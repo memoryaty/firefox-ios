@@ -70,6 +70,7 @@ extension URLComponents {
 // The root navigation for the Router. Look at the tests to see a complete URL
 enum NavigationPath {
     case url(webURL: URL?, isPrivate: Bool)
+    case widgetUrl(webURL: URL?, uuid: String)
     case fxa(params: FxALaunchParams)
     case deepLink(DeepLink)
     case text(String)
@@ -97,38 +98,17 @@ enum NavigationPath {
         } else if urlString.starts(with: "\(scheme)://fxa-signin"), components.valueForQuery("signin") != nil {
             self = .fxa(params: FxALaunchParams(query: url.getQuery()))
         } else if urlString.starts(with: "\(scheme)://open-url") {
-            let url = components.valueForQuery("url")?.asURL
-            // Unless the `open-url` URL specifies a `private` parameter,
-            // use the last browsing mode the user was in.
-            let isPrivate = Bool(components.valueForQuery("private") ?? "") ?? UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
-            self = .url(webURL: url, isPrivate: isPrivate)
-            
-            // Tracking for default browser
-            if (urlString.starts(with: "http:") ||  urlString.starts(with: "https:") && UserDefaults.standard.bool(forKey: "OpenedAsDefaultBrowser")) {
-                TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .asDefaultBrowser)
-                UserDefaults.standard.set(true, forKey: "OpenedAsDefaultBrowser")
-            }
+            self = .openUrlFromComponents(components: components)
+        } else if let widgetKitNavPath = NavigationPath.handleWidgetKitQuery(urlString: urlString, scheme: scheme, components: components) {
+            self = widgetKitNavPath
         } else if urlString.starts(with: "\(scheme)://open-text") {
             let text = components.valueForQuery("text")
             self = .text(text ?? "")
         } else if urlString.starts(with: "\(scheme)://glean") {
             self = .glean(url: url)
-        } else if urlString.starts(with: "\(scheme)://open-copied") {
-            if !UIPasteboard.general.hasURLs {
-                guard let searchText = UIPasteboard.general.string else {
-                    return nil
-                }
-                self = .text(searchText)
-            } else {
-                guard let url = UIPasteboard.general.url else {
-                    return nil
-                }
-                let isPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
-                self = .url(webURL: url, isPrivate: isPrivate)
-            }
-        } else if urlString.starts(with: "\(scheme)://close-private-tabs") {
-            self = .closePrivateTabs
         } else if urlString.starts(with: "http:") ||  urlString.starts(with: "https:") {
+            TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .asDefaultBrowser)
+            LeanPlumClient.shared.track(event: .appOpenedAsDefaultBrowser)
             // Use the last browsing mode the user was in
             let isPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
             self = .url(webURL: url, isPrivate: isPrivate)
@@ -145,6 +125,8 @@ enum NavigationPath {
         case .text(let text): NavigationPath.handleText(text: text, with: bvc)
         case .glean(let url): NavigationPath.handleGlean(url: url)
         case .closePrivateTabs: NavigationPath.handleClosePrivateTabs(with: bvc, tray: tray)
+        case .widgetUrl(webURL: let webURL, uuid: let uuid):
+            NavigationPath.handleWidgetURL(url: webURL, uuid: uuid, with: bvc)
         }
     }
 
@@ -166,6 +148,67 @@ enum NavigationPath {
         }
     }
 
+    private static func handleWidgetKitQuery(urlString: String, scheme: String, components: URLComponents) -> NavigationPath? {
+        if urlString.starts(with: "\(scheme)://widget-medium-topsites-open-url") {
+            // Widget Top sites - open url
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)
+            return .openUrlFromComponents(components: components)
+        } else if urlString.starts(with: "\(scheme)://widget-small-quicklink-open-url") {
+            // Widget Quick links - small - open url private or regular
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .smallQuickActionSearch)
+            return .openUrlFromComponents(components: components)
+        } else if urlString.starts(with: "\(scheme)://widget-medium-quicklink-open-url") {
+            // Widget Quick Actions - medium - open url private or regular
+            let isPrivate = Bool(components.valueForQuery("private") ?? "") ?? UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: isPrivate ? .mediumQuickActionPrivateSearch : .mediumQuickActionSearch)
+            return .openUrlFromComponents(components: components)
+        } else if urlString.starts(with: "\(scheme)://widget-small-quicklink-open-copied") || urlString.starts(with: "\(scheme)://widget-medium-quicklink-open-copied") {
+            // Widget Quick links - medium - open copied url
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumQuickActionCopiedLink)
+            return .openCopiedUrl()
+        } else if urlString.starts(with: "\(scheme)://widget-small-quicklink-close-private-tabs") || urlString.starts(with: "\(scheme)://widget-medium-quicklink-close-private-tabs"){
+            // Widget Quick links - medium - close private tabs
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumQuickActionClosePrivate)
+            return .closePrivateTabs
+        } else if urlString.starts(with: "\(scheme)://widget-tabs-medium-open-url") {
+            // Widget Tabs Quick View - medium
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTabsOpenUrl)
+            return .openWidgetUrl(components: components)
+        } else if urlString.starts(with: "\(scheme)://widget-tabs-large-open-url") {
+            // Widget Tabs Quick View - large
+            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .largeTabsOpenUrl)
+            return .openWidgetUrl(components: components)
+        }
+        return nil
+    }
+    
+    private static func openUrlFromComponents(components: URLComponents) -> NavigationPath {
+        let url = components.valueForQuery("url")?.asURL
+        // Unless the `open-url` URL specifies a `private` parameter,
+        // use the last browsing mode the user was in.
+        let isPrivate = Bool(components.valueForQuery("private") ?? "") ?? UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
+        return .url(webURL: url, isPrivate: isPrivate)
+    }
+    
+    private static func openCopiedUrl() -> NavigationPath {
+        if !UIPasteboard.general.hasURLs {
+            let searchText = UIPasteboard.general.string ?? ""
+            return .text(searchText)
+        }
+        let url = UIPasteboard.general.url
+        let isPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
+        return .url(webURL: url, isPrivate: isPrivate)
+    }
+    
+    private static func openWidgetUrl(components: URLComponents) -> NavigationPath {
+        let tabs = SimpleTab.getSimpleTabs()
+        guard let uuid = components.valueForQuery("uuid"), !tabs.isEmpty else {
+            return .url(webURL: nil, isPrivate: false)
+        }
+        let tab = tabs[uuid]
+        return .widgetUrl(webURL: tab?.url, uuid: uuid)
+    }
+    
     private static func handleFxA(params: FxALaunchParams, with bvc: BrowserViewController) {
         bvc.presentSignInViewController(params)
     }
@@ -199,6 +242,15 @@ enum NavigationPath {
             bvc.switchToTabForURLOrOpen(newURL, isPrivate: isPrivate)
         } else {
             bvc.openBlankNewTab(focusLocationField: true, isPrivate: isPrivate)
+        }
+        LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "External App or Extension"])
+    }
+    
+    private static func handleWidgetURL(url: URL?, uuid: String, with bvc: BrowserViewController) {
+        if let newURL = url {
+            bvc.switchToTabForWidgetURLOrOpen(newURL, uuid: uuid, isPrivate: false)
+        } else {
+            bvc.openBlankNewTab(focusLocationField: true, isPrivate: false)
         }
         LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "External App or Extension"])
     }

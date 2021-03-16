@@ -10,27 +10,40 @@ class NewTabUserResearch {
     // Variable
     var lpVariable: LPVar?
     // Constants
+    private let enrollmentKey = "newTabUserResearchEnrollmentKey"
     private let newTabUserResearchKey = "newTabUserResearchKey"
+    private let abTestName = "New Tab AB Test Prod (Fix)"
     // Saving user defaults
     private let defaults = UserDefaults.standard
     // LP fetched status variable
     private var fetchedExperimentVariables = false
-    // New tab button state
-    // True: Show new tab button
-    // False: Hide new tab button
-    var newTabState: Bool? {
+    // Note: Until AB Test is finalized we are going to disable it and have new tab state as False
+    var newTabState = false
+//    // New tab button state
+//    // True: Show new tab button
+//    // False: Hide new tab button
+//    var newTabState: Bool? {
+//        set(value) {
+//            if value == nil {
+//                defaults.removeObject(forKey: newTabUserResearchKey)
+//            } else {
+//                defaults.set(value, forKey: newTabUserResearchKey)
+//            }
+//        }
+//        get {
+//            guard let value = defaults.value(forKey: newTabUserResearchKey) as? Bool else {
+//                return nil
+//            }
+//            return value
+//        }
+//    }
+    
+    var hasEnrolled: Bool {
         set(value) {
-            if value == nil {
-                defaults.removeObject(forKey: newTabUserResearchKey)
-            } else {
-                defaults.set(value, forKey: newTabUserResearchKey)
-            }
+            defaults.set(value, forKey: enrollmentKey)
         }
         get {
-            guard let value = defaults.value(forKey: newTabUserResearchKey) as? Bool else {
-                return nil
-            }
-            return value
+            defaults.bool(forKey: enrollmentKey)
         }
     }
     
@@ -41,6 +54,8 @@ class NewTabUserResearch {
     
     // MARK: public
     func lpVariableObserver() {
+        // Note: Until AB Test is finalized we are going to disable and not fetch any data from leanplum server
+        return
         // Condition: Leanplum is disabled; Set default New tab state
         guard LeanPlumClient.shared.getSettings() != nil else {
             // default state is false
@@ -54,12 +69,16 @@ class NewTabUserResearch {
                 return
             }
             self.fetchedExperimentVariables = true
-            self.updateTelemetry()
-            self.newTabState = LPVariables.newTabButtonABTest?.boolValue() ?? false
+            //Only update add new tab (+ button) when it doesn't match leanplum value 
+            let lpValue = LPVariables.newTabButtonABTest?.boolValue() ?? false
+            if self.newTabState != lpValue {
+                self.newTabState = lpValue
+                self.updateTelemetry()
+            }
         }
         // Condition: Leanplum server too slow; Set default New tab state
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            guard self.fetchedExperimentVariables == false else {
+            guard self.fetchedExperimentVariables == false && self.newTabState == nil else {
                 return
             }
             // Condition: Leanplum server too slow; Set default New tab state
@@ -67,27 +86,38 @@ class NewTabUserResearch {
             // Condition: LP has already started but we missed onStartLPVariable callback
             if case .started(startedState: _) = LeanPlumClient.shared.lpState , let boolValue = LPVariables.newTabButtonABTest?.boolValue() {
                 self.newTabState = boolValue
+                self.updateTelemetry()
             }
             self.fetchedExperimentVariables = true
         }
     }
     
     func updateTelemetry() {
+        guard !hasEnrolled else { return }
         // Printing variant is good to know all details of A/B test fields
         print("lp variant \(String(describing: Leanplum.variants()))")
-        guard let variants = Leanplum.variants(), let lpData = variants.first as? Dictionary<String, AnyObject> else {
+        var lpData: Dictionary<String, Any>?
+        guard let variants = Leanplum.variants() as? [Dictionary<String, Any>] else {
+            return
+        }
+        variants.forEach {
+            if $0["abTestName"] as? String == abTestName {
+                lpData = $0
+            }
+        }
+        guard lpData != nil else {
             return
         }
         var abTestId = ""
-        if let value = lpData["abTestId"] as? Int64 {
+        if let value = lpData?["abTestId"] as? Int64 {
                 abTestId = "\(value)"
         }
-        let abTestName = lpData["abTestName"] as? String ?? ""
-        let abTestVariant = lpData["name"] as? String ?? ""
+        let abTestVariant = lpData?["name"] as? String ?? ""
         let attributesExtras = [LPAttributeKey.experimentId: abTestId, LPAttributeKey.experimentName: abTestName, LPAttributeKey.experimentVariant: abTestVariant]
         // Leanplum telemetry
         LeanPlumClient.shared.set(attributes: attributesExtras)
         // Legacy telemetry
         TelemetryWrapper.recordEvent(category: .enrollment, method: .add, object: .experimentEnrollment, extras: attributesExtras)
+        hasEnrolled = true
     }
 }

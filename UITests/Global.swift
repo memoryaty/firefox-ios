@@ -191,12 +191,12 @@ extension KIFUITestActor {
         }
         var stepResult = KIFTestStepResult.wait
 
-        webView.evaluateJavaScript("typeof KIFHelper") { result, _ in
+        webView.evaluateJavascriptInDefaultContentWorld("typeof KIFHelper") { result, _ in
             if result as! String == "undefined" {
                 let bundle = Bundle(for: BrowserTests.self)
                 let path = bundle.path(forResource: "KIFHelper", ofType: "js")!
                 let source = try! String(contentsOfFile: path, encoding: .utf8)
-                webView.evaluateJavaScript(source, completionHandler: nil)
+                webView.evaluateJavascriptInDefaultContentWorld(source)
             }
             stepResult = KIFTestStepResult.success
         }
@@ -225,26 +225,25 @@ class BrowserUtils {
 
     class func resetToAboutHomeKIF(_ tester: KIFUITestActor) {
         if iPad() {
-//            EarlGrey.selectElement(with: grey_accessibilityID("TopTabsViewController.tabsButton")).perform(grey_tap())
             tester.tapView(withAccessibilityIdentifier: "TopTabsViewController.tabsButton")
         } else {
             tester.tapView(withAccessibilityIdentifier: "TabToolbar.tabsButton")
         }
         
         // if in private mode, close all tabs
-        tester.tapView(withAccessibilityIdentifier: "TabTrayController.maskButton")
+        tester.tapView(withAccessibilityLabel: "smallPrivateMask")
 
-        tester.tapView(withAccessibilityIdentifier: "TabTrayController.removeTabsButton")
+        tester.tapView(withAccessibilityIdentifier: "closeAllTabsButtonTabTray")
         tester.tapView(withAccessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
 
         tester.wait(forTimeInterval: 3)
         /* go to Normal mode */
         if (tester.viewExistsWithLabel("Show Tabs")) {
-            tester.tapView(withAccessibilityIdentifier: "TabToolbar.tabsButton")
+            tester.tapView(withAccessibilityLabel: "1")
         } else {
-            tester.tapView(withAccessibilityIdentifier: "TabTrayController.maskButton")
+            tester.tapView(withAccessibilityLabel: "1")
         }
-        tester.tapView(withAccessibilityIdentifier: "TabTrayController.removeTabsButton")
+        tester.tapView(withAccessibilityIdentifier: "closeAllTabsButtonTabTray")
         tester.tapView(withAccessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
     }
 
@@ -253,7 +252,7 @@ class BrowserUtils {
         if (tester.viewExistsWithLabel("Next")) {
             tester.tapView(withAccessibilityIdentifier: "nextOnboardingButton")
             tester.waitForAnimationsToFinish(withTimeout: 3)
-            tester.tapView(withAccessibilityIdentifier: "startBrowsingOnboardingButton")
+            tester.tapView(withAccessibilityIdentifier: "startBrowsingButtonSyncView")
         }
     }
     
@@ -307,10 +306,6 @@ class BrowserUtils {
                 tester.setOn(clearables!.contains(clearable), forSwitchWithAccessibilityLabel: clearable.rawValue)
             }
         tester.tapView(withAccessibilityIdentifier: "ClearPrivateData")
-    }
-    
-    class func configEarlGrey() {
-    
     }
 
     class func clearPrivateDataKIF(_ tester: KIFUITestActor) {

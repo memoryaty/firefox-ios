@@ -8,6 +8,7 @@ import Shared
 import Leanplum
 import Account
 
+private let abTestMessageNames = ["Live_DefBrowser_CAB_ALL_Push_EN_121720", "Live_DefBrowser_AutAB_ALL_Push_EN_121820"] // list of the names of all a/b tests that send messages
 private let LPAppIdKey = "LeanplumAppId"
 private let LPProductionKeyKey = "LeanplumProductionKey"
 private let LPDevelopmentKeyKey = "LeanplumDevelopmentKey"
@@ -72,6 +73,10 @@ enum LPEvent: String {
     case onboardingTestLoadedTooSlow = "E_Onboarding_Was_Swiped_Before_AB_Test_Could_Start"
     case dismissDefaultBrowserCard = "E_Dismissed_Default_Browser_Card"
     case goToSettingsDefaultBrowserCard = "E_Default_Browser_Card_Clicked_Go_To_Settings"
+    case appOpenedAsDefaultBrowser = "E_App_Opened_as_Default_Browser"
+    case settingsSetAsDefaultBrowser = "E_Settings_Clicked_Set_Default_Browser"
+    case goToSettingsDefaultBrowserOnboarding = "E_Default_Browser_Onboarding_Clicked_Go_To_Settings"
+    case dismissDefaultBrowserOnboarding = "E_Dismissed_Default_Browser_Onboarding"
 }
 
 struct LPAttributeKey {
@@ -86,6 +91,7 @@ struct LPAttributeKey {
     static let experimentName = "Experiment name"
     static let experimentId = "Experiment id"
     static let experimentVariant = "Experiment variant"
+    static let isReleaseBuild = "Build channel is Release"
 }
 
 struct MozillaAppSchemes {
@@ -212,7 +218,8 @@ class LeanPlumClient {
             LPAttributeKey.klarInstalled: klarInstalled(),
             LPAttributeKey.pocketInstalled: pocketInstalled(),
             LPAttributeKey.signedInSync: profile?.hasAccount() ?? false,
-            LPAttributeKey.fxaAccountVerified: profile?.hasSyncableAccount() ?? false
+            LPAttributeKey.fxaAccountVerified: profile?.hasSyncableAccount() ?? false,
+            LPAttributeKey.isReleaseBuild: AppConstants.BuildChannel == .release
         ]
 
         self.setupCustomTemplates()
@@ -227,21 +234,10 @@ class LeanPlumClient {
             // According to the doc all variables should be synced when lp start finishes
             // Relying on this fact and sending the updated AB test variable
             self.finishedStartingLeanplum?()
-            // We need to check if the app is a clean install to use for
-            // preventing the What's New URL from appearing.
-            if self.prefs?.intForKey(PrefsKeys.IntroSeen) == nil {
-                self.prefs?.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
-                self.track(event: .firstRun)
-                self.lpState = .started(startedState: .firstRun)
-            } else if self.prefs?.boolForKey("SecondRun") == nil {
-                self.prefs?.setBool(true, forKey: "SecondRun")
-                self.track(event: .secondRun)
-                self.lpState = .started(startedState: .secondRun)
-            }
-
             self.checkIfAppWasInstalled(key: PrefsKeys.HasFocusInstalled, isAppInstalled: self.focusInstalled(), lpEvent: .downloadedFocus)
             self.checkIfAppWasInstalled(key: PrefsKeys.HasPocketInstalled, isAppInstalled: self.pocketInstalled(), lpEvent: .downloadedPocket)
             self.recordSyncedClients(with: self.profile)
+            self.recordPushTests()
         })
 
         NotificationCenter.default.addObserver(forName: .FirefoxAccountChanged, object: nil, queue: .main) { _ in
@@ -249,6 +245,33 @@ class LeanPlumClient {
                 LeanPlumClient.shared.set(attributes: [LPAttributeKey.signedInSync: false])
             }
         }
+    }
+    
+    // Send data to telemetry for a/b tests that send messages
+    func recordPushTests() {
+        var lpData: Dictionary<String, Any>?
+        guard let variants = Leanplum.variants() as? [Dictionary<String, Any>] else {
+            return
+        }
+        variants.forEach {
+            if abTestMessageNames.contains($0["abTestName"] as? String ?? "") {
+                lpData = $0
+            }
+        }
+        guard lpData != nil else {
+            return
+        }
+        var abTestId = ""
+        if let value = lpData?["abTestId"] as? Int64 {
+                abTestId = "\(value)"
+        }
+        let abTestName = lpData?["abTestName"] as? String ?? ""
+        let abTestVariant = lpData?["name"] as? String ?? ""
+        let attributesExtras = [LPAttributeKey.experimentId: abTestId, LPAttributeKey.experimentName: abTestName, LPAttributeKey.experimentVariant: abTestVariant]
+        // Leanplum telemetry
+        LeanPlumClient.shared.set(attributes: attributesExtras)
+        // Legacy telemetry
+        TelemetryWrapper.recordEvent(category: .enrollment, method: .add, object: .experimentEnrollment, extras: attributesExtras)
     }
 
     // Events

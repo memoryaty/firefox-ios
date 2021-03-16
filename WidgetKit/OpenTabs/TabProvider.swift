@@ -9,42 +9,39 @@ import Combine
 
 struct TabProvider: TimelineProvider {
     public typealias Entry = OpenTabsEntry
-
+    var tabsDict: [String: SimpleTab] = [:]
+    
     func placeholder(in context: Context) -> OpenTabsEntry {
         OpenTabsEntry(date: Date(), favicons: [String: Image](), tabs: [])
     }
     
     func getSnapshot(in context: Context, completion: @escaping (OpenTabsEntry) -> Void) {
-        let allOpenTabs = SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
-        let openTabs = allOpenTabs.filter {
-            !$0.isPrivate &&
-            $0.sessionData != nil &&
-            $0.url?.absoluteString.starts(with: "internal://") == false &&
-            $0.title != nil
+        let allOpenTabs = SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).1
+
+        let openTabs = allOpenTabs.values.filter {
+            !$0.isPrivate
         }
-        
-        let faviconFetchGroup = DispatchGroup()
         
         var tabFaviconDictionary = [String : Image]()
-        for tab in openTabs {
-            faviconFetchGroup.enter()
-            if let faviconURL = tab.faviconURL {
-                getImageForUrl(URL(string: faviconURL)!, completion: { image in
-                    if image != nil {
-                        tabFaviconDictionary[tab.title!] = image
-                    }
-                    
-                    faviconFetchGroup.leave()
-                })
-            } else {
-                faviconFetchGroup.leave()
-            }
+        let simpleTabs = SimpleTab.getSimpleTabs()
+        for (_ , tab) in simpleTabs {
+            guard !tab.imageKey.isEmpty else { continue }
+            let fetchedImage = FaviconFetcher.getFaviconFromDiskCache(imageKey: tab.imageKey)
+            let bundledFavicon = getBundledFavicon(siteUrl: tab.url)
+            let letterFavicon = FaviconFetcher.letter(forUrl: tab.url ?? URL(string: "about:blank")!)
+            let image = bundledFavicon ?? fetchedImage ?? letterFavicon
+            tabFaviconDictionary[tab.imageKey] = Image(uiImage: image)
         }
         
-        faviconFetchGroup.notify(queue: .main) {
-            let openTabsEntry = OpenTabsEntry(date: Date(), favicons: tabFaviconDictionary, tabs: openTabs)
-            completion(openTabsEntry)
-        }
+        let openTabsEntry = OpenTabsEntry(date: Date(), favicons: tabFaviconDictionary, tabs: openTabs)
+        completion(openTabsEntry)
+    }
+    
+    func getBundledFavicon(siteUrl: URL?) -> UIImage? {
+        guard let url = siteUrl else { return nil }
+        // Get the bundled favicon if available
+        guard let bundled = FaviconFetcher.getBundledIcon(forUrl: url), let image = UIImage(contentsOfFile: bundled.filePath) else { return nil }
+        return image
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<OpenTabsEntry>) -> Void) {
@@ -65,5 +62,5 @@ struct TabProvider: TimelineProvider {
 struct OpenTabsEntry: TimelineEntry {
     let date: Date
     let favicons: [String : Image]
-    let tabs: [SavedTab]
+    let tabs: [SimpleTab]
 }

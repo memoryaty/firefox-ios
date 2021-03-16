@@ -33,10 +33,12 @@ extension PhotonActionSheetProtocol {
 
     func getTabActions(tab: Tab, buttonView: UIView,
                        presentShareMenu: @escaping (URL, Tab, UIView, UIPopoverArrowDirection) -> Void,
-                       findInPage:  @escaping () -> Void,
+                       findInPage: @escaping () -> Void,
+                       reportSiteIssue: @escaping () -> Void,
                        presentableVC: PresentableVC,
                        isBookmarked: Bool,
                        isPinned: Bool,
+                       shouldShowNewTabButton: Bool,
                        success: @escaping (String, ButtonToastAction) -> Void) -> Array<[PhotonActionSheetItem]> {
         if tab.url?.isFileURL ?? false {
             let shareFile = PhotonActionSheetItem(title: Strings.AppMenuSharePageTitleString, iconString: "action_share") { _, _ in
@@ -208,15 +210,20 @@ extension PhotonActionSheetProtocol {
         let pinAction = (isPinned ? removeTopSitesPin : pinToTopSites)
         var commonActions = [toggleDesktopSite, pinAction]
 
-        // Disable find in page if document is pdf.
+        // Disable find in page and report site issue if document is pdf.
         if tab.mimeType != MIMEType.PDF {
             let findInPageAction = PhotonActionSheetItem(title: Strings.AppMenuFindInPageTitleString, iconString: "menu-FindInPage") { _, _ in
                 findInPage()
             }
             commonActions.insert(findInPageAction, at: 0)
+            
+            let reportSiteIssueAction = PhotonActionSheetItem(title: Strings.AppMenuReportSiteIssueTitleString, iconString: "menu-reportSiteIssue") { _, _ in
+                reportSiteIssue()
+            }
+            commonActions.insert(reportSiteIssueAction, at: 0)
         }
 
-        if (profile.prefs.boolForKey(PrefsKeys.ShowNewTabToolbarButton) ?? false && tab.readerModeAvailableOrActive) {
+        if shouldShowNewTabButton && tab.readerModeAvailableOrActive {
             return [refreshActions, mainActions, commonActions]
         } else {
             return [mainActions, commonActions]

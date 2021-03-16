@@ -114,10 +114,10 @@ class ClearPrivateDataTests: KIFTestCase, UITextFieldDelegate {
         // Close History (and so Library) panel
         BrowserUtils.closeLibraryMenu(tester())
     }
-
-    func testClearsCookies() {
+    // Disabled due to https://github.com/mozilla-mobile/firefox-ios/issues/7727
+    /*func testClearsCookies() {
         let url = "\(webRoot!)/numberedPage.html?page=1"
-        tester().waitForAnimationsToFinish(withTimeout: 3)
+        tester().waitForAnimationsToFinish(withTimeout: 5)
 
         BrowserUtils.enterUrlAddressBar(tester(), typeUrl: url)
         tester().waitForWebViewElementWithAccessibilityLabel("Page 1")
@@ -137,7 +137,7 @@ class ClearPrivateDataTests: KIFTestCase, UITextFieldDelegate {
         BrowserUtils.acceptClearPrivateData(tester())
         BrowserUtils.closeClearPrivateDataDialog(tester())
 
-        tester().waitForAnimationsToFinish(withTimeout: 3)
+        tester().waitForAnimationsToFinish(withTimeout: 5)
         cookies = getCookies(webView)
         XCTAssertEqual(cookies.cookie, "foo=bar")
         XCTAssertEqual(cookies.localStorage, "foo=bar")
@@ -149,11 +149,12 @@ class ClearPrivateDataTests: KIFTestCase, UITextFieldDelegate {
         BrowserUtils.acceptClearPrivateData(tester())
         BrowserUtils.closeClearPrivateDataDialog(tester())
 
+        tester().waitForAnimationsToFinish(withTimeout: 5)
         cookies = getCookies(webView)
         XCTAssertEqual(cookies.cookie, "")
         XCTAssertEqual(cookies.localStorage, "null")
         XCTAssertEqual(cookies.sessionStorage, "null")
-    }
+    }*/
 
     func testClearsCache() {
         let cachedServer = CachedPageServer()

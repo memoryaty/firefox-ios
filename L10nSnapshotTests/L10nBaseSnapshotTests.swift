@@ -5,15 +5,16 @@
 import MappaMundi
 import XCTest
 
+let testPageBase = "http://www.example.com"
+let loremIpsumURL = "\(testPageBase)"
+
 class L10nBaseSnapshotTests: XCTestCase {
 
     var app: XCUIApplication!
     var navigator: MMNavigator<FxUserState>!
     var userState: FxUserState!
 
-    var skipIntro: Bool {
-        return true
-    }
+    var args = [LaunchArguments.ClearProfile, LaunchArguments.SkipWhatsNew, LaunchArguments.SkipETPCoverSheet,LaunchArguments.SkipIntro]
 
     override func setUp() {
         super.setUp()
@@ -21,17 +22,12 @@ class L10nBaseSnapshotTests: XCTestCase {
         app = XCUIApplication()
         setupSnapshot(app)
         app.terminate()
-        var args = [LaunchArguments.ClearProfile, LaunchArguments.SkipWhatsNew, LaunchArguments.SkipETPCoverSheet]
-        if skipIntro {
-            args.append(LaunchArguments.SkipIntro)
-        }
+
         springboardStart(app, args: args)
 
         let map = createScreenGraph(for: self, with: app)
         navigator = map.navigator()
         userState = navigator.userState
-
-        userState.showIntro = !skipIntro
 
         navigator.synchronizeWithUserState()
     }
@@ -56,11 +52,8 @@ class L10nBaseSnapshotTests: XCTestCase {
             }
         }
 
-    func waitForNoExistence(_ element: XCUIElement) {
-        let exists = NSPredicate(format: "exists != true")
-
-        expectation(for: exists, evaluatedWith: element, handler: nil)
-        waitForExpectations(timeout: 20, handler: nil)
+    func waitForNoExistence(_ element: XCUIElement, timeoutValue: TimeInterval = 5.0, file: String = #file, line: UInt = #line) {
+        waitFor(element, with: "exists != true", timeout: timeoutValue, file: file, line: line)
     }
 
     func loadWebPage(url: String, waitForOtherElementWithAriaLabel ariaLabel: String) {
@@ -71,5 +64,11 @@ class L10nBaseSnapshotTests: XCTestCase {
     func loadWebPage(url: String, waitForLoadToFinish: Bool = true) {
         userState.url = url
         navigator.performAction(Action.LoadURL)
+    }
+
+    func waitUntilPageLoad() {
+        let app = XCUIApplication()
+        let progressIndicator = app.progressIndicators.element(boundBy: 0)
+        waitForNoExistence(progressIndicator, timeoutValue: 20.0)
     }
 }

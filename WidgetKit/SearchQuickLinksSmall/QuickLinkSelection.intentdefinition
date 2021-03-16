@@ -73,18 +73,16 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>6vd2jx</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>19F101</string>
+	<string>20D64</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A6163b</string>
+	<string>12D4e</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>12.0</string>
+	<string>12.4</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
 			<key>INIntentCategory</key>
 			<string>information</string>
-			<key>INIntentConfigurable</key>
-			<true/>
 			<key>INIntentDescription</key>
 			<string>String.QuickActionDescription</string>
 			<key>INIntentDescriptionID</key>
@@ -94,17 +92,7 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>4</integer>
-			<key>INIntentManagedParameterCombinations</key>
-			<dict>
-				<key>selectedLink</key>
-				<dict>
-					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
-					<key>INIntentParameterCombinationUpdatesLinked</key>
-					<true/>
-				</dict>
-			</dict>
+			<integer>8</integer>
 			<key>INIntentName</key>
 			<string>QuickLinkSelection</string>
 			<key>INIntentParameters</key>
@@ -122,20 +110,15 @@
 					<string>IntentQuickLink</string>
 					<key>INIntentParameterEnumTypeNamespace</key>
 					<string>6vd2jx</string>
-					<key>INIntentParameterMetadata</key>
-					<dict>
-						<key>INIntentParameterMetadataDefaultValue</key>
-						<string>search</string>
-					</dict>
 					<key>INIntentParameterName</key>
-					<string>selectedLink</string>
+					<string>quickLink</string>
 					<key>INIntentParameterPromptDialogs</key>
 					<array>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
 							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>There are ${count} options matching ‘${selectedLink}’.</string>
+							<string>There are ${count} options matching ‘${quickLink}’.</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
 							<string>pooIV6</string>
 							<key>INIntentParameterPromptDialogType</key>
@@ -151,7 +134,7 @@
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
 							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>There are ${count} options matching ‘${selectedLink}’.</string>
+							<string>There are ${count} options matching ‘${quickLink}’.</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
 							<string>oQDtoo</string>
 							<key>INIntentParameterPromptDialogType</key>
@@ -161,7 +144,7 @@
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
 							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>Just to confirm, you wanted ‘${selectedLink}’?</string>
+							<string>Just to confirm, you wanted ‘${quickLink}’?</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
 							<string>QjQSnd</string>
 							<key>INIntentParameterPromptDialogType</key>
@@ -169,7 +152,7 @@
 						</dict>
 					</array>
 					<key>INIntentParameterTag</key>
-					<integer>4</integer>
+					<integer>8</integer>
 					<key>INIntentParameterType</key>
 					<string>Integer</string>
 				</dict>

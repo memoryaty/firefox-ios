@@ -26,14 +26,15 @@ class DefaultBrowserCard: UIView {
         descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
         return descriptionText
     }()
-    lazy var settingsButton: UIButton = {
+    lazy var learnHowButton: UIButton = {
         let button = UIButton()
-        button.setTitle(String.DefaultBrowserCardButton, for: .normal)
+        button.setTitle(String.PrivateBrowsingLearnMore, for: .normal) // TODO update string
         button.backgroundColor = UIColor.Photon.Blue50
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
+        button.accessibilityIdentifier = "Home.learnMoreDefaultBrowserbutton"
         return button
     }()
     lazy var image: UIImageView = {
@@ -64,7 +65,7 @@ class DefaultBrowserCard: UIView {
         topView.addSubview(labelView)
         topView.addSubview(image)
         
-        background.addSubview(settingsButton)
+        background.addSubview(learnHowButton)
         background.addSubview(topView)
         background.addSubview(closeButton)
         
@@ -90,7 +91,7 @@ class DefaultBrowserCard: UIView {
         }
         topView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.bottom.equalTo(settingsButton.snp.top)
+            make.bottom.equalTo(learnHowButton.snp.top)
             make.height.greaterThanOrEqualTo(114)
         }
         image.snp.makeConstraints { make in
@@ -103,10 +104,10 @@ class DefaultBrowserCard: UIView {
             make.right.equalToSuperview()
             make.left.equalTo(image.snp.right)
             make.width.lessThanOrEqualTo(223)
-            make.bottom.equalTo(settingsButton.snp.top).offset(-16)
+            make.bottom.equalTo(learnHowButton.snp.top).offset(-16)
             make.top.equalToSuperview().offset(30)
         }
-        settingsButton.snp.makeConstraints { make in
+        learnHowButton.snp.makeConstraints { make in
             make.top.equalTo(topView.snp.bottom).offset(16)
             make.bottom.right.equalToSuperview().offset(-16)
             make.left.equalToSuperview().offset(16)
@@ -122,7 +123,7 @@ class DefaultBrowserCard: UIView {
     
     private func setupButtons() {
         closeButton.addTarget(self, action: #selector(dismissCard), for: .touchUpInside)
-        settingsButton.addTarget(self, action: #selector(showSettings), for: .touchUpInside)
+        learnHowButton.addTarget(self, action: #selector(showOnboarding), for: .touchUpInside)
     }
     
     @objc private func dismissCard() {
@@ -132,10 +133,13 @@ class DefaultBrowserCard: UIView {
         LeanPlumClient.shared.track(event: .dismissDefaultBrowserCard)
     }
     
-    @objc private func showSettings() {
-        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
+    @objc private func showOnboarding() {
+        BrowserViewController.foregroundBVC().presentDBOnboardingViewController(true)
         TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserCard)
         LeanPlumClient.shared.track(event: .goToSettingsDefaultBrowserCard)
+        
+        // Set default browser onboarding did show to true so it will not show again after user clicks this button
+        UserDefaults.standard.set(true, forKey: PrefsKeys.KeyDidShowDefaultBrowserOnboarding)
     }
     
     func applyTheme() {

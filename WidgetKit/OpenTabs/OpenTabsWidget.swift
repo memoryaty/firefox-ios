@@ -16,7 +16,7 @@ struct OpenTabsWidget: Widget {
         }
         .supportedFamilies([.systemMedium, .systemLarge])
         .configurationDisplayName(String.QuickViewGalleryTitle)
-        .description(String.QuickViewGalleryDescription)
+        .description(String.QuickViewGalleryDescriptionV2)
     }
 }
 
@@ -26,14 +26,13 @@ struct OpenTabsView: View {
     @Environment(\.widgetFamily) var widgetFamily
     
     @ViewBuilder
-    func lineItemForTab(_ tab: SavedTab) -> some View {
-        let url = tab.sessionData!.urls.last!
-
+    func lineItemForTab(_ tab: SimpleTab) -> some View {
+        let query = widgetFamily == .systemMedium ? "widget-tabs-medium-open-url" : "widget-tabs-large-open-url"
         VStack(alignment: .leading) {
-            Link(destination: linkToContainingApp("?url=\(url)", query: "open-url")) {
+            Link(destination: linkToContainingApp("?uuid=\(tab.uuid)", query: query)) {
                 HStack(alignment: .center, spacing: 15) {
-                    if (entry.favicons[tab.title!] != nil) {
-                        (entry.favicons[tab.title!])!.resizable().frame(width: 16, height: 16)
+                    if (entry.favicons[tab.imageKey] != nil) {
+                        (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
                         Image("placeholderFavicon")
                             .foregroundColor(Color.white)

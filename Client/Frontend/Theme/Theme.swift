@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 import Foundation
 
-protocol Themeable:  AnyObject {
+protocol Themeable: AnyObject {
     func applyTheme()
 }
 
@@ -166,8 +166,8 @@ class HomePanelColor {
     var siteTableHeaderBorder: UIColor { return UIColor.Photon.Grey30.withAlphaComponent(0.8) }
 
     var topSiteDomain: UIColor { return UIColor.black }
-    var topSitesGradientStart:  UIColor { return UIColor.white }
-    var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0xf8f8f8) }
+    var topSitesGradientStart: UIColor { return UIColor.white }
+    var topSitesGradientEnd: UIColor { return UIColor(rgb: 0xf8f8f8) }
     var topSitesBackground: UIColor { return UIColor.white }
 
     var activityStreamHeaderText: UIColor { return UIColor.Photon.Grey50 }
@@ -206,6 +206,12 @@ class GeneralColor {
 class DefaultBrowserCardColor {
     var backgroundColor: UIColor { return UIColor.Photon.Grey30 }
     var textColor: UIColor { return UIColor.black }
+    var closeButtonBackground: UIColor { return UIColor.Photon.Grey20 }
+    var closeButton: UIColor { return UIColor.Photon.Grey80 }
+}
+
+class OnboardingColor {
+    var backgroundColor: UIColor { return UIColor.white }
 }
 
 protocol Theme {
@@ -224,6 +230,7 @@ protocol Theme {
     var actionMenu: ActionMenuColor { get }
     var switchToggleTheme: GeneralColor { get }
     var defaultBrowserCard: DefaultBrowserCardColor { get }
+    var onboarding: OnboardingColor { get }
 }
 
 class NormalTheme: Theme {
@@ -242,4 +249,5 @@ class NormalTheme: Theme {
     var actionMenu: ActionMenuColor { return ActionMenuColor() }
     var switchToggleTheme: GeneralColor { return GeneralColor() }
     var defaultBrowserCard: DefaultBrowserCardColor { return DefaultBrowserCardColor() }
+    var onboarding: OnboardingColor { return OnboardingColor() }
 }

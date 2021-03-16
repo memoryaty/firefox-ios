@@ -16,7 +16,6 @@ import Sync
 import CoreSpotlight
 import UserNotifications
 import Account
-import WidgetKit
 
 #if canImport(BackgroundTasks)
  import BackgroundTasks
@@ -41,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
     var tabManager: TabManager!
     var applicationCleanlyBackgrounded = true
     var shutdownWebServer: DispatchSourceTimer?
-
+    var orientationLock = UIInterfaceOrientationMask.all
     weak var application: UIApplication?
     var launchOptions: [AnyHashable: Any]?
 
@@ -221,15 +220,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         pushNotificationSetup()
 
-        // Leanplum user research variable setup for onboarding research
-        _ = OnboardingUserResearch()
         // Leanplum user research variable setup for New tab user research
         _ = NewTabUserResearch()
+        // Leanplum user research variable setup for Chron tabs user research
+        _ = ChronTabsUserResearch()
         // Leanplum setup
 
-        if let profile = self.profile, LeanPlumClient.shouldEnable(profile: profile) {
-            LeanPlumClient.shared.setup(profile: profile)
-            LeanPlumClient.shared.set(enabled: true)
+        if let profile = self.profile {
+            // Leanplum setup
+            if LeanPlumClient.shouldEnable(profile: profile) {
+                LeanPlumClient.shared.setup(profile: profile)
+                LeanPlumClient.shared.set(enabled: true)
+            }
+            
+            let persistedCurrentVersion = InstallType.persistedCurrentVersion()
+            let introScreen = profile.prefs.intForKey(PrefsKeys.IntroSeen)
+            // upgrade install - Intro screen shown & persisted current version does not match
+            if introScreen != nil && persistedCurrentVersion != AppInfo.appVersion {
+                InstallType.set(type: .upgrade)
+                InstallType.updateCurrentVersion(version: AppInfo.appVersion)
+            }
+            
+            // We need to check if the app is a clean install to use for
+            // preventing the What's New URL from appearing.
+            if introScreen == nil {
+                // fresh install - Intro screen not yet shown
+                InstallType.set(type: .fresh)
+                InstallType.updateCurrentVersion(version: AppInfo.appVersion)
+                // Profile and leanplum setup
+                profile.prefs.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
+                LeanPlumClient.shared.track(event: .firstRun)
+            } else if profile.prefs.boolForKey(PrefsKeys.KeySecondRun) == nil {
+                profile.prefs.setBool(true, forKey: PrefsKeys.KeySecondRun)
+                LeanPlumClient.shared.track(event: .secondRun)
+            }
         }
 
         if #available(iOS 13.0, *) {
@@ -265,8 +289,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 }
             }
         }
+        updateSessionCount()
 
         return shouldPerformAdditionalDelegateHandling
+    }
+
+    func updateSessionCount() {
+        var sessionCount: Int32 = 0
+        
+        // Get the session count from preferences
+        if let currentSessionCount = profile?.prefs.intForKey(PrefsKeys.SessionCount) {
+            sessionCount = currentSessionCount
+        }
+        // increase session count value
+        profile?.prefs.setInt(sessionCount + 1, forKey: PrefsKeys.SessionCount)
     }
 
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -341,11 +377,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             self.receivedURLs.removeAll()
             application.applicationIconBadgeNumber = 0
         }
+        // Create fx favicon cache directory
+        FaviconFetcher.createWebImageCacheDirectory()
+        // update top sites widget
+        updateTopSitesWidget()
         
-        if #available(iOS 14.0, *) {
-            // TopSite is only available in iOS14 for WidgetKit hence we don't need to write for lower versions
-            transformTopSitesAndAttemptWrite()
-        }
         // Cleanup can be a heavy operation, take it out of the startup path. Instead check after a few seconds.
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             self.profile?.cleanupHistoryIfNeeded()
@@ -353,13 +389,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
-        if #available(iOS 14.0, *) {
-            // Since we only need the topSites data in the archiver, let's write it
-            // only if iOS 14 is available.
-            transformTopSitesAndAttemptWrite()
-            
-            WidgetCenter.shared.reloadAllTimelines()
-        }
+        // update top sites widget
+        updateTopSitesWidget()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -397,13 +428,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         tabManager.preserveTabs()
     }
     
-    private func transformTopSitesAndAttemptWrite() {
-        if let profile = profile {
-            TopSitesHandler.getTopSites(profile: profile).uponQueue(.main) { result in
-                let topSites = result.map { TopSite(url: $0.url, title: $0.title, faviconUrl: $0.icon?.url) }
-                
-                TopSitesHandler.compareAndUpdateWidgetKitTopSite(clientSites: topSites)
-            }
+    private func updateTopSitesWidget() {
+        // Since we only need the topSites data in the archiver, let's write it
+        // only if iOS 14 is available.
+        if #available(iOS 14.0, *) {
+            guard let profile = profile else { return }
+            TopSitesHandler.writeWidgetKitTopSites(profile: profile)
         }
     }
 
@@ -474,7 +504,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             InternalSchemeHandler.responders[path] = responder
         }
 
-        if AppConstants.IsRunningTest {
+        if AppConstants.IsRunningTest || AppConstants.IsRunningPerfTest {
             registerHandlersForTestMethods(server: server.server)
         }
 
@@ -615,5 +645,26 @@ extension AppDelegate: MFMailComposeViewControllerDelegate {
 extension UIApplication {
     static var isInPrivateMode: Bool {
         return BrowserViewController.foregroundBVC().tabManager.selectedTab?.isPrivate ?? false
+    }
+}
+
+// Orientation lock for views that use new modal presenter 
+extension AppDelegate {
+    /// ref: https://stackoverflow.com/questions/28938660/
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return self.orientationLock
+    }
+    
+    struct AppUtility {
+        static func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
+            if let delegate = UIApplication.shared.delegate as? AppDelegate {
+                delegate.orientationLock = orientation
+            }
+        }
+
+        static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation:UIInterfaceOrientation) {
+            self.lockOrientation(orientation)
+            UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
+        }
     }
 }

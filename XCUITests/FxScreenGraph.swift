@@ -127,6 +127,7 @@ class Action {
     static let OpenNewTabFromTabTray = "OpenNewTabFromTabTray"
     static let AcceptRemovingAllTabs = "AcceptRemovingAllTabs"
 
+    static let ToggleRegularMode = "ToggleRegularMode"
     static let TogglePrivateMode = "TogglePrivateBrowing"
     static let TogglePrivateModeFromTabBarHomePanel = "TogglePrivateModeFromTabBarHomePanel"
     static let TogglePrivateModeFromTabBarBrowserTab = "TogglePrivateModeFromTabBarBrowserTab"
@@ -179,6 +180,8 @@ class Action {
     static let OpenSettingsFromTPMenu = "OpenSettingsFromTPMenu"
     static let SwitchETP = "SwitchETP"
     static let CloseTPContextMenu = "CloseTPContextMenu"
+    static let EnableStrictMode = "EnableStrictMode"
+    static let EnableStandardMode = "EnableStandardMode"
 
     static let CloseTab = "CloseTab"
     static let CloseTabFromTabTrayLongPressMenu = "CloseTabFromTabTrayLongPressMenu"
@@ -379,20 +382,11 @@ func createScreenGraph(for test: XCTestCase, with app: XCUIApplication) -> MMScr
             userState.trackingProtectionPerTabEnabled = !userState.trackingProtectionPerTabEnabled
         }
 
-        screenState.gesture(forAction: Action.OpenSettingsFromTPMenu) { userState in
+        screenState.gesture(forAction: Action.OpenSettingsFromTPMenu, transitionTo: TrackingProtectionSettings) { userState in
             app.cells["settings"].tap()
         }
 
         screenState.gesture(forAction: Action.CloseTPContextMenu) { userState in
-            if isTablet {
-                // There is no Cancel option in iPad.
-                app.otherElements["PopoverDismissRegion"].tap()
-            } else {
-                app.buttons["PhotonMenu.close"].tap()
-            }
-        }
-
-        screenState.backAction = {
             if isTablet {
                 // There is no Cancel option in iPad.
                 app.otherElements["PopoverDismissRegion"].tap()
@@ -898,6 +892,10 @@ func createScreenGraph(for test: XCTestCase, with app: XCUIApplication) -> MMScr
         screenState.tap(app.switches["prefkey.trackingprotection.normalbrowsing"], forAction: Action.SwitchETP) { userState in
             userState.trackingProtectionSettingOnNormalMode = !userState.trackingProtectionSettingOnNormalMode
         }
+
+        screenState.tap(app.cells["Settings.TrackingProtectionOption.BlockListStrict"], forAction: Action.EnableStrictMode) { userState in
+                userState.trackingProtectionPerTabEnabled = !userState.trackingProtectionPerTabEnabled
+        }
     }
 
     map.addScreenState(Intro_FxASignin) { screenState in
@@ -909,14 +907,17 @@ func createScreenGraph(for test: XCTestCase, with app: XCUIApplication) -> MMScr
     }
 
     map.addScreenState(TabTray) { screenState in
-        screenState.tap(app.buttons["TabTrayController.addTabButton"], forAction: Action.OpenNewTabFromTabTray, transitionTo: NewTabScreen)
-        screenState.tap(app.buttons["TabTrayController.maskButton"], forAction: Action.TogglePrivateMode) { userState in
+        screenState.tap(app.buttons["newTabButtonTabTray"], forAction: Action.OpenNewTabFromTabTray, transitionTo: NewTabScreen)
+        screenState.tap(app.buttons["smallPrivateMask"], forAction: Action.TogglePrivateMode) { userState in
             userState.isPrivate = !userState.isPrivate
         }
-        screenState.tap(app.buttons["TabTrayController.removeTabsButton"], to: CloseTabMenu)
+        screenState.tap(app.toolbars.segmentedControls.buttons.firstMatch, forAction: Action.ToggleRegularMode) { userState in
+            userState.isPrivate = !userState.isPrivate
+        }
+        screenState.tap(app.buttons["closeAllTabsButtonTabTray"], to: CloseTabMenu)
 
         screenState.onEnter { userState in
-            userState.numTabs = Int(app.collectionViews.cells.count)
+            userState.numTabs = Int(app.tables.cells.count)
         }
     }
 
@@ -1001,7 +1002,7 @@ func createScreenGraph(for test: XCTestCase, with app: XCUIApplication) -> MMScr
             }
         }
 
-        screenState.tap(app.buttons["Private Mode"], forAction: Action.TogglePrivateModeFromTabBarBrowserTab) { userState in
+        screenState.tap(app.buttons["smallPrivateMask"], forAction: Action.TogglePrivateModeFromTabBarBrowserTab) { userState in
             userState.isPrivate = !userState.isPrivate
         }
     }
@@ -1117,7 +1118,7 @@ extension MMNavigator where T == FxUserState {
     func createNewTab() {
         let app = XCUIApplication()
         self.goto(TabTray)
-        app.buttons["TabTrayController.addTabButton"].tap()
+        app.buttons["newTabButtonTabTray"].tap()
         self.nowAt(NewTabScreen)
     }
 
@@ -1190,7 +1191,7 @@ extension XCUIElement {
                 let cell = cells.element(boundBy: Int(i))
                 // if the cell's bottom is beyond the table's bottom
                 // i.e. if the cell isn't completely visible.
-                if self.frame.maxY <= cell.frame.maxY  {
+                if self.frame.maxY <= cell.frame.maxY {
                     return i
                 }
             }

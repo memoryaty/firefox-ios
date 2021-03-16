@@ -71,6 +71,7 @@ class TabManager: NSObject {
 
     public static func makeWebViewConfig(isPrivate: Bool, prefs: Prefs?) -> WKWebViewConfiguration {
         let configuration = WKWebViewConfiguration()
+        configuration.dataDetectorTypes = [.phoneNumber]
         configuration.processPool = WKProcessPool()
         let blockPopups = prefs?.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
         configuration.preferences.javaScriptCanOpenWindowsAutomatically = !blockPopups
@@ -217,6 +218,7 @@ class TabManager: NSObject {
             TabEvent.post(.didGainFocus, for: tab)
             tab.applyTheme()
         }
+        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .tab)
     }
     
     func preserveTabs() {
@@ -498,7 +500,17 @@ class TabManager: NSObject {
         privateConfiguration = TabManager.makeWebViewConfig(isPrivate: true, prefs: profile.prefs)
     }
 
-    func removeTabsWithUndoToast(_ tabs: [Tab]) {
+    func removeTabsAndAddNormalTab(_ tabs: [Tab]) {
+        for tab in tabs {
+            self.removeTab(tab, flushToDisk: false, notify: true)
+        }
+        if normalTabs.isEmpty {
+            selectTab(addTab())
+        }
+        storeChanges()
+    }
+    
+    func removeTabsWithToast(_ tabs: [Tab]) {
         recentlyClosedForUndo = normalTabs.compactMap {
             SavedTab(tab: $0, isSelected: selectedTab === $0)
         }
@@ -569,6 +581,14 @@ class TabManager: NSObject {
         assert(Thread.isMainThread)
         return tabs.filter({ $0.webView?.url == url }).first
     }
+    
+    func getTabForUUID(uuid: String) -> Tab? {
+        assert(Thread.isMainThread)
+        let filterdTabs = tabs.filter { tab -> Bool in
+            tab.tabUUID == uuid
+        }
+        return filterdTabs.first
+    }
 
     @objc func prefsDidChange() {
         DispatchQueue.main.async {
@@ -610,7 +630,7 @@ extension TabManager {
         return store.hasTabsToRestoreAtStartup
     }
 
-    func restoreTabs() {
+    func restoreTabs(_ forced: Bool = false) {
         defer {
             // Always make sure there is a single normal tab.
             if normalTabs.isEmpty {
@@ -621,7 +641,7 @@ extension TabManager {
             }
         }
         
-        guard count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
+        guard forced || count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
             return
         }
 
@@ -631,11 +651,11 @@ extension TabManager {
             tabToSelect = addTab(isPrivate: true)
         }
 
+        selectTab(tabToSelect)
+        
         for delegate in self.delegates {
             delegate.get()?.tabManagerDidRestoreTabs(self)
         }
-
-        selectTab(tabToSelect)
     }
 }
 

@@ -51,7 +51,8 @@ class DownloadFilesTests: BaseTestCase {
         navigator.goto(LibraryPanel_Downloads)
         checkTheNumberOfDownloadedItems(items: 0)
     }
-
+    
+    // Smoketest
     func testDownloadFile() {
         downloadFile(fileName: testFileName, numberOfDownlowds: 1)
         navigator.goto(BrowserTabMenu)
@@ -182,7 +183,7 @@ class DownloadFilesTests: BaseTestCase {
         let list = app.tables["DownloadsTable"].cells.count
         XCTAssertEqual(list, items, "The number of items in the downloads table is not correct")
     }
-
+    // Smoketest
     func testToastButtonToGoToDownloads() {
         downloadFile(fileName: testFileName, numberOfDownlowds: 1)
         waitForExistence(app.buttons["Downloads"])

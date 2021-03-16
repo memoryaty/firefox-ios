@@ -13,7 +13,7 @@ func path(forTestPage page: String) -> String {
 
 class BaseTestCase: XCTestCase {
     var navigator: MMNavigator<FxUserState>!
-    let app =  XCUIApplication()
+    let app = XCUIApplication()
     var userState: FxUserState!
 
     // leave empty for non-specific tests
@@ -29,7 +29,11 @@ class BaseTestCase: XCTestCase {
     }
 
     func setUpApp() {
-        app.launchArguments = [LaunchArguments.Test] + launchArguments
+        if !launchArguments.contains("FIREFOX_PERFORMANCE_TEST") {
+            app.launchArguments = [LaunchArguments.Test] + launchArguments
+        } else {
+            app.launchArguments = [LaunchArguments.PerformanceTest] + launchArguments
+        }
         app.launch()
     }
 

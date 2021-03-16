@@ -9,7 +9,7 @@ let newTopSite = ["url": "www.mozilla.org", "topSiteLabel": "mozilla", "bookmark
 let allDefaultTopSites = ["facebook", "youtube", "amazon", "wikipedia", "twitter"]
 
 class ActivityStreamTest: BaseTestCase {
-    let TopSiteCellgroup = XCUIApplication().collectionViews.cells["TopSitesCell"]
+    let TopSiteCellgroup = XCUIApplication().cells["TopSitesCell"]
 
     let testWithDB = ["testActivityStreamPages","testTopSitesAdd", "testTopSitesOpenInNewTab", "testTopSitesOpenInNewPrivateTab", "testTopSitesBookmarkNewTopSite", "testTopSitesShareNewTopSite", "testContextMenuInLandscape"]
 
@@ -29,10 +29,12 @@ class ActivityStreamTest: BaseTestCase {
                 launchArguments = [LaunchArguments.SkipIntro, LaunchArguments.SkipWhatsNew, LaunchArguments.SkipETPCoverSheet, LaunchArguments.LoadDatabasePrefix + pagesVisitediPhone]
             }
         }
+        launchArguments.append(LaunchArguments.SkipAddingGoogleTopSite)
         super.setUp()
     }
 
     override func tearDown() {
+        XCUIDevice.shared.orientation = .portrait
         super.tearDown()
     }
 
@@ -57,7 +59,8 @@ class ActivityStreamTest: BaseTestCase {
         }
     }
 
-    func testTopSitesRemove() {
+    // Disabled due to issue #7611
+    /*func testTopSitesRemove() {
         loadWebPage("http://example.com")
         waitForTabsButton()
         if iPad() {
@@ -65,6 +68,7 @@ class ActivityStreamTest: BaseTestCase {
         } else {
             app.buttons["TabToolbar.backButton"].tap()
         }
+        navigator.goto(TabTray)
         navigator.performAction(Action.OpenNewTabFromTabTray)
         // A new site has been added to the top sites
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 6)
@@ -73,7 +77,7 @@ class ActivityStreamTest: BaseTestCase {
         app.tables["Context Menu"].cells["Remove"].tap()
         // A top site has been removed
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 5)
-    }
+    }*/
 
     func testTopSitesRemoveDefaultTopSite() {
         TopSiteCellgroup.cells[defaultTopSite["topSiteLabel"]!].press(forDuration: 1)
@@ -83,7 +87,8 @@ class ActivityStreamTest: BaseTestCase {
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 4)
     }
 
-    func testTopSitesRemoveAllDefaultTopSitesAddNewOne() {
+    // Disabled due to issue #7611
+    /*func testTopSitesRemoveAllDefaultTopSitesAddNewOne() {
         // Remove all default Top Sites
         waitForExistence(app.cells["facebook"])
         for element in allDefaultTopSites {
@@ -105,11 +110,12 @@ class ActivityStreamTest: BaseTestCase {
         navigator.performAction(Action.AcceptRemovingAllTabs)
         navigator.performAction(Action.OpenNewTabFromTabTray)
 
-        waitForExistence(TopSiteCellgroup.cells[newTopSite["topSiteLabel"]!])
+        waitForExistence(TopSiteCellgroup.staticTexts[newTopSite["topSiteLabel"]!])
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 1)
-    }
+    }*/
 
-    func testTopSitesRemoveAllExceptDefaultClearPrivateData() {
+    // Disabled due to issue #7611
+    /*func testTopSitesRemoveAllExceptDefaultClearPrivateData() {
         navigator.goto(BrowserTab)
         waitForTabsButton()
         navigator.goto(TabTray)
@@ -117,8 +123,8 @@ class ActivityStreamTest: BaseTestCase {
         navigator.performAction(Action.AcceptRemovingAllTabs)
         navigator.performAction(Action.OpenNewTabFromTabTray)
 
-        waitForExistence(app.collectionViews.cells["mozilla"])
-        XCTAssertTrue(app.collectionViews.cells["mozilla"].exists)
+        waitForExistence(app.cells.staticTexts["mozilla"])
+        XCTAssertTrue(app.cells.staticTexts["mozilla"].exists)
         // A new site has been added to the top sites
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 6)
 
@@ -126,11 +132,12 @@ class ActivityStreamTest: BaseTestCase {
         navigator.performAction(Action.AcceptClearPrivateData)
         navigator.goto(HomePanelsScreen)
         checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 5)
-        XCTAssertFalse(app.collectionViews.cells["mozilla"].exists)
-    }
+        XCTAssertFalse(app.cells.staticTexts["mozilla"].exists)
+    }*/
 
     func testTopSitesRemoveAllExceptPinnedClearPrivateData() {
-        navigator.goto(BrowserTab)
+        waitForExistence(app.cells["TopSitesCell"].cells.element(boundBy: 0), timeout: 3)
+        navigator.openURL("mozilla.org")
         waitUntilPageLoad()
         navigator.performAction(Action.PinToTopSitesPAM)
         // Workaround to have visited website in top sites
@@ -178,12 +185,12 @@ class ActivityStreamTest: BaseTestCase {
         XCTAssert(TopSiteCellgroup.exists)
 
         navigator.goto(TabTray)
-        app.collectionViews.cells["Home"].tap()
+        app.cells.staticTexts["Home"].tap()
         waitForExistence(TopSiteCellgroup.cells["apple"])
         navigator.nowAt(HomePanelsScreen)
         navigator.goto(TabTray)
-        waitForExistence(app.collectionViews.cells["Apple"])
-        XCTAssertTrue(app.collectionViews.cells["Apple"].exists, "A new Tab has not been open")
+        waitForExistence(app.cells.staticTexts["apple.com"])
+        XCTAssertTrue(app.cells.staticTexts["apple.com"].exists, "A new Tab has not been open")
     }
 
     // Smoketest
@@ -198,8 +205,8 @@ class ActivityStreamTest: BaseTestCase {
         waitForNoExistence(app.tables["Context Menu"], timeoutValue: 15)
         navigator.nowAt(HomePanelsScreen)
         navigator.goto(TabTray)
-        waitForExistence(app.collectionViews.cells[defaultTopSite["bookmarkLabel"]!])
-        let numTabsOpen = app.collectionViews.cells.count
+        waitForExistence(app.cells.staticTexts[defaultTopSite["bookmarkLabel"]!])
+        let numTabsOpen = app.tables.cells.count
         XCTAssertEqual(numTabsOpen, 2, "New tab not open")
     }
 
@@ -216,15 +223,15 @@ class ActivityStreamTest: BaseTestCase {
 
         navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
         navigator.goto(TabTray)
-        waitForExistence(app.collectionViews.cells.element(boundBy: 0))
+        waitForExistence(app.cells.staticTexts.element(boundBy: 0))
         if !app.collectionViews["Apple"].exists {
-            app.collectionViews.cells.element(boundBy: 0).tap()
+            app.cells.staticTexts.element(boundBy: 0).tap()
             waitForValueContains(app.textFields["url"], value: "apple")
             app.buttons["Show Tabs"].tap()
         }
         navigator.nowAt(TabTray)
-        waitForExistence(app.cells["Apple"])
-        app.collectionViews.cells["Apple"].tap()
+        waitForExistence(app.tables.cells.staticTexts["Apple"])
+        app.cells.staticTexts["Apple"].tap()
 
         // The website is open
         XCTAssertFalse(TopSiteCellgroup.exists)
@@ -248,11 +255,11 @@ class ActivityStreamTest: BaseTestCase {
 
         navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
 
-        waitForExistence(app.collectionViews.cells[defaultTopSite["bookmarkLabel"]!])
+        waitForExistence(app.cells.staticTexts[defaultTopSite["bookmarkLabel"]!])
         let numTabsOpen = userState.numTabs
         XCTAssertEqual(numTabsOpen, 1, "New tab not open")
     }
-
+    /* Disable due to https://github.com/mozilla-mobile/firefox-ios/issues/7521
     func testTopSitesBookmarkDefaultTopSite() {
         // Bookmark a default TopSite, Wikipedia, third top site
         waitForExistence(app.cells["TopSitesCell"].cells.element(boundBy: 3), timeout: 3)
@@ -260,6 +267,8 @@ class ActivityStreamTest: BaseTestCase {
         selectOptionFromContextMenu(option: "Bookmark")
 
         // Check that it appears under Bookmarks menu
+        navigator.goto(LibraryPanel_Bookmarks)
+        waitForExistence(app.cells.staticTexts["Mobile Bookmarks"], timeout: 5)
         navigator.goto(MobileBookmarks)
         waitForExistence(app.tables["Bookmarks List"])
         XCTAssertTrue(app.tables["Bookmarks List"].staticTexts[defaultTopSite["bookmarkLabel"]!].exists)
@@ -277,8 +286,9 @@ class ActivityStreamTest: BaseTestCase {
         selectOptionFromContextMenu(option: "Remove Bookmark")
         navigator.goto(LibraryPanel_Bookmarks)
         XCTAssertFalse(app.tables["Bookmarks List"].staticTexts[defaultTopSite["bookmarkLabel"]!].exists)
-    }
+    }*/
 
+    /* Disable due to https://github.com/mozilla-mobile/firefox-ios/issues/7521
     func testTopSitesBookmarkNewTopSite() {
         let topSiteCells = TopSiteCellgroup.cells
         waitForExistence(topSiteCells[newTopSite["topSiteLabel"]!])
@@ -287,6 +297,8 @@ class ActivityStreamTest: BaseTestCase {
 
         // Check that it appears under Bookmarks menu
         navigator.nowAt(HomePanelsScreen)
+        navigator.goto(LibraryPanel_Bookmarks)
+        waitForExistence(app.cells.staticTexts["Mobile Bookmarks"], timeout: 5)
         navigator.goto(MobileBookmarks)
         XCTAssertTrue(app.tables["Bookmarks List"].staticTexts[newTopSite["bookmarkLabel"]!].exists)
 
@@ -300,7 +312,7 @@ class ActivityStreamTest: BaseTestCase {
         selectOptionFromContextMenu(option: "Remove Bookmark")
         navigator.goto(LibraryPanel_Bookmarks)
         XCTAssertFalse(app.tables["Bookmarks List"].staticTexts[newTopSite["bookmarkLabel"]!].exists)
-    }
+    }*/
 
     func testTopSitesShareDefaultTopSite() {
         TopSiteCellgroup.cells[defaultTopSite["topSiteLabel"]!]
@@ -345,6 +357,7 @@ class ActivityStreamTest: BaseTestCase {
     func testContextMenuInLandscape() {
         XCUIDevice.shared.orientation = .landscapeLeft
 
+        waitForExistence(TopSiteCellgroup.cells["apple"], timeout: 5)
         TopSiteCellgroup.cells["apple"].press(forDuration: 1)
 
         let contextMenuHeight = app.tables["Context Menu"].frame.size.height
