@@ -8,7 +8,7 @@ import Telemetry
 
 extension BrowserViewController: URLBarDelegate {
     func showTabTray() {
-        Sentry.shared.clearBreadcrumbs()
+        //Sentry.shared.clearBreadcrumbs()
 
         updateFindInPageVisibility(visible: false)
         

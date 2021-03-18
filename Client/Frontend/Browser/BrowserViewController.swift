@@ -16,7 +16,7 @@ import SDWebImage
 import SwiftyJSON
 import Telemetry
 import MozillaAppServices
-import Sentry
+
 
 private let KVOs: [KVOConstants] = [
     .estimatedProgress,
@@ -592,7 +592,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func crashedLastLaunch() -> Bool {
-        return Sentry.crashedLastLaunch
+        return false
     }
 
     fileprivate func cleanlyBackgrounded() -> Bool {

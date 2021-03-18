@@ -16,7 +16,7 @@ class TelemetryWrapper {
     // last run of the app. We cannot simply use `Sentry.crashedLastLaunch`
     // because we want to clear this flag after we've already reported it
     // to avoid re-reporting the same crash multiple times.
-    private var crashedLastLaunch: Bool
+//    private var crashedLastLaunch: Bool
 
     private var profile: Profile?
 
@@ -41,7 +41,7 @@ class TelemetryWrapper {
     }
 
     init(profile: Profile) {
-        crashedLastLaunch = Sentry.crashedLastLaunch
+//        crashedLastLaunch = Sentry.crashedLastLaunch
 
         migratePathComponentInDocumentsDirectory("MozTelemetry-Default-core", to: .cachesDirectory)
         migratePathComponentInDocumentsDirectory("MozTelemetry-Default-mobile-event", to: .cachesDirectory)
@@ -89,8 +89,8 @@ class TelemetryWrapper {
             // Report this flag as a `1` or `0` integer to allow it
             // to be counted easily when reporting. Then, clear the
             // flag to avoid it getting reported multiple times.
-            settings["crashedLastLaunch"] = self.crashedLastLaunch ? 1 : 0
-            self.crashedLastLaunch = false
+//            settings["crashedLastLaunch"] = self.crashedLastLaunch ? 1 : 0
+//            self.crashedLastLaunch = false
 
             outputDict["settings"] = settings
             
@@ -279,7 +279,7 @@ class TelemetryWrapper {
 
     @objc func uploadError(notification: NSNotification) {
         guard !DeviceInfo.isSimulator(), let error = notification.userInfo?["error"] as? NSError else { return }
-        Sentry.shared.send(message: "Upload Error", tag: SentryTag.unifiedTelemetry, severity: .info, description: error.debugDescription)
+        //Sentry.shared.send(message: "Upload Error", tag: SentryTag.unifiedTelemetry, severity: .info, description: error.debugDescription)
     }
 }
 
@@ -452,7 +452,7 @@ extension TelemetryWrapper {
                         GleanMetrics.Preferences.ChangedKeys.changedTo: to])
             } else {
                 let msg = "Uninstrumented pref metric: \(category), \(method), \(object), \(value), \(String(describing: extras))"
-                Sentry.shared.send(message: msg, severity: .debug)
+                //Sentry.shared.send(message: msg, severity: .debug)
             }
         // QR Codes
         case (.action, .scan, .qrCodeText, _, _),
@@ -518,11 +518,11 @@ extension TelemetryWrapper {
                         GleanMetrics.Experiments.ExperimentEnrollmentKeys.experimentVariant: variant])
             } else {
                 let msg = "Uninstrumented pref metric: \(category), \(method), \(object), \(value), \(String(describing: extras))"
-                Sentry.shared.send(message: msg, severity: .debug)
+                //Sentry.shared.send(message: msg, severity: .debug)
             }
         default:
             let msg = "Uninstrumented metric recorded: \(category), \(method), \(object), \(value), \(String(describing: extras))"
-            Sentry.shared.send(message: msg, severity: .debug)
+            //Sentry.shared.send(message: msg, severity: .debug)
         }
     }
 }

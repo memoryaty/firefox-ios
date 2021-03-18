@@ -115,7 +115,7 @@ public class RustLogins {
             }
         } catch {
             print(error)
-            Sentry.shared.send(message: "setupPlaintextHeaderAndGetSalt failed", tag: SentryTag.rustLogins, severity: .error, description: error.localizedDescription)
+            //Sentry.shared.send(message: "setupPlaintextHeaderAndGetSalt failed", tag: SentryTag.rustLogins, severity: .error, description: error.localizedDescription)
         }
         let saltOf32Chars = UUID().uuidString.replacingOccurrences(of: "-", with: "")
         return saltOf32Chars
@@ -128,23 +128,6 @@ public class RustLogins {
             isOpen = true
             return nil
         } catch let err as NSError {
-            if let loginsStoreError = err as? LoginsStoreError {
-                switch loginsStoreError {
-                // The encryption key is incorrect, or the `databasePath`
-                // specified is not a valid database. This is an unrecoverable
-                // state unless we can move the existing file to a backup
-                // location and start over.
-                case .invalidKey(let message):
-                    //log.error(message)
-                break
-                case .panic(let message):
-                    Sentry.shared.sendWithStacktrace(message: "Panicked when opening Rust Logins database", tag: SentryTag.rustLogins, severity: .error, description: message)
-                default:
-                    Sentry.shared.sendWithStacktrace(message: "Unspecified or other error when opening Rust Logins database", tag: SentryTag.rustLogins, severity: .error, description: loginsStoreError.localizedDescription)
-                }
-            } else {
-                Sentry.shared.sendWithStacktrace(message: "Unknown error when opening Rust Logins database", tag: SentryTag.rustLogins, severity: .error, description: err.localizedDescription)
-            }
 
             if !didAttemptToMoveToBackup {
                 RustShared.moveDatabaseFileToBackupLocation(databasePath: databasePath)
@@ -162,7 +145,7 @@ public class RustLogins {
             isOpen = false
             return nil
         } catch let err as NSError {
-            Sentry.shared.sendWithStacktrace(message: "Unknown error when closing Logins database", tag: SentryTag.rustLogins, severity: .error, description: err.localizedDescription)
+            //Sentry.shared.sendWithStacktrace(message: "Unknown error when closing Logins database", tag: SentryTag.rustLogins, severity: .error, description: err.localizedDescription)
             return err
         }
     }
@@ -183,7 +166,7 @@ public class RustLogins {
         do {
             try storage.interrupt()
         } catch let err as NSError {
-            Sentry.shared.sendWithStacktrace(message: "Error interrupting Logins database", tag: SentryTag.rustLogins, severity: .error, description: err.localizedDescription)
+            //Sentry.shared.sendWithStacktrace(message: "Error interrupting Logins database", tag: SentryTag.rustLogins, severity: .error, description: err.localizedDescription)
         }
     }
 
@@ -215,14 +198,6 @@ public class RustLogins {
                 try _ = self.storage.sync(unlockInfo: unlockInfo)
                 deferred.fill(Maybe(success: ()))
             } catch let err as NSError {
-                if let loginsStoreError = err as? LoginsStoreError {
-                    switch loginsStoreError {
-                    case .panic(let message):
-                        Sentry.shared.sendWithStacktrace(message: "Panicked when syncing Logins database", tag: SentryTag.rustLogins, severity: .error, description: message)
-                    default:
-                        Sentry.shared.sendWithStacktrace(message: "Unspecified or other error when syncing Logins database", tag: SentryTag.rustLogins, severity: .error, description: loginsStoreError.localizedDescription)
-                    }
-                }
 
                 deferred.fill(Maybe(failure: err))
             }

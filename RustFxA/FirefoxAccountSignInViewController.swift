@@ -208,6 +208,6 @@ extension FirefoxAccountSignInViewController: QRCodeViewControllerDelegate {
     }
 
     func didScanQRCodeWithText(_ text: String) {
-        Sentry.shared.send(message: "FirefoxAccountSignInVC Error: `didScanQRCodeWithText` should not be called")
+        //Sentry.shared.send(message: "FirefoxAccountSignInVC Error: `didScanQRCodeWithText` should not be called")
     }
 }

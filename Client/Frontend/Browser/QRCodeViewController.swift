@@ -285,7 +285,7 @@ extension QRCodeViewController: AVCaptureMetadataOutputObjectsDelegate {
             stopScanLineAnimation()
             self.dismiss(animated: true, completion: {
                 guard let metaData = metadataObjects.first as? AVMetadataMachineReadableCodeObject, let qrCodeDelegate = self.qrCodeDelegate, let text = metaData.stringValue else {
-                        Sentry.shared.sendWithStacktrace(message: "Unable to scan QR code", tag: .general)
+                        //Sentry.shared.sendWithStacktrace(message: "Unable to scan QR code", tag: .general)
                         return
                 }
 
