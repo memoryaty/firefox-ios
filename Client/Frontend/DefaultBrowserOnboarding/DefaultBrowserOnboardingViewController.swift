@@ -287,14 +287,14 @@ class DefaultBrowserOnboardingViewController: UIViewController {
     // Button Actions
     @objc private func dismissAnimated() {
         self.dismiss(animated: true, completion: nil)
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .dismissDefaultBrowserOnboarding)
+        //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .dismissDefaultBrowserOnboarding)
         LeanPlumClient.shared.track(event: .dismissDefaultBrowserOnboarding)
     }
     
     @objc private func goToSettings() {
         viewModel.goToSettings?()
         UserDefaults.standard.set(true, forKey: "DidDismissDefaultBrowserCard") // Don't show default browser card if this button is clicked
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserOnboarding)
+        //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserOnboarding)
         LeanPlumClient.shared.track(event: .goToSettingsDefaultBrowserOnboarding)
     }
   

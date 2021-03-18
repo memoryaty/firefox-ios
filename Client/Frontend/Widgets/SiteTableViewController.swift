@@ -212,7 +212,7 @@ extension SiteTableViewController: UITableViewDragDelegate {
             return []
         }
 
-        TelemetryWrapper.recordEvent(category: .action, method: .drag, object: .url, value: .homePanel)
+        //TelemetryWrapper.recordEvent(category: .action, method: .drag, object: .url, value: .homePanel)
 
         let dragItem = UIDragItem(itemProvider: itemProvider)
         dragItem.localObject = site

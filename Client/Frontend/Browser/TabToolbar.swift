@@ -165,7 +165,7 @@ open class TabToolbarHelper: NSObject {
     }
     
     func didClickAddNewTab() {
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
+        //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
         toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.addNewTabButton)
     }
 
@@ -174,7 +174,7 @@ open class TabToolbarHelper: NSObject {
         case .reload:
             toolbar.tabToolbarDelegate?.tabToolbarDidPressReload(toolbar, button: toolbar.multiStateButton)
         case .search:
-            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .startSearchButton)
+            //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .startSearchButton)
             toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.multiStateButton)
         case .newTab:
             toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.addNewTabButton)

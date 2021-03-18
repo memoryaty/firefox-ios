@@ -448,7 +448,7 @@ extension TabTrayControllerV1: UITextFieldDelegate {
 
         tabDisplayManager.searchTabsAnimated()
         
-        TelemetryWrapper.recordEvent(category: .action, method: .press, object: .tabSearch)
+        //TelemetryWrapper.recordEvent(category: .action, method: .press, object: .tabSearch)
     }
 
     func clearSearch() {
@@ -522,7 +522,7 @@ extension TabTrayControllerV1 {
         collectionView.layer.removeAllAnimations()
         collectionView.cellForItem(at: IndexPath(row: 0, section: 0))?.layer.removeAllAnimations()
         _ = self.navigationController?.popViewController(animated: true)
-        TelemetryWrapper.recordEvent(category: .action, method: .close, object: .tabTray)
+        //TelemetryWrapper.recordEvent(category: .action, method: .close, object: .tabTray)
     }
 
 }

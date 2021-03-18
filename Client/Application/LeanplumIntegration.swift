@@ -271,7 +271,7 @@ class LeanPlumClient {
         // Leanplum telemetry
         LeanPlumClient.shared.set(attributes: attributesExtras)
         // Legacy telemetry
-        TelemetryWrapper.recordEvent(category: .enrollment, method: .add, object: .experimentEnrollment, extras: attributesExtras)
+        //TelemetryWrapper.recordEvent(category: .enrollment, method: .add, object: .experimentEnrollment, extras: attributesExtras)
     }
 
     // Events

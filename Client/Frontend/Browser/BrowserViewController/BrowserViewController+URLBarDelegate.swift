@@ -4,7 +4,7 @@
 
 import Shared
 import Storage
-import Telemetry
+
 
 extension BrowserViewController: URLBarDelegate {
     func showTabTray() {
@@ -56,7 +56,7 @@ extension BrowserViewController: URLBarDelegate {
         if let tab = tabManager.selectedTab {
             screenshotHelper.takeScreenshot(tab)
         }
-        TelemetryWrapper.recordEvent(category: .action, method: .open, object: .tabTray)
+        //TelemetryWrapper.recordEvent(category: .action, method: .open, object: .tabTray)
     }
 
     func urlBarDidPressReload(_ urlBar: URLBarView) {
@@ -128,7 +128,7 @@ extension BrowserViewController: URLBarDelegate {
             let trackingProtectionMenu = self.getTrackingSubMenu(for: tab)
             let title = String.localizedStringWithFormat(Strings.TPPageMenuTitle, tab.url?.host ?? "")
             LeanPlumClient.shared.track(event: .trackingProtectionMenu)
-            TelemetryWrapper.recordEvent(category: .action, method: .press, object: .trackingProtectionMenu)
+            //TelemetryWrapper.recordEvent(category: .action, method: .press, object: .trackingProtectionMenu)
             self.presentSheetWith(title: title, actions: trackingProtectionMenu, on: self, from: urlBar)
         }
     }
@@ -150,11 +150,11 @@ extension BrowserViewController: URLBarDelegate {
         switch readerMode.state {
         case .available:
             enableReaderMode()
-            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeOpenButton)
+            //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeOpenButton)
             LeanPlumClient.shared.track(event: .useReaderView)
         case .active:
             disableReaderMode()
-            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeCloseButton)
+            //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeCloseButton)
         case .unavailable:
             break
         }
@@ -298,8 +298,8 @@ extension BrowserViewController: URLBarDelegate {
 
         if let searchURL = engine.searchURLForQuery(text) {
             // We couldn't find a matching search keyword, so do a search query.
-            Telemetry.default.recordSearch(location: .actionBar, searchEngine: engine.engineID ?? "other")
-            GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.actionBar.rawValue)"].add()
+//            Telemetry.default.recordSearch(location: .actionBar, searchEngine: engine.engineID ?? "other")
+            GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\("actionbar")"].add()
             searchTelemetry?.shouldSetUrlTypeSearch = true
             finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         } else {
