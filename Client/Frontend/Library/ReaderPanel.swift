@@ -6,9 +6,9 @@ import UIKit
 import SnapKit
 import Storage
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private struct ReadingListTableViewCellUX {
     static let RowHeight: CGFloat = 86
@@ -227,7 +227,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
             }
         default:
             // no need to do anything at all
-            log.warning("Received unexpected notification \(notification.name)")
+            //log.warning("Received unexpected notification \(notification.name)")
             break
         }
     }

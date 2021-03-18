@@ -5,11 +5,11 @@
 import Shared
 import Storage
 import Sync
-import XCGLogger
+
 import UserNotifications
 import Account
 
-private let log = Logger.browserLogger
+
 
 extension UIApplication {
     var syncDelegate: SyncDelegate {
@@ -43,9 +43,6 @@ class AppSyncDelegate: SyncDelegate {
                 if settings.alertSetting != .enabled {
                     return
                 }
-                if Logger.logPII {
-                    log.info("Displaying notification for URL \(url.absoluteString)")
-                }
 
                 let notificationContent = UNMutableNotificationContent()
                 let title: String
@@ -68,7 +65,7 @@ class AppSyncDelegate: SyncDelegate {
 
                 UNUserNotificationCenter.current().add(request) { error in
                     if let error = error {
-                        log.error(error.localizedDescription)
+                        //log.error(error.localizedDescription)
                     }
                 }
             }

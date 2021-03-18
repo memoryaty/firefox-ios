@@ -5,10 +5,10 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
+
 import SwiftyJSON
 
-private let log = Logger.syncLogger
+
 let TabsStorageVersion = 1
 
 open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchronizer {
@@ -38,9 +38,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
             "clientName": self.scratchpad.clientName,
             "tabs": tabs.compactMap { $0.toDictionary() }
         ])
-        if Logger.logPII {
-            log.verbose("Sending tabs JSON \(tabsJSON.stringify() ?? "nil")")
-        }
+
         let payload = TabsPayload(tabsJSON)
         return Record(id: guid, payload: payload, ttl: ThreeWeeksInSeconds)
     }
@@ -50,7 +48,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
         let lastUploadTime: Timestamp? = (self.tabsRecordLastUpload == 0) ? nil : self.tabsRecordLastUpload
         if let lastUploadTime = lastUploadTime,
             lastUploadTime >= (Date.now() - (OneMinuteInMilliseconds)) {
-            log.debug("Not uploading tabs: already did so at \(lastUploadTime).")
+            //log.debug("Not uploading tabs: already did so at \(lastUploadTime).")
             return succeed()
         }
 
@@ -64,7 +62,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
             }
 
             let tabsRecord = self.createOwnTabsRecord(tabs)
-            log.debug("Uploading our tabs: \(tabs.count).")
+            //log.debug("Uploading our tabs: \(tabs.count).")
 
             var uploadStats = SyncUploadStats()
             uploadStats.sent += 1
@@ -74,7 +72,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
             return tabsClient.put(tabsRecord, ifUnmodifiedSince: nil) >>== { resp in
                 if let ts = resp.metadata.lastModifiedMilliseconds {
                     // Protocol says this should always be present for success responses.
-                    log.debug("Tabs record upload succeeded. New timestamp: \(ts).")
+                    //log.debug("Tabs record upload succeeded. New timestamp: \(ts).")
                     self.tabsRecordLastUpload = ts
                 } else {
                     uploadStats.sentFailed += 1
@@ -100,7 +98,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
                     ins.upon() { res in
                         if let inserted = res.successValue {
                             if inserted != remotes.count {
-                                log.warning("Only inserted \(inserted) tabs, not \(remotes.count). Malformed or missing client?")
+                                //log.warning("Only inserted \(inserted) tabs, not \(remotes.count). Malformed or missing client?")
                             }
                             downloadStats.applied += 1
                         } else {
@@ -115,7 +113,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
                 let records = response.value
                 let responseTimestamp = response.metadata.lastModifiedMilliseconds
 
-                log.debug("Got \(records.count) tab records.")
+                //log.debug("Got \(records.count) tab records.")
 
                 // We can only insert tabs for clients that we know locally, so
                 // first we fetch the list of IDs and intersect the two.
@@ -124,7 +122,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
                     >>== { clientGUIDs in
                         let filtered = records.filter({ $0.id != ourGUID && clientGUIDs.contains($0.id) })
                         if filtered.count != records.count {
-                            log.debug("Filtered \(records.count) records down to \(filtered.count).")
+                            //log.debug("Filtered \(records.count) records down to \(filtered.count).")
                         }
 
                         let allDone = all(filtered.map(doInsert))
@@ -141,7 +139,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
 
             // If this is a fresh start, do a wipe.
             if self.lastFetched == 0 {
-                log.info("Last fetch was 0. Wiping tabs.")
+                //log.info("Last fetch was 0. Wiping tabs.")
                 return localTabs.wipeRemoteTabs()
                     >>== afterWipe
             }
@@ -172,7 +170,7 @@ open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchroniz
                 >>> { deferMaybe(self.completedWithStats) }
         }
 
-        log.error("Couldn't make tabs factory.")
+        //log.error("Couldn't make tabs factory.")
         return deferMaybe(FatalError(message: "Couldn't make tabs factory."))
     }
 

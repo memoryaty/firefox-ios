@@ -397,9 +397,9 @@ class ExportBrowserDataSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         do {
-            let log = Logger.syncLogger
+//            let log = Logger.syncLogger
             try self.settings.profile.files.copyMatching(fromRelativeDirectory: "", toAbsoluteDirectory: documentsPath) { file in
-                log.debug("Matcher: \(file)")
+                //log.debug("Matcher: \(file)")
                 return file.hasPrefix("browser.") || file.hasPrefix("logins.") || file.hasPrefix("metadata.")
             }
         } catch {
@@ -415,7 +415,7 @@ class ExportLogDataSetting: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        Logger.copyPreviousLogsToDocuments()
+//        Logger.copyPreviousLogsToDocuments()
     }
 }
 

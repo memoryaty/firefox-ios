@@ -7,7 +7,7 @@ import Shared
 
 @_exported import MozillaAppServices
 
-private let log = Logger.syncLogger
+
 
 public extension LoginRecord {
     convenience init(credentials: URLCredential, protectionSpace: URLProtectionSpace) {
@@ -135,7 +135,8 @@ public class RustLogins {
                 // state unless we can move the existing file to a backup
                 // location and start over.
                 case .invalidKey(let message):
-                    log.error(message)
+                    //log.error(message)
+                break
                 case .panic(let message):
                     Sentry.shared.sendWithStacktrace(message: "Panicked when opening Rust Logins database", tag: SentryTag.rustLogins, severity: .error, description: message)
                 default:

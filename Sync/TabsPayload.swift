@@ -5,14 +5,14 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
+
 import SwiftyJSON
 
 // Int64.max / 1000.
 private let MaxSecondsToConvertInt64: Int64 = 9223372036854775
 private let MaxSecondsToConvertDouble = Double(9223372036854775 as Int64)
 
-private let log = Logger.browserLogger
+
 
 open class TabsPayload: CleartextPayloadJSON {
     open class Tab {
@@ -31,7 +31,7 @@ open class TabsPayload: CleartextPayloadJSON {
         func toRemoteTabForClient(_ guid: GUID) -> RemoteTab? {
             let urls = urlHistory.compactMap({ $0.asURL })
             if urls.isEmpty {
-                log.debug("Bug 1201875 - Discarding tab as history has no conforming URLs.")
+                //log.debug("Bug 1201875 - Discarding tab as history has no conforming URLs.")
                 return nil
             }
 
@@ -113,11 +113,11 @@ open class TabsPayload: CleartextPayloadJSON {
             let payloadTabs = self["tabs"].arrayValue
             let remoteTabs = payloadTabs.compactMap({ Tab.remoteTabFromJSON($0, clientGUID: clientGUID) })
             if payloadTabs.count != remoteTabs.count {
-                log.debug("Bug 1201875 - Missing remote tabs from sync")
+                //log.debug("Bug 1201875 - Missing remote tabs from sync")
             }
             return remoteTabs
         }
-        log.debug("no client ID for remote tabs")
+        //log.debug("no client ID for remote tabs")
         return []
     }
 

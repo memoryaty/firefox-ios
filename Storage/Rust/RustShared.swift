@@ -5,7 +5,7 @@
 import Foundation
 import Shared
 
-private let log = Logger.syncLogger
+
 
 public class RustShared {
     static func moveDatabaseFileToBackupLocation(databasePath: String) {
@@ -37,21 +37,21 @@ public class RustShared {
 
             let shmBaseFilename = baseFilename + "-shm"
             let walBaseFilename = baseFilename + "-wal"
-            log.debug("Moving \(shmBaseFilename) and \(walBaseFilename)…")
+            //log.debug("Moving \(shmBaseFilename) and \(walBaseFilename)…")
 
             let shmDatabasePath = databaseContainingDirURL.appendingPathComponent(shmBaseFilename).path
             if FileManager.default.fileExists(atPath: shmDatabasePath) {
-                log.debug("\(shmBaseFilename) exists.")
+                //log.debug("\(shmBaseFilename) exists.")
                 try FileManager.default.moveItem(atPath: shmDatabasePath, toPath: "\(bakDatabasePath)-shm")
             }
 
             let walDatabasePath = databaseContainingDirURL.appendingPathComponent(walBaseFilename).path
             if FileManager.default.fileExists(atPath: walDatabasePath) {
-                log.debug("\(walBaseFilename) exists.")
+                //log.debug("\(walBaseFilename) exists.")
                 try FileManager.default.moveItem(atPath: shmDatabasePath, toPath: "\(bakDatabasePath)-wal")
             }
 
-            log.debug("Finished moving Rust database (\(baseFilename)) successfully.")
+            //log.debug("Finished moving Rust database (\(baseFilename)) successfully.")
         } catch let error as NSError {
             Sentry.shared.sendWithStacktrace(message: "Unable to move Rust database to backup location", tag: SentryTag.rustLogins, severity: .error, description: "Attempted to move to '\(bakBaseFilename)'. \(error.localizedDescription)")
         }

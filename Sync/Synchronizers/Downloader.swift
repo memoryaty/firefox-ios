@@ -5,9 +5,9 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 class BatchingDownloader<T: CleartextPayloadJSON> {
     let client: Sync15CollectionClient<T>
@@ -41,7 +41,7 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
         let branchName = "downloader." + collection + "."
         self.prefs = basePrefs.branch(branchName)
 
-        log.info("Downloader configured with prefs '\(self.prefs.getBranchPrefix())'.")
+        //log.info("Downloader configured with prefs '\(self.prefs.getBranchPrefix())'.")
     }
 
     static func resetDownloaderWithPrefs(_ basePrefs: Prefs, collection: String) {
@@ -52,7 +52,7 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
 
         let lm = prefs.timestampForKey("lastModified")
         let bt = prefs.timestampForKey("baseTimestamp")
-        log.debug("Resetting downloader prefs \(prefs.getBranchPrefix()). Previous values: \(lm ??? "nil"), \(bt ??? "nil").")
+        //log.debug("Resetting downloader prefs \(prefs.getBranchPrefix()). Previous values: \(lm ??? "nil"), \(bt ??? "nil").")
 
         prefs.removeObjectForKey("nextOffset")
         prefs.removeObjectForKey("offsetNewer")
@@ -119,26 +119,26 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
 
     func go(_ info: InfoCollections, limit: Int) -> Deferred<Maybe<DownloadEndState>> {
         guard let modified = info.modified(self.collection) else {
-            log.debug("No server modified time for collection \(self.collection).")
+            //log.debug("No server modified time for collection \(self.collection).")
             return deferMaybe(.noNewData)
         }
 
-        log.debug("Modified: \(modified); last \(self.lastModified).")
+        //log.debug("Modified: \(modified); last \(self.lastModified).")
         if modified == self.lastModified {
-            log.debug("No more data to batch-download.")
+            //log.debug("No more data to batch-download.")
             return deferMaybe(.noNewData)
         }
 
         // If the caller hasn't advanced after the last batch, strange things will happen --
         // potentially looping indefinitely. Warn.
         if self._advance != nil && !self.batch.isEmpty {
-            log.warning("Downloading another batch without having advanced. This might be a bug.")
+            //log.warning("Downloading another batch without having advanced. This might be a bug.")
         }
         return self.downloadNextBatchWithLimit(limit, infoModified: modified)
     }
 
     func advanceTimestampTo(_ timestamp: Timestamp) {
-        log.debug("Advancing downloader lastModified from \(self.lastModified) to \(timestamp).")
+        //log.debug("Advancing downloader lastModified from \(self.lastModified) to \(timestamp).")
         self.lastModified = timestamp
     }
 
@@ -153,25 +153,25 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
 
     func downloadNextBatchWithLimit(_ limit: Int, infoModified: Timestamp) -> Deferred<Maybe<DownloadEndState>> {
         let (offset, since) = self.fetchParameters()
-        log.debug("Fetching newer=\(since), offset=\(offset ?? "nil").")
+        //log.debug("Fetching newer=\(since), offset=\(offset ?? "nil").")
 
         let fetch = self.client.getSince(since, sort: SortOption.OldestFirst, limit: limit, offset: offset)
 
         func handleFailure(_ err: MaybeErrorType) -> Deferred<Maybe<DownloadEndState>> {
-            log.debug("Handling failure.")
+            //log.debug("Handling failure.")
             guard let badRequest = err as? BadRequestError<[Record<T>]>, badRequest.response.metadata.status == 412 else {
                 // Just pass through the failure.
                 return deferMaybe(err)
             }
 
             // Conflict. Start again.
-            log.warning("Server contents changed during offset-based batching. Stepping back.")
+            //log.warning("Server contents changed during offset-based batching. Stepping back.")
             self.nextFetchParameters = nil
             return deferMaybe(.interrupted)
         }
 
         func handleSuccess(_ response: StorageResponse<[Record<T>]>) -> Deferred<Maybe<DownloadEndState>> {
-            log.debug("Handling success.")
+            //log.debug("Handling success.")
             let nextOffset = response.metadata.nextOffset
             let responseModified = response.value.last?.modified
 
@@ -188,7 +188,7 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
                 //
                 // This approach is only valid if we're fetching oldest-first.
                 if let newBase = responseModified {
-                    log.debug("Advancing baseTimestamp to \(newBase) - 1")
+                    //log.debug("Advancing baseTimestamp to \(newBase) - 1")
                     self.baseTimestamp = newBase - 1
                 }
 
@@ -200,12 +200,12 @@ class BatchingDownloader<T: CleartextPayloadJSON> {
                     // value, we'll simply redownload some records.
                     // All bets are off if we hit this case and are filtering somehow… don't do that.
                     let lm = response.metadata.lastModifiedMilliseconds
-                    log.debug("Advancing lastModified to \(String(describing: lm)) ?? \(infoModified).")
+                    //log.debug("Advancing lastModified to \(String(describing: lm)) ?? \(infoModified).")
                     self.lastModified = lm ?? infoModified
                 }
             }
 
-            log.debug("Got success response with \(response.metadata.records ?? 0) records.")
+            //log.debug("Got success response with \(response.metadata.records ?? 0) records.")
 
             // Store the incoming records for collection.
             self.store(response.value)

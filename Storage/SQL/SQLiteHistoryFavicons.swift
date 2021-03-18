@@ -7,9 +7,9 @@ import Fuzi
 import SDWebImage
 import SwiftyJSON
 import Shared
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 // Set up for downloading web content for parsing.
 // NOTE: We use the desktop UA to try and get hi-res icons.
@@ -110,7 +110,7 @@ extension SQLiteHistory: Favicons {
 
                 guard let faviconID = id else {
                     let err = DatabaseError(description: "Error adding favicon. ID = 0")
-                    log.error("addFavicon(_:, forSite:) encountered an error: \(err.localizedDescription)")
+                    //log.error("addFavicon(_:, forSite:) encountered an error: \(err.localizedDescription)")
                     throw err
                 }
 

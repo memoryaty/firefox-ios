@@ -5,9 +5,9 @@
 import Foundation
 import Shared
 import Account
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 private let StorageVersionCurrent = 5
 
@@ -113,13 +113,13 @@ open class SyncStateMachine {
     }
 
     open class func clearStateFromPrefs(_ prefs: Prefs) {
-        log.debug("Clearing all Sync prefs.")
+        //log.debug("Clearing all Sync prefs.")
         Scratchpad.clearFromPrefs(prefs.branch("scratchpad")) // XXX this is convoluted.
         prefs.clearAll()
     }
 
     fileprivate func advanceFromState(_ state: SyncState) -> ReadyDeferred {
-        log.info("advanceFromState: \(state.label)")
+        //log.info("advanceFromState: \(state.label)")
 
         // Record visibility before taking any action.
         let labelAlreadySeen = self.stateLabelsSeen.updateValue(true, forKey: state.label) != nil
@@ -150,13 +150,10 @@ open class SyncStateMachine {
                     readyDeferred.fill(Maybe(failure: success.failureValue ?? FxAClientError.local(NSError())))
                     return
                 }
-                log.debug("Got token from auth state.")
-                if Logger.logPII {
-                   log.debug("Server is \(token.api_endpoint).")
-                }
+
                 let prior = Scratchpad.restoreFromPrefs(self.scratchpadPrefs, syncKeyBundle: KeyBundle.fromKSync(kSync))
                 if prior == nil {
-                   log.info("No persisted Sync state. Starting over.")
+                   //log.info("No persisted Sync state. Starting over.")
                 }
                 var scratchpad = prior ?? Scratchpad(b: KeyBundle.fromKSync(kSync), persistingTo: self.scratchpadPrefs)
 
@@ -168,7 +165,7 @@ open class SyncStateMachine {
                 } else {
                    // Either deviceRegistration hasn't occurred yet (our bug) or
                    // FxA has given us an UnknownDevice error.
-                   log.warning("Device registration has not taken place before sync.")
+                   //log.warning("Device registration has not taken place before sync.")
                 }
                 b.hashedUID = token.hashedFxAUID
 
@@ -191,7 +188,7 @@ open class SyncStateMachine {
 
                 scratchpad = b.build()
 
-                log.info("Advancing to InitialWithLiveToken.")
+                //log.info("Advancing to InitialWithLiveToken.")
                 let state = InitialWithLiveToken(scratchpad: scratchpad, token: token)
 
                 // Start with fresh visibility data.
@@ -320,7 +317,7 @@ open class BaseSyncState: SyncState {
         self.scratchpad = scratchpad
         self.token = token
         self.client = client
-        log.info("Inited \(self.label.rawValue)")
+        //log.info("Inited \(self.label.rawValue)")
     }
 
     open func synchronizer<T: Synchronizer>(_ synchronizerClass: T.Type, delegate: SyncDelegate, prefs: Prefs, why: SyncReason) -> T {
@@ -336,7 +333,7 @@ open class BaseSyncState: SyncState {
         self.scratchpad = scratchpad
         self.token = token
         self.client = client
-        log.info("Inited \(self.label.rawValue)")
+        //log.info("Inited \(self.label.rawValue)")
     }
 
     open func advance() -> Deferred<Maybe<SyncState>> {
@@ -665,13 +662,13 @@ open class ResolveMetaGlobalVersion: BaseSyncStateWithInfo {
         let v = fetched.value.storageVersion
         if v > StorageVersionCurrent {
             // New storage version?  Uh-oh.  No recovery possible here.
-            log.info("Client upgrade required for storage version \(v)")
+            //log.info("Client upgrade required for storage version \(v)")
             return deferMaybe(ClientUpgradeRequired(previousState: self, target: v))
         }
 
         if v < StorageVersionCurrent {
             // Old storage version?  Uh-oh.  Wipe and upload both meta/global and crypto/keys.
-            log.info("Server storage version \(v) is outdated.")
+            //log.info("Server storage version \(v) is outdated.")
             return deferMaybe(RemoteUpgradeRequired(previousState: self))
         }
 
@@ -697,7 +694,7 @@ open class ResolveMetaGlobalContent: BaseSyncStateWithInfo {
         if let previous = self.scratchpad.global?.value {
             // Do checks that only apply when we're coming from a previous meta/global.
             if previous.syncID != fetched.value.syncID {
-                log.info("Remote global sync ID has changed. Dropping keys and resetting all local collections.")
+                //log.info("Remote global sync ID has changed. Dropping keys and resetting all local collections.")
                 let s = self.scratchpad.freshStartWithGlobal(fetched).checkpoint()
                 return deferMaybe(HasMetaGlobal.fromState(self, scratchpad: s))
             }
@@ -709,12 +706,12 @@ open class ResolveMetaGlobalContent: BaseSyncStateWithInfo {
             let remoteEngines = Set(fetched.value.engines.keys)
 
             for engine in previousEngines.subtracting(remoteEngines) {
-                log.info("Remote meta/global disabled previously enabled engine \(engine).")
+                //log.info("Remote meta/global disabled previously enabled engine \(engine).")
                 b.localCommands.insert(.disableEngine(engine: engine))
             }
 
             for engine in remoteEngines.subtracting(previousEngines) {
-                log.info("Remote meta/global enabled previously disabled engine \(engine).")
+                //log.info("Remote meta/global enabled previously disabled engine \(engine).")
                 b.localCommands.insert(.enableEngine(engine: engine))
             }
 
@@ -722,7 +719,7 @@ open class ResolveMetaGlobalContent: BaseSyncStateWithInfo {
                 let remoteEngine = fetched.value.engines[engine]!
                 let previousEngine = previous.engines[engine]!
                 if previousEngine.syncID != remoteEngine.syncID {
-                    log.info("Remote sync ID for \(engine) has changed. Resetting local.")
+                    //log.info("Remote sync ID for \(engine) has changed. Resetting local.")
                     b.localCommands.insert(.resetEngine(engine: engine))
                 }
             }
@@ -739,24 +736,24 @@ open class ResolveMetaGlobalContent: BaseSyncStateWithInfo {
 
 private func processFailure(_ failure: MaybeErrorType?) -> MaybeErrorType {
     if let failure = failure as? ServerInBackoffError {
-        log.warning("Server in backoff. Bailing out. \(failure.description)")
+        //log.warning("Server in backoff. Bailing out. \(failure.description)")
         return failure
     }
 
     // TODO: backoff etc. for all of these.
     if let failure = failure as? ServerError<HTTPURLResponse> {
         // Be passive.
-        log.error("Server error. Bailing out. \(failure.description)")
+        //log.error("Server error. Bailing out. \(failure.description)")
         return failure
     }
 
     if let failure = failure as? BadRequestError<HTTPURLResponse> {
         // Uh oh.
-        log.error("Bad request. Bailing out. \(failure.description)")
+        //log.error("Bad request. Bailing out. \(failure.description)")
         return failure
     }
 
-    log.error("Unexpected failure. \(failure?.description ?? "nil")")
+    //log.error("Unexpected failure. \(failure?.description ?? "nil")")
     return failure ?? UnknownError()
 }
 
@@ -777,24 +774,24 @@ open class InitialWithLiveTokenAndInfo: BaseSyncStateWithInfo {
                 // later than the collection timestamp. All we care about here is if the
                 // server might have a newer record.
                 if global.timestamp >= metaModified {
-                    log.debug("Cached meta/global fetched at \(global.timestamp), newer than server modified \(metaModified). Using cached meta/global.")
+                    //log.debug("Cached meta/global fetched at \(global.timestamp), newer than server modified \(metaModified). Using cached meta/global.")
                     // Strictly speaking we can avoid fetching if this condition is not true,
                     // but if meta/ is modified for a different reason -- store timestamps
                     // for the last collection fetch. This will do for now.
                     return deferMaybe(HasMetaGlobal.fromState(self))
                 }
-                log.info("Cached meta/global fetched at \(global.timestamp) older than server modified \(metaModified). Fetching fresh meta/global.")
+                //log.info("Cached meta/global fetched at \(global.timestamp) older than server modified \(metaModified). Fetching fresh meta/global.")
             } else {
                 // No known modified time for meta/. That means the server has no meta/global.
                 // Drop our cached value and fall through; we'll try to fetch, fail, and
                 // go through the usual failure flow.
-                log.warning("Local meta/global fetched at \(global.timestamp) found, but no meta collection on server. Dropping cached meta/global.")
+                //log.warning("Local meta/global fetched at \(global.timestamp) found, but no meta collection on server. Dropping cached meta/global.")
                 // If we bail because we've been overly optimistic, then we nil out the current (broken)
                 // meta/global. Next time around, we end up in the "No cached meta/global found" branch.
                 self.scratchpad = self.scratchpad.evolve().setGlobal(nil).setKeys(nil).build().checkpoint()
             }
         } else {
-            log.debug("No cached meta/global found. Fetching fresh meta/global.")
+            //log.debug("No cached meta/global found. Fetching fresh meta/global.")
         }
 
         return deferMaybe(NeedsFreshMetaGlobal.fromState(self))
@@ -866,7 +863,7 @@ open class HasMetaGlobal: BaseSyncStateWithInfo {
                 // Both of these are server timestamps. If the record we stored was fetched after the last time the record was modified, as represented by the "crypto" entry in info/collections, and we're fetching from the
                 // same server, then the record must be identical, and we can use it directly.  If are ever additional records in the crypto collection, this will fetch keys too frequently.  In that case, we should use X-I-U-S and expect some 304 responses.
                 if keys.timestamp >= cryptoModified {
-                    log.debug("Cached keys fetched at \(keys.timestamp), newer than server modified \(cryptoModified). Using cached keys.")
+                    //log.debug("Cached keys fetched at \(keys.timestamp), newer than server modified \(cryptoModified). Using cached keys.")
                     return deferMaybe(HasFreshCryptoKeys.fromState(self, scratchpad: self.scratchpad, collectionKeys: keys.value))
                 }
 
@@ -874,17 +871,17 @@ open class HasMetaGlobal: BaseSyncStateWithInfo {
                 // Re-fetch keys and check to see if the actual contents differ.
                 // If the keys are the same, we can ignore this change. If they differ,
                 // we need to re-sync any collection whose keys just changed.
-                log.info("Cached keys fetched at \(keys.timestamp) older than server modified \(cryptoModified). Fetching fresh keys.")
+                //log.info("Cached keys fetched at \(keys.timestamp) older than server modified \(cryptoModified). Fetching fresh keys.")
                 return deferMaybe(NeedsFreshCryptoKeys.fromState(self, scratchpad: self.scratchpad, staleCollectionKeys: keys.value))
             } else {
                 // No known modified time for crypto/. That likely means the server has no keys.
                 // Drop our cached value and fall through; we'll try to fetch, fail, and
                 // go through the usual failure flow.
-                log.warning("Local keys fetched at \(keys.timestamp) found, but no crypto collection on server. Dropping cached keys.")
+                //log.warning("Local keys fetched at \(keys.timestamp) found, but no crypto collection on server. Dropping cached keys.")
                 self.scratchpad = self.scratchpad.evolve().setKeys(nil).build().checkpoint()
             }
         } else {
-            log.debug("No cached keys found. Fetching fresh keys.")
+            //log.debug("No cached keys found. Fetching fresh keys.")
         }
 
         return deferMaybe(NeedsFreshCryptoKeys.fromState(self, scratchpad: self.scratchpad, staleCollectionKeys: nil))
@@ -910,7 +907,7 @@ open class NeedsFreshCryptoKeys: BaseSyncStateWithInfo {
             if let resp = result.successValue {
                 let collectionKeys = Keys(payload: resp.value.payload)
                 if !collectionKeys.valid {
-                    log.error("Unexpectedly invalid crypto/keys during a successful fetch.")
+                    //log.error("Unexpectedly invalid crypto/keys during a successful fetch.")
                     return Deferred(value: Maybe(failure: InvalidKeysError(collectionKeys)))
                 }
 

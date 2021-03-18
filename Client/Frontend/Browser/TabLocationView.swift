@@ -5,9 +5,9 @@
 import UIKit
 import Shared
 import SnapKit
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 protocol TabLocationViewDelegate {
     func tabLocationViewDidTapLocation(_ tabLocationView: TabLocationView)

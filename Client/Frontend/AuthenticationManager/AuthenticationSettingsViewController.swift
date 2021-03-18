@@ -7,8 +7,6 @@ import Shared
 import SwiftKeychainWrapper
 import LocalAuthentication
 
-private let logger = Logger.browserLogger
-
 private func presentNavAsFormSheet(_ presented: UINavigationController, presenter: UINavigationController?, settings: AuthenticationSettingsViewController?) {
     presented.modalPresentationStyle = .formSheet
     presenter?.present(presented, animated: true) {
@@ -196,7 +194,7 @@ class TouchIDSetting: Setting {
 
     @objc fileprivate func switchTapped() {
         guard let authInfo = authInfo else {
-            logger.error("Authentication info should always be present when modifying Touch ID preference.")
+            //logger.error("Authentication info should always be present when modifying Touch ID preference.")
             return
         }
 

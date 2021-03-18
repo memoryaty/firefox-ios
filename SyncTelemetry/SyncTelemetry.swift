@@ -3,11 +3,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
-import XCGLogger
+
 import SwiftyJSON
 import Shared
 
-private let log = Logger.browserLogger
+
 private let ServerURL = "https://incoming.telemetry.mozilla.org".asURL!
 private let AppName = "Fennec"
 
@@ -48,8 +48,8 @@ open class SyncTelemetry {
         let url = ServerURL.appendingPathComponent(path)
         var request = URLRequest(url: url)
 
-        log.debug("Ping URL: \(url)")
-        log.debug("Ping payload: \(ping.payload.stringify() ?? "")")
+        //log.debug("Ping URL: \(url)")
+        //log.debug("Ping payload: \(ping.payload.stringify() ?? "")")
 
         // Don't add the common ping format for the mobile core ping.
         let pingString: String?
@@ -62,13 +62,13 @@ open class SyncTelemetry {
         }
 
         guard let body = pingString?.data(using: .utf8) else {
-            log.error("Invalid data!")
+            //log.error("Invalid data!")
             assertionFailure()
             return
         }
 
         guard channel != "default" else {
-            log.debug("Non-release build; not sending ping")
+            //log.debug("Non-release build; not sending ping")
             return
         }
 
@@ -79,7 +79,7 @@ open class SyncTelemetry {
 
         makeURLSession(userAgent: UserAgent.fxaUserAgent, configuration: URLSessionConfiguration.ephemeral).dataTask(with: request) { (_, response, error) in
             let code = (response as? HTTPURLResponse)?.statusCode
-            log.debug("Ping response: \(code ?? -1).")
+            //log.debug("Ping response: \(code ?? -1).")
         }.resume()
     }
 

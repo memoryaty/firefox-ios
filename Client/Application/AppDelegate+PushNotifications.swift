@@ -5,12 +5,12 @@
 import Shared
 import Storage
 import Sync
-import XCGLogger
+
 import UserNotifications
 import Account
 import SwiftKeychainWrapper
 
-private let log = Logger.browserLogger
+
 
 /**
  * This exists because the Sync code is extension-safe, and thus doesn't get

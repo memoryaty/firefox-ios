@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import XCGLogger
+
 import SwiftyJSON
 import MozillaAppServices
 
@@ -63,7 +63,7 @@ public struct RemoteError {
 
 private let CurrentSyncAuthStateCacheVersion = 1
 
-private let log = Logger.syncLogger
+
 
 public struct SyncAuthStateCache {
     let token: TokenServerToken
@@ -81,7 +81,7 @@ public protocol SyncAuthState {
 public func syncAuthStateCachefromJSON(_ json: JSON) -> SyncAuthStateCache? {
     if let version = json["version"].int {
         if version != CurrentSyncAuthStateCacheVersion {
-            log.warning("Sync Auth State Cache is wrong version; dropping.")
+            //log.warning("Sync Auth State Cache is wrong version; dropping.")
             return nil
         }
         if let
@@ -116,7 +116,7 @@ open class FirefoxAccountSyncAuthState: SyncAuthState {
 
     // If a token gives you a 401, invalidate it and request a new one.
     open func invalidate() {
-        log.info("Invalidating cached token server token.")
+        //log.info("Invalidating cached token server token.")
         self.cache.value = nil
     }
 
@@ -126,15 +126,15 @@ open class FirefoxAccountSyncAuthState: SyncAuthState {
             let isExpired = value.expiresAt < now + 5 * OneMinuteInMilliseconds
             if canBeExpired {
                 if isExpired {
-                    log.info("Returning cached expired token.")
+                    //log.info("Returning cached expired token.")
                 } else {
-                    log.info("Returning cached token, which should be valid.")
+                    //log.info("Returning cached token, which should be valid.")
                 }
                 return deferMaybe((token: value.token, forKey: value.forKey))
             }
 
             if !isExpired {
-                log.info("Returning cached token, which should be valid.")
+                //log.info("Returning cached token, which should be valid.")
                 return deferMaybe((token: value.token, forKey: value.forKey))
             }
         }
@@ -154,7 +154,7 @@ open class FirefoxAccountSyncAuthState: SyncAuthState {
                         case .failure(let err):
                             deferred.fill(Maybe(failure: err as MaybeErrorType))
                         case .success(let accessToken):
-                            log.debug("Fetching token server token.")
+                            //log.debug("Fetching token server token.")
                             client.token(token: accessToken.token, kid: accessToken.key!.kid).upon { result in
                             guard let token = result.successValue else {
                                 deferred.fill(Maybe(failure: result.failureValue!))
@@ -162,7 +162,7 @@ open class FirefoxAccountSyncAuthState: SyncAuthState {
                             }
                             let kSync = accessToken.key!.k.base64urlSafeDecodedData!
                             let newCache = SyncAuthStateCache(token: token, forKey: kSync,expiresAt: now + 1000 * token.durationInSeconds)
-                            log.debug("Fetched token server token!  Token expires at \(newCache.expiresAt).")
+                            //log.debug("Fetched token server token!  Token expires at \(newCache.expiresAt).")
                             self.cache.value = newCache
                             deferred.fill(Maybe(success: (token: token, forKey: kSync)))
                         }

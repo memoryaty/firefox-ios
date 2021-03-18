@@ -4,9 +4,9 @@
 
 import Foundation
 import Shared
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 class ReadingListStorageError: MaybeErrorType {
     var message: String

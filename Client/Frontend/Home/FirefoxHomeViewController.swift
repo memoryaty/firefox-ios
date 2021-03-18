@@ -6,11 +6,11 @@ import Shared
 import UIKit
 import Storage
 import SDWebImage
-import XCGLogger
+
 import SyncTelemetry
 import SnapKit
 
-private let log = Logger.browserLogger
+
 
 // MARK: -  Lifecycle
 struct FirefoxHomeUX {

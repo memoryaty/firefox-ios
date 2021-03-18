@@ -5,11 +5,11 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
+
 import WebKit
 import SwiftyJSON
 
-private let log = Logger.browserLogger
+
 
 class LoginsHelper: TabContentScript {
     fileprivate weak var tab: Tab?
@@ -40,7 +40,7 @@ class LoginsHelper: TabContentScript {
             let host = uri.host else {
             // bug 159484 - disallow url types that don't support a hostPort.
             // (although we handle "javascript:..." as a special case above.)
-            log.debug("Couldn't parse origin for \(uriString)")
+            //log.debug("Couldn't parse origin for \(uriString)")
             return nil
         }
 
@@ -139,7 +139,7 @@ class LoginsHelper: TabContentScript {
 
     func setCredentials(_ login: LoginRecord) {
         if login.password.isEmpty {
-            log.debug("Empty password")
+            //log.debug("Empty password")
             return
         }
 
@@ -147,7 +147,7 @@ class LoginsHelper: TabContentScript {
                .getLoginsForProtectionSpace(login.protectionSpace, withUsername: login.username)
                .uponQueue(.main) { res in
             if let data = res.successValue {
-                log.debug("Found \(data.count) logins.")
+                //log.debug("Found \(data.count) logins.")
                 for saved in data {
                     if let saved = saved {
                         if saved.password == login.password {
@@ -261,7 +261,7 @@ class LoginsHelper: TabContentScript {
                 return login?.httpRealm == nil ? login?.toJSONDict() : nil
             }
 
-            log.debug("Found \(logins.count) logins.")
+            //log.debug("Found \(logins.count) logins.")
 
             let dict: [String: Any] = [
                 "requestId": requestId,

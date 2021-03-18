@@ -5,10 +5,10 @@
 import Foundation
 import Shared
 import Account
-import XCGLogger
+
 import SwiftyJSON
 
-private let log = Logger.syncLogger
+
 
 // Not an error that indicates a server problem, but merely an
 // error that encloses a StorageResponse.
@@ -365,7 +365,7 @@ open class Sync15StorageClient {
         // response.
         // This logic will have to change if we ever invalidate that assumption.
         if let ms = response.metadata.backoffMilliseconds ?? response.metadata.retryAfterMilliseconds {
-            log.info("Backing off for \(ms)ms.")
+            //log.info("Backing off for \(ms)ms.")
             self.backoff.serverBackoffUntilLocalTimestamp = ms + Date.now()
         }
     }
@@ -374,26 +374,26 @@ open class Sync15StorageClient {
         func failFromResponse(_ httpResponse: HTTPURLResponse?) -> MaybeErrorType? {
             guard let httpResponse = httpResponse else {
                 // TODO: better error.
-                log.error("No response")
+                //log.error("No response")
                 return RecordParseError()
             }
 
-            log.debug("Status code: \(httpResponse.statusCode).")
+            //log.debug("Status code: \(httpResponse.statusCode).")
             let storageResponse = StorageResponse(value: httpResponse, metadata: ResponseMetadata(response: httpResponse))
             self.updateBackoffFromResponse(storageResponse)
 
             if httpResponse.statusCode >= 500 {
-                log.debug("ServerError.")
+                //log.debug("ServerError.")
                 return ServerError(storageResponse)
             }
 
             if httpResponse.statusCode == 404 {
-                log.debug("NotFound")
+                //log.debug("NotFound")
                 return NotFound(storageResponse)
             }
 
             if httpResponse.statusCode >= 400 {
-                log.debug("BadRequestError.")
+                //log.debug("BadRequestError.")
                 let req = URLRequest(url: httpResponse.url!)
                 return BadRequestError(request: req, response: storageResponse)
             }
@@ -403,16 +403,16 @@ open class Sync15StorageClient {
 
         let httpResponse = response as? HTTPURLResponse
         if error != nil {
-            log.error("Response: \(httpResponse?.statusCode ?? 0). Got error \(error ??? "nil").")
+            //log.error("Response: \(httpResponse?.statusCode ?? 0). Got error \(error ??? "nil").")
 
             // If we got one, we don't want to hit the response nil case above and
             // return a RecordParseError, because a RequestError is more fittinghttpResponse
             if let httpResponse = httpResponse, let result = failFromResponse(httpResponse) {
-                log.error("This was a failure response. Filled specific error type.")
+                //log.error("This was a failure response. Filled specific error type.")
                 return result
             }
 
-            log.error("Filling generic RequestError.")
+            //log.error("Filling generic RequestError.")
             return RequestError()
         }
 
@@ -702,10 +702,10 @@ open class Sync15CollectionClient<T: CleartextPayloadJSON> {
                     deferred.fill(Maybe(success: storageResponse))
                     return
                 } else {
-                    log.warning("Couldn't parse JSON response.")
+                    //log.warning("Couldn't parse JSON response.")
                 }
             } catch {
-                log.warning("Couldn't parse JSON response. \(error)")
+                //log.warning("Couldn't parse JSON response. \(error)")
             }
 
             deferred.fill(Maybe(failure: RecordParseError()))
@@ -751,10 +751,10 @@ open class Sync15CollectionClient<T: CleartextPayloadJSON> {
                     deferred.fill(Maybe(success: storageResponse))
                     return
                 } else {
-                    log.warning("Couldn't parse JSON response.")
+                    //log.warning("Couldn't parse JSON response.")
                 }
             } catch {
-                log.warning("Couldn't parse JSON response. \(error)")
+                //log.warning("Couldn't parse JSON response. \(error)")
 
             }
 
@@ -798,7 +798,7 @@ open class Sync15CollectionClient<T: CleartextPayloadJSON> {
             params.append(URLQueryItem(name: "sort", value: sort.rawValue))
         }
 
-        log.debug("Issuing GET with newer = \(since), offset = \(offset ??? "nil"), sort = \(sort ??? "nil").")
+        //log.debug("Issuing GET with newer = \(since), offset = \(offset ??? "nil"), sort = \(sort ??? "nil").")
         client.requestGET(self.collectionURI.withQueryParams(params)) { (data, response, error) in
             if let failure = self.client.getFailureInfo(response, error) {
                 let result = Maybe<StorageResponse<[Record<T>]>>.failure(failure)
@@ -807,10 +807,10 @@ open class Sync15CollectionClient<T: CleartextPayloadJSON> {
             }
 
             do {
-                log.verbose("Response is \(response?.debugDescription ?? "").")
+                //log.verbose("Response is \(response?.debugDescription ?? "").")
                 let json = try jsonResponse(fromData: data)
                 guard let arr = json.array, let httpResponse = response as? HTTPURLResponse else {
-                    log.warning("Non-array response.")
+                    //log.warning("Non-array response.")
                     deferred.fill(Maybe(failure: RecordParseError()))
                     return
                 }
@@ -825,7 +825,7 @@ open class Sync15CollectionClient<T: CleartextPayloadJSON> {
                 deferred.fill(Maybe(success: response))
                 return
             } catch {
-                log.warning("Couldn't parse JSON response. \(error)")
+                //log.warning("Couldn't parse JSON response. \(error)")
             }
 
             deferred.fill(Maybe(failure: RecordParseError()))

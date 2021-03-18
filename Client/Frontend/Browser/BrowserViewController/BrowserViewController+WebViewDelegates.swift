@@ -7,7 +7,7 @@ import WebKit
 import Shared
 import UIKit
 
-private let log = Logger.browserLogger
+
 
 /// List of schemes that are allowed to be opened in new tabs.
 private let schemesAllowedToBeOpenedAsPopups = ["http", "https", "javascript", "data", "about"]
@@ -340,7 +340,7 @@ extension BrowserViewController: WKNavigationDelegate {
 
         if InternalURL.isValid(url: url) {
             if navigationAction.navigationType != .backForward, navigationAction.isInternalUnprivileged {
-                log.warning("Denying unprivileged request: \(navigationAction.request)")
+                //log.warning("Denying unprivileged request: \(navigationAction.request)")
                 decisionHandler(.cancel)
                 return
             }

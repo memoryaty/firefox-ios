@@ -4,10 +4,10 @@
 
 import Foundation
 import Shared
-import XCGLogger
+
 import SwiftyJSON
 
-private let log = Logger.syncLogger
+
 
 open class LoginPayload: CleartextPayloadJSON {
     fileprivate static let OptionalStringFields = [
@@ -56,7 +56,7 @@ open class LoginPayload: CleartextPayloadJSON {
             // Yup, 404 is not found, so this means "string or nothing".
             let valid = val.isString() || val.isNull() || val.error?.errorCode == 404
             if !valid {
-                log.debug("Field \(field) is invalid: \(val)")
+                //log.debug("Field \(field) is invalid: \(val)")
             }
             return valid
         }) {
@@ -69,7 +69,7 @@ open class LoginPayload: CleartextPayloadJSON {
             // We only check for number because we're including timestamps as NSNumbers.
             let valid = val.isNumber() || val.isNull() || val.error?.errorCode == 404
             if !valid {
-                log.debug("Field \(field) is invalid: \(val)")
+                //log.debug("Field \(field) is invalid: \(val)")
             }
             return valid
         }) {

@@ -7,7 +7,7 @@ import WebKit
 import Storage
 import Shared
 import SwiftyJSON
-import XCGLogger
+
 
 fileprivate var debugTabCount = 0
 

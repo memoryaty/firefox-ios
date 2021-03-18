@@ -7,7 +7,7 @@ import Shared
 
 @_exported import MozillaAppServices
 
-private let log = Logger.syncLogger
+
 
 public class RustPlaces {
     let databasePath: String
@@ -213,7 +213,7 @@ public class RustPlaces {
         return withWriter { connection in
             let result = try connection.deleteBookmarkNode(guid: guid)
             if !result {
-                log.debug("Bookmark with GUID \(guid) does not exist.")
+                //log.debug("Bookmark with GUID \(guid) does not exist.")
             }
         }
     }

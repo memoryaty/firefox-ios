@@ -4,7 +4,7 @@
 
 import Shared
 
-private let log = Logger.browserLogger
+
 
 public let PrefKeySyncEvents = "sync.telemetry.events"
 
@@ -77,7 +77,7 @@ public struct Event {
         do {
             return try JSONSerialization.data(withJSONObject: toArray(), options: [])
         } catch let error {
-            log.error("Error pickling telemetry event. Error: \(error), Event: \(self)")
+            //log.error("Error pickling telemetry event. Error: \(error), Event: \(self)")
             return nil
         }
     }
@@ -94,7 +94,7 @@ public struct Event {
                 extra: array[5] as? [String: String]
             )
         } catch let error {
-            log.error("Error unpickling telemetry event: \(error)")
+            //log.error("Error unpickling telemetry event: \(error)")
             return nil
         }
     }
@@ -110,7 +110,7 @@ public struct Event {
             events.append(data)
             prefs.setObject(events, forKey: PrefKeySyncEvents)
         } else {
-            log.info("Event not recorded due to validation failure or pickling error!")
+            //log.info("Event not recorded due to validation failure or pickling error!")
         }
     }
 }

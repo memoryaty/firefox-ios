@@ -6,9 +6,9 @@ import UIKit
 import NotificationCenter
 import Shared
 import SnapKit
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 @objc (TodayViewController)
 class TodayViewController: UIViewController, NCWidgetProviding, TodayWidgetAppearanceDelegate {
@@ -163,7 +163,7 @@ class TodayViewController: UIViewController, NCWidgetProviding, TodayWidgetAppea
     func openContainingApp(_ urlSuffix: String = "", query: String) {
         let urlString = "\(model.scheme)://\(query)\(urlSuffix)"
         self.extensionContext?.open(URL(string: urlString)!) { success in
-            log.info("Extension opened containing app: \(success)")
+            //log.info("Extension opened containing app: \(success)")
         }
     }
 }

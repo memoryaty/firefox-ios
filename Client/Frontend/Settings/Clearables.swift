@@ -8,7 +8,7 @@ import WebKit
 import SDWebImage
 import CoreSpotlight
 
-private let log = Logger.browserLogger
+
 
 // A base protocol for something that can be cleared.
 protocol Clearable {
@@ -45,7 +45,7 @@ class HistoryClearable: Clearable {
             self.profile.recentlyClosedTabs.clearTabs()
             CSSearchableIndex.default().deleteAllSearchableItems()
             NotificationCenter.default.post(name: .PrivateDataClearedHistory, object: nil)
-            log.debug("HistoryClearable succeeded: \(success).")
+            //log.debug("HistoryClearable succeeded: \(success).")
             return Deferred(value: success)
         }
     }
@@ -80,7 +80,7 @@ class CacheClearable: Clearable {
         MemoryReaderModeCache.sharedInstance.clear()
         DiskReaderModeCache.sharedInstance.clear()
 
-        log.debug("CacheClearable succeeded.")
+        //log.debug("CacheClearable succeeded.")
         return succeed()
     }
 }
@@ -95,7 +95,7 @@ private func deleteLibraryFolderContents(_ folder: String) throws {
             try manager.removeItem(at: dir.appendingPathComponent(content))
         } catch where ((error as NSError).userInfo[NSUnderlyingErrorKey] as? NSError)?.code == Int(EPERM) {
             // "Not permitted". We ignore this.
-            log.debug("Couldn't delete some library contents.")
+            //log.debug("Couldn't delete some library contents.")
         }
     }
 }
@@ -120,7 +120,7 @@ class SiteDataClearable: Clearable {
         let dataTypes = Set([WKWebsiteDataTypeOfflineWebApplicationCache])
         WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {})
 
-        log.debug("SiteDataClearable succeeded.")
+        //log.debug("SiteDataClearable succeeded.")
         return succeed()
     }
 }
@@ -138,7 +138,7 @@ class CookiesClearable: Clearable {
         let dataTypes = Set([WKWebsiteDataTypeCookies, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeIndexedDBDatabases])
         WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {})
 
-        log.debug("CookiesClearable succeeded.")
+        //log.debug("CookiesClearable succeeded.")
         return succeed()
     }
 }

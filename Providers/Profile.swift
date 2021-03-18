@@ -11,7 +11,7 @@ import Account
 import Shared
 import Storage
 import Sync
-import XCGLogger
+
 import SwiftKeychainWrapper
 import SyncTelemetry
 
@@ -20,7 +20,7 @@ import SyncTelemetry
     import SwiftyJSON
 #endif
 
-private let log = Logger.syncLogger
+
 
 public let ProfileRemoteTabsSyncDelay: TimeInterval = 0.1
 
@@ -67,7 +67,7 @@ class ProfileFileAccessor: FileAccessor {
         if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: sharedContainerIdentifier) {
             rootPath = url.path
         } else {
-            log.error("Unable to find the shared container. Defaulting profile location to ~/Documents instead.")
+            //log.error("Unable to find the shared container. Defaulting profile location to ~/Documents instead.")
             rootPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
         }
 
@@ -203,7 +203,7 @@ open class BrowserProfile: Profile {
      * However, if we provide it here, it's assumed that we're initializing it from the application.
      */
     init(localName: String, syncDelegate: SyncDelegate? = nil, clear: Bool = false) {
-        log.debug("Initing profile \(localName) on thread \(Thread.current).")
+        //log.debug("Initing profile \(localName) on thread \(Thread.current).")
         self.name = localName
         self.files = ProfileFileAccessor(localName: localName)
         self.keychain = KeychainWrapper.sharedAppContainerKeychain
@@ -216,7 +216,7 @@ open class BrowserProfile: Profile {
                 // …then remove the directory itself.
                 try self.files.remove("")
             } catch {
-                log.info("Cannot clear profile: \(error)")
+                //log.info("Cannot clear profile: \(error)")
             }
         }
 
@@ -229,39 +229,23 @@ open class BrowserProfile: Profile {
         self.readingListDB = BrowserDB(filename: "ReadingList.db", schema: ReadingListSchema(), files: files)
 
         if isNewProfile {
-            log.info("New profile. Removing old Keychain/Prefs data.")
+            //log.info("New profile. Removing old Keychain/Prefs data.")
             KeychainWrapper.wipeKeychain()
             prefs.clearAll()
         }
 
         // Log SQLite compile_options.
         // db.sqliteCompileOptions() >>== { compileOptions in
-        //     log.debug("SQLite compile_options:\n\(compileOptions.joined(separator: "\n"))")
+        //     //log.debug("SQLite compile_options:\n\(compileOptions.joined(separator: "\n"))")
         // }
 
         // Set up logging from Rust.
         if !RustLog.shared.tryEnable({ (level, tag, message) -> Bool in
             let logString = "[RUST][\(tag ?? "no-tag")] \(message)"
 
-            switch level {
-            case .trace:
-                if Logger.logPII {
-                    log.verbose(logString)
-                }
-            case .debug:
-                log.debug(logString)
-            case .info:
-                log.info(logString)
-            case .warn:
-                log.warning(logString)
-            case .error:
-                Sentry.shared.sendWithStacktrace(message: logString, tag: .rustLog, severity: .error)
-                log.error(logString)
-            }
-
             return true
         }) {
-            log.error("ERROR: Unable to enable logging from Rust")
+            //log.error("ERROR: Unable to enable logging from Rust")
         }
 
         // By default, filter logging from Rust below `.info` level.
@@ -318,7 +302,7 @@ open class BrowserProfile: Profile {
     }
 
     func _reopen() {
-        log.debug("Reopening profile.")
+        //log.debug("Reopening profile.")
         isShutdown = false
 
         if !places.isOpen && !RustFirefoxAccounts.shared.hasAccount() {
@@ -331,7 +315,7 @@ open class BrowserProfile: Profile {
     }
 
     func _shutdown() {
-        log.debug("Shutting down profile.")
+        //log.debug("Shutting down profile.")
         isShutdown = true
 
         db.forceClose()
@@ -355,7 +339,7 @@ open class BrowserProfile: Profile {
 
             history.setTopSitesNeedsInvalidation()
         } else {
-            log.debug("Ignoring navigation.")
+            //log.debug("Ignoring navigation.")
         }
     }
 
@@ -363,12 +347,12 @@ open class BrowserProfile: Profile {
     func onPageMetadataFetched(notification: NSNotification) {
         let isPrivate = notification.userInfo?["isPrivate"] as? Bool ?? true
         guard !isPrivate else {
-            log.debug("Private mode - Ignoring page metadata.")
+            //log.debug("Private mode - Ignoring page metadata.")
             return
         }
         guard let pageURL = notification.userInfo?["tabURL"] as? URL,
               let pageMetadata = notification.userInfo?["pageMetadata"] as? PageMetadata else {
-            log.debug("Metadata notification doesn't contain any metadata!")
+            //log.debug("Metadata notification doesn't contain any metadata!")
             return
         }
         let defaultMetadataTTL: UInt64 = 3 * 24 * 60 * 60 * 1000 // 3 days for the metadata to live
@@ -376,7 +360,7 @@ open class BrowserProfile: Profile {
     }
 
     deinit {
-        log.debug("Deiniting profile \(self.localName()).")
+        //log.debug("Deiniting profile \(self.localName()).")
         self.syncManager.endTimedSyncs()
     }
 
@@ -624,12 +608,12 @@ open class BrowserProfile: Profile {
             let now = Date.now()
             let then = self.lastSyncFinishTime ?? 0
             guard now >= then else {
-                log.debug("Time was modified since last sync.")
+                //log.debug("Time was modified since last sync.")
                 self.syncEverythingSoon()
                 return
             }
             let since = now - then
-            log.debug("\(since)msec since last sync.")
+            //log.debug("\(since)msec since last sync.")
             if since > SyncConstants.SyncOnForegroundMinimumDelayMillis {
                 self.syncEverythingSoon()
             }
@@ -666,7 +650,7 @@ open class BrowserProfile: Profile {
             // loop through statuses and fill sync state
             syncLock.lock()
             defer { syncLock.unlock() }
-            log.info("Ending all queued syncs.")
+            //log.info("Ending all queued syncs.")
 
             syncDisplayState = SyncStatusResolver(engineResults: result.engineResults).resolveResults()
 
@@ -677,7 +661,7 @@ open class BrowserProfile: Profile {
                                   prefs: prefs,
                                   why: .schedule) >>== { SyncTelemetry.send(ping: $0, docType: .sync) }
                 } else {
-                    log.debug("Profile isn't sending usage data. Not sending sync status event.")
+                    //log.debug("Profile isn't sending usage data. Not sending sync status event.")
                 }
             #endif
 
@@ -718,7 +702,7 @@ open class BrowserProfile: Profile {
             case "<all>", "browser.db":
                 return self.locallyResetCollections(browserCollections)
             default:
-                log.debug("Unknown database \(dbName).")
+                //log.debug("Unknown database \(dbName).")
                 return succeed()
             }
         }
@@ -731,9 +715,9 @@ open class BrowserProfile: Profile {
 
         @objc
         func onDatabaseWasRecreated(notification: NSNotification) {
-            log.debug("Database was recreated.")
+            //log.debug("Database was recreated.")
             let name = notification.object as? String
-            log.debug("Database was \(name ?? "nil").")
+            //log.debug("Database was \(name ?? "nil").")
 
             // We run this in the background after a few hundred milliseconds;
             // it doesn't really matter when it runs, so long as it doesn't
@@ -741,7 +725,7 @@ open class BrowserProfile: Profile {
 
             let resetDatabase = {
                 return self.handleRecreationOfDatabaseNamed(name: name) >>== {
-                    log.debug("Reset of \(name ?? "nil") done")
+                    //log.debug("Reset of \(name ?? "nil") done")
                 }
             }
 
@@ -765,7 +749,7 @@ open class BrowserProfile: Profile {
         // Simple in-memory rate limiting.
         var lastTriggeredLoginSync: Timestamp = 0
         @objc func onLoginDidChange(_ notification: NSNotification) {
-            log.debug("Login did change.")
+            //log.debug("Login did change.")
             if (Date.now() - lastTriggeredLoginSync) > OneMinuteInMilliseconds {
                 lastTriggeredLoginSync = Date.now()
 
@@ -840,16 +824,16 @@ open class BrowserProfile: Profile {
             case "passwords":
                 return self.profile.logins.reset()
             case "forms":
-                log.debug("Requested reset for forms, but this client doesn't sync them yet.")
+                //log.debug("Requested reset for forms, but this client doesn't sync them yet.")
                 return succeed()
             case "addons":
-                log.debug("Requested reset for addons, but this client doesn't sync them.")
+                //log.debug("Requested reset for addons, but this client doesn't sync them.")
                 return succeed()
             case "prefs":
-                log.debug("Requested reset for prefs, but this client doesn't sync them.")
+                //log.debug("Requested reset for prefs, but this client doesn't sync them.")
                 return succeed()
             default:
-                log.warning("Asked to reset collection \(collection), which we don't know about.")
+                //log.warning("Asked to reset collection \(collection), which we don't know about.")
                 return succeed()
             }
         }
@@ -891,13 +875,13 @@ open class BrowserProfile: Profile {
 
         public func beginTimedSyncs() {
             if self.syncTimer != nil {
-                log.debug("Already running sync timer.")
+                //log.debug("Already running sync timer.")
                 return
             }
 
             let interval = FifteenMinutes
             let selector = #selector(syncOnTimer)
-            log.debug("Starting sync timer.")
+            //log.debug("Starting sync timer.")
             self.syncTimer = repeatingTimerAtInterval(interval, selector: selector)
         }
 
@@ -907,14 +891,14 @@ open class BrowserProfile: Profile {
          */
         public func endTimedSyncs() {
             if let t = self.syncTimer {
-                log.debug("Stopping sync timer.")
+                //log.debug("Stopping sync timer.")
                 self.syncTimer = nil
                 t.invalidate()
             }
         }
 
         fileprivate func syncClientsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            log.debug("Syncing clients to storage.")
+            //log.debug("Syncing clients to storage.")
 
             if constellationStateUpdate == nil {
                 constellationStateUpdate = NotificationCenter.default.addObserver(forName: .constellationStateUpdate, object: nil, queue: .main) { [weak self] notification in
@@ -935,7 +919,7 @@ open class BrowserProfile: Profile {
                 guard case .completed = result, let accountManager = self.profile.rustFxA.accountManager.peek() else {
                     return deferMaybe(result)
                 }
-                log.debug("Updating FxA devices list.")
+                //log.debug("Updating FxA devices list.")
 
                 accountManager.deviceConstellation()?.refreshState()
                 return deferMaybe(result)
@@ -949,7 +933,7 @@ open class BrowserProfile: Profile {
         }
 
         fileprivate func syncHistoryWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            log.debug("Syncing history to storage.")
+            //log.debug("Syncing history to storage.")
             let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, delegate: delegate, prefs: prefs, why: why)
             return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info, greenLight: self.greenLight())
         }
@@ -985,7 +969,7 @@ open class BrowserProfile: Profile {
         }
 
         fileprivate func syncLoginsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            log.debug("Syncing logins to storage.")
+            //log.debug("Syncing logins to storage.")
             return syncUnlockInfo().bind({ result in
                 guard let syncUnlockInfo = result.successValue else {
                     return deferMaybe(SyncStatus.notStarted(.unknown))
@@ -1003,7 +987,7 @@ open class BrowserProfile: Profile {
         }
 
         fileprivate func syncBookmarksWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            log.debug("Syncing bookmarks to storage.")
+            //log.debug("Syncing bookmarks to storage.")
             return syncUnlockInfo().bind({ result in
                 guard let syncUnlockInfo = result.successValue else {
                     return deferMaybe(SyncStatus.notStarted(.unknown))
@@ -1025,7 +1009,7 @@ open class BrowserProfile: Profile {
             needReset.formUnion(changes.enginesDisabled())
             needReset.formUnion(changes.enginesEnabled())
             if needReset.isEmpty {
-                log.debug("No collections need reset. Moving on.")
+                //log.debug("No collections need reset. Moving on.")
                 return deferMaybe(changes)
             }
 
@@ -1034,7 +1018,7 @@ open class BrowserProfile: Profile {
             // doing duplicate work.
             if needReset.contains("clients") {
                 if needReset.remove("tabs") != nil {
-                    log.debug("Already resetting clients (and tabs); not bothering to also reset tabs again.")
+                    //log.debug("Already resetting clients (and tabs); not bothering to also reset tabs again.")
                 }
             }
 
@@ -1088,7 +1072,7 @@ open class BrowserProfile: Profile {
                     let done = Set(statuses.map { $0.0 })
                     let remaining = synchronizers.filter { !done.contains($0.0) }
                     if remaining.isEmpty {
-                        log.info("Nothing left to sync")
+                        //log.info("Nothing left to sync")
                         return deferMaybe(statuses)
                     }
 
@@ -1112,7 +1096,7 @@ open class BrowserProfile: Profile {
             do {
                 return try syncReducer!.append(synchronizers)
             } catch let error {
-                log.error("Synchronizers appended after sync was finished. This is a bug. \(error)")
+                //log.error("Synchronizers appended after sync was finished. This is a bug. \(error)")
                 let statuses = synchronizers.map {
                     ($0.0, SyncStatus.notStarted(.unknown))
                 }
@@ -1143,15 +1127,15 @@ open class BrowserProfile: Profile {
         // This SHOULD NOT be called directly: use syncSeveral instead.
         fileprivate func syncWith(synchronizers: [(EngineIdentifier, SyncFunction)],
                                   statsSession: SyncOperationStatsSession, why: SyncReason) -> Deferred<Maybe<[(EngineIdentifier, SyncStatus)]>> {
-            log.info("Syncing \(synchronizers.map { $0.0 })")
+            //log.info("Syncing \(synchronizers.map { $0.0 })")
             var authState = RustFirefoxAccounts.shared.syncAuthState
             let delegate = self.profile.getSyncDelegate()
             // TODO
             if let enginesEnablements = self.engineEnablementChangesForAccount(),
                !enginesEnablements.isEmpty {
                 authState.enginesEnablements = enginesEnablements
-                log.debug("engines to enable: \(enginesEnablements.compactMap { $0.value ? $0.key : nil })")
-                log.debug("engines to disable: \(enginesEnablements.compactMap { !$0.value ? $0.key : nil })")
+                //log.debug("engines to enable: \(enginesEnablements.compactMap { $0.value ? $0.key : nil })")
+                //log.debug("engines to disable: \(enginesEnablements.compactMap { !$0.value ? $0.key : nil })")
             }
 
             // TODO
@@ -1162,7 +1146,7 @@ open class BrowserProfile: Profile {
             let function: (SyncDelegate, Prefs, Ready) -> Deferred<Maybe<[EngineStatus]>> = { delegate, syncPrefs, ready in
                 let thunks = synchronizers.map { (i, f) in
                     return { () -> Deferred<Maybe<EngineStatus>> in
-                        log.debug("Syncing \(i)…")
+                        //log.debug("Syncing \(i)…")
                         return f(delegate, syncPrefs, ready, why) >>== { deferMaybe((i, $0)) }
                     }
                 }
@@ -1205,7 +1189,7 @@ open class BrowserProfile: Profile {
 
         func syncEverythingSoon() {
             self.doInBackgroundAfter(SyncConstants.SyncOnForegroundAfterMillis) {
-                log.debug("Running delayed startup sync.")
+                //log.debug("Running delayed startup sync.")
                 self.syncEverything(why: .startup)
             }
         }
@@ -1294,7 +1278,7 @@ open class BrowserProfile: Profile {
 
             // Give it two minutes to run before we stop.
             let stopBy = start + (2 * OneMinuteInMilliseconds)
-            log.debug("Checking green light. Backgrounded: \(self.backgrounded).")
+            //log.debug("Checking green light. Backgrounded: \(self.backgrounded).")
             return {
                 Date.now() < stopBy &&
                 self.profile.hasSyncableAccount()

@@ -24,7 +24,7 @@ import SwiftyJSON
 public let PushClientErrorDomain = "org.mozilla.push.error"
 private let PushClientUnknownError = NSError(domain: PushClientErrorDomain, code: 999,
                                              userInfo: [NSLocalizedDescriptionKey: "Invalid server response"])
-private let log = Logger.browserLogger
+
 
 /// Bug 1364403 – This is to be put into the push registration
 private let apsEnvironment: [String: Any] = [
@@ -103,7 +103,7 @@ public extension PushClient {
         mutableURLRequest.httpBody = JSON(parameters).stringify()?.utf8EncodedData
 
         if experimentalMode {
-            log.info("curl -X POST \(registerURL.absoluteString) --data '\(JSON(parameters).stringify()!)'")
+            //log.info("curl -X POST \(registerURL.absoluteString) --data '\(JSON(parameters).stringify()!)'")
         }
 
         return send(request: mutableURLRequest) >>== { json in
@@ -148,7 +148,7 @@ public extension PushClient {
 /// Utilities
 extension PushClient {
     fileprivate func send(request: URLRequest) -> Deferred<Maybe<JSON>> {
-        log.info("\(request.httpMethod!) \(request.url?.absoluteString ?? "nil")")
+        //log.info("\(request.httpMethod!) \(request.url?.absoluteString ?? "nil")")
         let deferred = Deferred<Maybe<JSON>>()
         urlSession.dataTask(with: request) { (data, response, error) in
             if let error = error {

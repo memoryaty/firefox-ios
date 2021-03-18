@@ -35,7 +35,7 @@ private struct LPMessage {
     static let DefaultLaterButtonText = "Don’t Enable"
 }
 
-private let log = Logger.browserLogger
+
 
 enum LPEvent: String {
     case firstRun = "E_First_Run"
@@ -195,17 +195,17 @@ class LeanPlumClient {
         guard let settings = getSettings(), isLocaleSupported(), !Leanplum.hasStarted() else {
             enabled = false
             Sentry.shared.send(message: "LeanplumIntegration - Could not be started | isLocaleSupported: \(isLocaleSupported()) | Leanplum has not started: \(!Leanplum.hasStarted())")
-            log.error("LeanplumIntegration - Could not be started")
+            //log.error("LeanplumIntegration - Could not be started")
             return
         }
 
         if UIDevice.current.name.contains("MozMMADev") {
-            log.info("LeanplumIntegration - Setting up for Development")
+            //log.info("LeanplumIntegration - Setting up for Development")
             Leanplum.setDeviceId(UIDevice.current.identifierForVendor?.uuidString)
             Leanplum.setAppId(settings.appId, withDevelopmentKey: settings.developmentKey)
             setupType = .debug
         } else {
-            log.info("LeanplumIntegration - Setting up for Production")
+            //log.info("LeanplumIntegration - Setting up for Production")
             Leanplum.setAppId(settings.appId, withProductionKey: settings.productionKey)
             setupType = .production
         }

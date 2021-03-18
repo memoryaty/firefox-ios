@@ -6,9 +6,9 @@ import Foundation
 import WebKit
 import Storage
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 protocol TabManagerDelegate: AnyObject {
     func tabManager(_ tabManager: TabManager, didSelectedTabChange selected: Tab?, previous: Tab?, isRestoring: Bool)

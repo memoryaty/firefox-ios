@@ -5,9 +5,9 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private let OrderedEngineNames = "search.orderedEngineNames"
 private let DisabledEngineNames = "search.disabledEngineNames"

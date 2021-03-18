@@ -5,9 +5,9 @@
 import UIKit
 import Storage
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private let BookmarkDetailFieldCellIdentifier = "BookmarkDetailFieldCellIdentifier"
 private let BookmarkDetailFolderCellIdentifier = "BookmarkDetailFolderCellIdentifier"
@@ -411,7 +411,8 @@ extension BookmarkDetailPanel: TextFieldTableViewCellDelegate {
             bookmarkItemURL = text
             updateSaveButton()
         default:
-            log.warning("Received didChangeText: for a cell with an IndexPath that should not exist.")
+            break
+            //log.warning("Received didChangeText: for a cell with an IndexPath that should not exist.")
         }
     }
 }

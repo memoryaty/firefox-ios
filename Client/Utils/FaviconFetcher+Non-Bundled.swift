@@ -4,7 +4,7 @@
 
 import Storage
 import Shared
-import XCGLogger
+
 import SDWebImage
 import Fuzi
 import SwiftyJSON

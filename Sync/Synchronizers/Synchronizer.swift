@@ -5,9 +5,9 @@
 import Foundation
 import Shared
 import Storage
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 /**
  * This exists to pass in external context: e.g., the UIApplication can
@@ -199,7 +199,7 @@ open class BaseCollectionSynchronizer {
         self.statsSession = SyncEngineStatsSession(collection: collection)
         self.why = why
 
-        log.info("Synchronizer configured with prefs '\(self.prefs.getBranchPrefix()).'")
+        //log.info("Synchronizer configured with prefs '\(self.prefs.getBranchPrefix()).'")
     }
 
     var storageVersion: Int {
@@ -270,7 +270,7 @@ open class TimestampedSingleCollectionSynchronizer: BaseCollectionSynchronizer, 
     }
 
     func setTimestamp(_ timestamp: Timestamp) {
-        log.debug("Setting post-upload lastFetched to \(timestamp).")
+        //log.debug("Setting post-upload lastFetched to \(timestamp).")
         self.lastFetched = timestamp
     }
 

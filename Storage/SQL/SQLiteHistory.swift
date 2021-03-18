@@ -4,9 +4,9 @@
 
 import Foundation
 import Shared
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 public let TopSiteCacheSize: Int32 = 16
 
 class NoSuchRecordError: MaybeErrorType {
@@ -518,7 +518,7 @@ extension SQLiteHistory: BrowserHistory {
             }
 
             let err = DatabaseError(description: "Unable to update or insert site; Invalid key returned")
-            log.error("recordVisitedSite encountered an error: \(err.localizedDescription)")
+            //log.error("recordVisitedSite encountered an error: \(err.localizedDescription)")
             throw err
         }
     }
@@ -537,14 +537,12 @@ extension SQLiteHistory: BrowserHistory {
 
         let update = "UPDATE history SET title = ?, local_modified = ?, should_upload = 1, domain_id = (SELECT id FROM domains where domain = ?) WHERE url = ?"
         let updateArgs: Args? = [site.title, time, host, site.url]
-        if Logger.logPII {
-            log.debug("Setting title to \(site.title) for URL \(site.url)")
-        }
+
         do {
             try conn.executeChange(update, withArgs: updateArgs)
             return conn.numberOfRowsModified
         } catch let error as NSError {
-            log.warning("Update failed with error: \(error.localizedDescription)")
+            //log.warning("Update failed with error: \(error.localizedDescription)")
             return 0
         }
     }
@@ -554,7 +552,7 @@ extension SQLiteHistory: BrowserHistory {
             do {
                 try conn.executeChange("INSERT OR IGNORE INTO domains (domain) VALUES (?)", withArgs: [host])
             } catch let error as NSError {
-                log.warning("Domain insertion failed with \(error.localizedDescription)")
+                //log.warning("Domain insertion failed with \(error.localizedDescription)")
                 return 0
             }
 
@@ -569,16 +567,14 @@ extension SQLiteHistory: BrowserHistory {
             do {
                 try conn.executeChange(insert, withArgs: insertArgs)
             } catch let error as NSError {
-                log.warning("Site insertion failed with \(error.localizedDescription)")
+                //log.warning("Site insertion failed with \(error.localizedDescription)")
                 return 0
             }
 
             return 1
         }
 
-        if Logger.logPII {
-            log.warning("Invalid URL \(site.url). Not stored in history.")
-        }
+
         return 0
     }
 
@@ -774,7 +770,7 @@ extension SQLiteHistory: SyncableHistory {
             if let metadata = metadata {
                 // The item exists locally (perhaps originally with a different GUID).
                 if metadata.serverModified == modified {
-                    log.verbose("History item \(place.guid) is unchanged; skipping insert-or-update.")
+                    //log.verbose("History item \(place.guid) is unchanged; skipping insert-or-update.")
                     return deferMaybe(place.guid)
                 }
 
@@ -782,9 +778,9 @@ extension SQLiteHistory: SyncableHistory {
                 if metadata.shouldUpload {
                     // Uh oh, it changed locally.
                     // This might well just be a visit change, but we can't tell. Usually this conflict is harmless.
-                    log.debug("Warning: history item \(place.guid) changed both locally and remotely. Comparing timestamps from different clocks!")
+                    //log.debug("Warning: history item \(place.guid) changed both locally and remotely. Comparing timestamps from different clocks!")
                     if let localModified = metadata.localModified, localModified > modified {
-                        log.debug("Local changes overriding remote.")
+                        //log.debug("Local changes overriding remote.")
 
                         // Update server modified time only. (Though it'll be overwritten again after a successful upload.)
                         let update = "UPDATE history SET server_modified = ? WHERE id = ?"
@@ -792,23 +788,20 @@ extension SQLiteHistory: SyncableHistory {
                         return self.db.run(update, withArgs: args) >>> always(place.guid)
                     }
 
-                    log.verbose("Remote changes overriding local.")
+                    //log.verbose("Remote changes overriding local.")
                     // Fall through.
                 }
 
                 // The record didn't change locally. Update it.
-                log.verbose("Updating local history item for guid \(place.guid).")
+                //log.verbose("Updating local history item for guid \(place.guid).")
                 let update = "UPDATE history SET title = ?, server_modified = ?, is_deleted = 0 WHERE id = ?"
                 let args: Args = [place.title, serverModified, metadata.id]
                 return self.db.run(update, withArgs: args) >>> always(place.guid)
             }
 
             // The record doesn't exist locally. Insert it.
-            log.verbose("Inserting remote history item for guid \(place.guid).")
+            //log.verbose("Inserting remote history item for guid \(place.guid).")
             if let host = place.url.asURL?.normalizedHost {
-                if Logger.logPII {
-                    log.debug("Inserting: \(place.url).")
-                }
 
                 let insertDomain = "INSERT OR IGNORE INTO domains (domain) VALUES (?)"
                 let insertHistory = """
@@ -823,9 +816,6 @@ extension SQLiteHistory: SyncableHistory {
                 ]) >>> always(place.guid)
             } else {
                 // This is a URL with no domain. Insert it directly.
-                if Logger.logPII {
-                    log.debug("Inserting: \(place.url) with no domain.")
-                }
 
                 let insertHistory = """
                     INSERT INTO history (
@@ -955,7 +945,7 @@ extension SQLiteHistory: SyncableHistory {
 
             let recentVisitCount = placesAndVisits.reduce(0) { $0 + $1.1.count }
 
-            log.info("Attaching \(placesAndVisits.count) places to \(recentVisitCount) most recent visits")
+            //log.info("Attaching \(placesAndVisits.count) places to \(recentVisitCount) most recent visits")
             return deferMaybe(placesAndVisits)
         }
     }
@@ -965,7 +955,7 @@ extension SQLiteHistory: SyncableHistory {
             return succeed()
         }
 
-        log.debug("Wiping \(guids.count) deleted GUIDs.")
+        //log.debug("Wiping \(guids.count) deleted GUIDs.")
         return self.db.run(chunk(guids, by: BrowserDB.MaxVariableNumber).compactMap(markAsDeletedStatementForGUIDs))
     }
 
@@ -985,7 +975,7 @@ extension SQLiteHistory: SyncableHistory {
             return deferMaybe(modified)
         }
 
-        log.debug("Marking \(guids.count) GUIDs as synchronized. Returning timestamp \(modified).")
+        //log.debug("Marking \(guids.count) GUIDs as synchronized. Returning timestamp \(modified).")
         return self.db.run(chunk(guids, by: BrowserDB.MaxVariableNumber).compactMap { chunk in
             return markAsSynchronizedStatementForGUIDs(chunk, modified: modified)
         }) >>> always(modified)
@@ -1036,7 +1026,7 @@ extension SQLiteHistory: ResettableSyncStorage {
 
 extension SQLiteHistory: AccountRemovalDelegate {
     public func onRemovedAccount() -> Success {
-        log.info("Clearing history metadata and deleted items after account removal.")
+        //log.info("Clearing history metadata and deleted items after account removal.")
         let discard = "DELETE FROM history WHERE is_deleted = 1"
         return self.db.run(discard) >>> self.resetClient
     }

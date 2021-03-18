@@ -39,12 +39,12 @@ public class Sentry {
         assert(!enabled, "Sentry.setup() should only be called once")
 
         if DeviceInfo.isSimulator() {
-            Logger.browserLogger.debug("Not enabling Sentry; Running in Simulator")
+            //Logger.browserLogger.debug("Not enabling Sentry; Running in Simulator")
             return
         }
 
         if !sendUsageData {
-            Logger.browserLogger.debug("Not enabling Sentry; Not enabled by user choice")
+            //Logger.browserLogger.debug("Not enabling Sentry; Not enabled by user choice")
             return
         }
 
@@ -58,11 +58,11 @@ public class Sentry {
         }
 
         guard let dsn = bundle.object(forInfoDictionaryKey: SentryDSNKey) as? String, !dsn.isEmpty else {
-            Logger.browserLogger.debug("Not enabling Sentry; Not configured in Info.plist")
+            //Logger.browserLogger.debug("Not enabling Sentry; Not configured in Info.plist")
             return
         }
 
-        Logger.browserLogger.debug("Enabling Sentry crash handler")
+        //Logger.browserLogger.debug("Enabling Sentry crash handler")
 
         do {
             Client.shared = try Client(dsn: dsn)
@@ -87,7 +87,7 @@ public class Sentry {
                 event.extra = attributes
             }
         } catch let error {
-            Logger.browserLogger.error("Failed to initialize Sentry: \(error)")
+            //Logger.browser//logger.error("Failed to initialize Sentry: \(error)")
         }
 
         // Ignore SIGPIPE exceptions globally.
@@ -183,6 +183,6 @@ public class Sentry {
             let (key, value) = arg1
             return "\(result), \(key): \(value)"
         }
-        Logger.browserLogger.debug("Sentry: \(message) \(string ??? "")")
+        //Logger.browserLogger.debug("Sentry: \(message) \(string ??? "")")
     }
 }

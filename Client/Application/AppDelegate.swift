@@ -5,7 +5,7 @@
 import Shared
 import Storage
 import AVFoundation
-import XCGLogger
+
 import MessageUI
 import SDWebImage
 import SwiftKeychainWrapper
@@ -21,7 +21,7 @@ import Account
  import BackgroundTasks
 #endif
 
-private let log = Logger.browserLogger
+
 
 let LatestAppVersionProfileKey = "latestAppVersion"
 let AllowThirdPartyKeyboardsKey = "settings.allowThirdPartyKeyboards"
@@ -75,14 +75,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
         if DebugSettingsBundleOptions.saveLogsToDocuments {
-            Logger.copyPreviousLogsToDocuments()
+//            Logger.copyPreviousLogsToDocuments()
         }
 
         return startApplication(application, withLaunchOptions: launchOptions)
     }
 
     func startApplication(_ application: UIApplication, withLaunchOptions launchOptions: [AnyHashable: Any]?) -> Bool {
-        log.info("startApplication begin")
+        //log.info("startApplication begin")
 
         // Need to get "settings.sendUsageData" this way so that Sentry can be initialized
         // before getting the Profile.
@@ -98,12 +98,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         DynamicFontHelper.defaultHelper.startObserving()
 
         MenuHelper.defaultHelper.setItems()
-
-        let logDate = Date()
-        // Create a new sync log file on cold app launch. Note that this doesn't roll old logs.
-        Logger.syncLogger.newLogWithDate(logDate)
-
-        Logger.browserLogger.newLogWithDate(logDate)
 
         let profile = getProfile(application)
 
@@ -140,7 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
             print("RustFirefoxAccounts started")
         }
-        log.info("startApplication end")
+        //log.info("startApplication end")
         return true
     }
 
@@ -201,8 +195,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         // Now roll logs.
         DispatchQueue.global(qos: DispatchQoS.background.qosClass).async {
-            Logger.syncLogger.deleteOldLogsDownToSizeLimit()
-            Logger.browserLogger.deleteOldLogsDownToSizeLimit()
+//            Logger.syncLogger.deleteOldLogsDownToSizeLimit()
+            //Logger.browserLogger.deleteOldLogsDownToSizeLimit()
         }
 
         // If a shortcut was launched, display its information and take the appropriate action

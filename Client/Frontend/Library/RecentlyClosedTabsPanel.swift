@@ -6,9 +6,9 @@ import UIKit
 
 import Shared
 import Storage
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private struct RecentlyClosedPanelUX {
     static let IconSize = CGSize(width: 23, height: 23)
@@ -93,7 +93,7 @@ class RecentlyClosedTabsPanelSiteTableViewController: SiteTableViewController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let libraryPanelDelegate = libraryPanelDelegate else {
-            log.warning("No site or no URL when selecting row.")
+            //log.warning("No site or no URL when selecting row.")
             return
         }
         let visitType = VisitType.typed    // Means History, too.

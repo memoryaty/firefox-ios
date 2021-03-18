@@ -5,9 +5,9 @@
 import Foundation
 import Storage
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 class TabManagerStore {
     fileprivate var lockedForReading = false
     fileprivate let imageStore: DiskImageStore?
@@ -92,7 +92,7 @@ class TabManagerStore {
             
             SimpleTab.saveSimpleTab(tabs: simpleTabs)
             // Ignore write failure (could be restoring).
-            log.debug("PreserveTabs write ok: \(written), bytes: \(tabStateData.length)")
+            //log.debug("PreserveTabs write ok: \(written), bytes: \(tabStateData.length)")
             result.fill(Maybe(success: ()))
         }
 

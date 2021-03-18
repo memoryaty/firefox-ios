@@ -9,7 +9,7 @@ import WebKit
 import Shared
 import Storage
 import SnapKit
-import XCGLogger
+
 import Account
 import MobileCoreServices
 import SDWebImage
@@ -1470,7 +1470,7 @@ extension BrowserViewController: LibraryPanelDelegate {
 
     func libraryPanel(didSelectURLString url: String, visitType: VisitType) {
         guard let url = URIFixup.getURL(url) ?? profile.searchEngines.defaultEngine.searchURLForQuery(url) else {
-            Logger.browserLogger.warning("Invalid URL, and couldn't generate a search URL for it.")
+            //Logger.browserLogger.warning("Invalid URL, and couldn't generate a search URL for it.")
             return
         }
         return self.libraryPanel(didSelectURL: url, visitType: visitType)

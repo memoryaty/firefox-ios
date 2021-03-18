@@ -4,9 +4,9 @@
 
 import Foundation
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 struct HomePageConstants {
     static let NewTabCustomUrlPrefKey = PrefsKeys.NewTabCustomUrlPrefKey
@@ -43,7 +43,7 @@ class HomePageHelper {
     func openHomePage(_ tab: Tab) {
         guard let url = currentURL else {
             // this should probably never happen.
-            log.error("User requested a homepage that wasn't a valid URL")
+            //log.error("User requested a homepage that wasn't a valid URL")
             return
         }
         tab.loadRequest(URLRequest(url: url))

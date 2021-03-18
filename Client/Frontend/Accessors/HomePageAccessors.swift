@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import XCGLogger
+
 
 /// Accessors for homepage details from the app state.
 /// These are pure functions, so it's quite ok to have them

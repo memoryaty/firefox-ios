@@ -4,9 +4,9 @@
 
 import Foundation
 import Shared
-import XCGLogger
 
-private let log = Logger.syncLogger
+
+
 
 let ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60
 
@@ -46,16 +46,16 @@ open class Record<T: CleartextPayloadJSON> {
     // TODO: consider using error tuples.
     open class func fromEnvelope(_ envelope: EnvelopeJSON, payloadFactory: (String) -> T?) -> Record<T>? {
         if !(envelope.isValid()) {
-            log.error("Invalid envelope.")
+            //log.error("Invalid envelope.")
             return nil
         }
         guard let payload = payloadFactory(envelope.payload) else {
-            log.error("Unable to parse payload.")
+            //log.error("Unable to parse payload.")
             return nil
         }
 
         if !payload.isValid() {
-            log.error("Invalid payload \(envelope.payload).")
+            //log.error("Invalid payload \(envelope.payload).")
             return nil
         }
 

@@ -5,9 +5,9 @@
 import UIKit
 import Storage
 import Shared
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private let BookmarkNodeCellIdentifier = "BookmarkNodeCellIdentifier"
 private let BookmarkSeparatorCellIdentifier = "BookmarkSeparatorCellIdentifier"
@@ -313,7 +313,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
         case .FirefoxAccountChanged, .DynamicFontChanged:
             reloadData()
         default:
-            log.warning("Received unexpected notification \(notification.name)")
+            //log.warning("Received unexpected notification \(notification.name)")
             break
         }
     }

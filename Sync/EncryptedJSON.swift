@@ -6,10 +6,10 @@ import Foundation
 import Account
 import Shared
 
-import XCGLogger
+
 import SwiftyJSON
 
-private let log = Logger.syncLogger
+
 
 /**
  * Turns JSON of the form
@@ -91,7 +91,7 @@ open class EncryptedJSON {
         // We can force-unwrap self["ciphertext"] because we already checked
         // it when verifying the HMAC above.
         guard let data = self.ciphertextBytes else {
-            log.error("Unable to decode ciphertext base64 in record \(self["id"].string ?? "<unknown>")")
+            //log.error("Unable to decode ciphertext base64 in record \(self["id"].string ?? "<unknown>")")
             valid = false
             return false
         }
@@ -142,13 +142,13 @@ open class EncryptedJSON {
         }
 
         if !isValid() {
-            log.error("Failed to validate.")
+            //log.error("Failed to validate.")
             return nil
         }
 
         let decrypted: String? = keyBundle.decrypt(self.ciphertext, iv: self.iv)
         if decrypted == nil {
-            log.error("Failed to decrypt.")
+            //log.error("Failed to decrypt.")
             valid = false
             return nil
         }

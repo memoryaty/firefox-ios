@@ -5,11 +5,11 @@
 import Foundation
 import Account
 import Shared
-import XCGLogger
+
 import SwiftKeychainWrapper
 import SwiftyJSON
 
-private let log = Logger.syncLogger
+
 
 /*
  * This file includes types that manage intra-sync and inter-sync metadata
@@ -447,11 +447,11 @@ open class Scratchpad {
                 if let global = MetaGlobal.fromJSON(JSON(parseJSON: mg)) {
                     _ = b.setGlobal(Fetched(value: global, timestamp: mgTS))
                 } else {
-                    log.error("Malformed meta/global in prefs. Ignoring.")
+                    //log.error("Malformed meta/global in prefs. Ignoring.")
                 }
             } else {
                 // This should never happen.
-                log.error("Found global in prefs, but not globalTS!")
+                //log.error("Found global in prefs, but not globalTS!")
             }
         }
 
@@ -464,24 +464,24 @@ open class Scratchpad {
                     // We serialize as JSON.
                     let keys = Keys(payload: KeysPayload(keys))
                     if keys.valid {
-                        log.debug("Read keys from Keychain with label \(keyLabel).")
+                        //log.debug("Read keys from Keychain with label \(keyLabel).")
                         _ = b.setKeys(Fetched(value: keys, timestamp: ckTS))
                     } else {
-                        log.error("Invalid keys extracted from Keychain. Discarding.")
+                        //log.error("Invalid keys extracted from Keychain. Discarding.")
                     }
                 } else {
-                    log.error("Found keysTS in prefs, but didn't find keys in Keychain!")
+                    //log.error("Found keysTS in prefs, but didn't find keys in Keychain!")
                 }
             }
         }
 
         b.clientGUID = prefs.stringForKey(PrefClientGUID) ?? {
-            log.error("No value found in prefs for client GUID! Generating one.")
+            //log.error("No value found in prefs for client GUID! Generating one.")
             return Bytes.generateGUID()
         }()
 
         b.clientName = prefs.stringForKey(PrefClientName) ?? {
-            log.error("No value found in prefs for client name! Using default.")
+            //log.error("No value found in prefs for client name! Using default.")
             return DeviceInfo.defaultClientName()
         }()
 
@@ -501,7 +501,7 @@ open class Scratchpad {
             }
             // This is run the first time we sync with a new account.
             // It will be replaced by a real fxaDeviceId, from account.deviceRegistration?.id.
-            log.warning("No value found in prefs for fxaDeviceId! Will overwrite on first sync")
+            //log.warning("No value found in prefs for fxaDeviceId! Will overwrite on first sync")
             return "unknown_fxaDeviceId"
         }()
 
@@ -513,7 +513,7 @@ open class Scratchpad {
             if let engineConfiguration = EngineConfiguration.fromJSON(JSON(parseJSON: engineConfigurationString)) {
                 b.engineConfiguration = engineConfiguration
             } else {
-                log.error("Invalid engineConfiguration found in prefs. Discarding.")
+                //log.error("Invalid engineConfiguration found in prefs. Discarding.")
             }
         }
 
@@ -529,10 +529,10 @@ open class Scratchpad {
      */
     open class func clearFromPrefs(_ prefs: Prefs) {
         if let keyLabel = prefs.stringForKey(PrefKeyLabel) {
-            log.debug("Removing saved key from keychain.")
+            //log.debug("Removing saved key from keychain.")
             KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: keyLabel)
         } else {
-            log.debug("No key label; nothing to remove from keychain.")
+            //log.debug("No key label; nothing to remove from keychain.")
         }
     }
 
@@ -546,7 +546,7 @@ open class Scratchpad {
             }
         }
 
-        log.debug("No scratchpad found in prefs.")
+        //log.debug("No scratchpad found in prefs.")
         return nil
     }
 
@@ -575,12 +575,12 @@ open class Scratchpad {
         if let keys = self.keys,
             let payload = keys.value.asPayload().json.stringify() {
             let label = "keys." + self.keyLabel
-            log.debug("Storing keys in Keychain with label \(label).")
+            //log.debug("Storing keys in Keychain with label \(label).")
             prefs.setString(self.keyLabel, forKey: PrefKeyLabel)
             prefs.setLong(keys.timestamp, forKey: PrefKeysTS)
             KeychainWrapper.sharedAppContainerKeychain.set(payload, forKey: label, withAccessibility: .afterFirstUnlock)
         } else {
-            log.debug("Removing keys from Keychain.")
+            //log.debug("Removing keys from Keychain.")
             KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: self.keyLabel)
         }
 

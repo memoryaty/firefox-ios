@@ -4,9 +4,6 @@
 
 import Foundation
 import Shared
-import XCGLogger
-
-fileprivate let log = Logger.syncLogger
 
 extension SQLiteHistory: HistoryRecommendations {
     static let MaxHistoryRowCount: UInt = 200000
@@ -43,7 +40,7 @@ extension SQLiteHistory: HistoryRecommendations {
     // the threshold used in `checkIfCleanupIsNeeded()` and therefore, this may
     // end up running several times until that threshold is crossed.
     func cleanupOldHistory(numberOfRowsToPrune: UInt) -> [(String, Args?)] {
-        log.debug("Cleaning up \(numberOfRowsToPrune) rows of history.")
+        //log.debug("Cleaning up \(numberOfRowsToPrune) rows of history.")
 
         let sql = """
             DELETE FROM \(TableHistory) WHERE id IN (

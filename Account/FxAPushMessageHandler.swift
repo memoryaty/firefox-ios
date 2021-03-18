@@ -9,7 +9,7 @@ import Account
 import SwiftKeychainWrapper
 import os.log
 
-private let log = Logger.syncLogger
+
 
 let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
 

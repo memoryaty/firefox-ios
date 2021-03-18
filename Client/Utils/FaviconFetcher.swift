@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Shared
-import XCGLogger
+
 import SDWebImage
 import Fuzi
 import SwiftyJSON
 
-private let log = Logger.browserLogger
+
 
 class FaviconFetcherErrorType: MaybeErrorType {
     let description: String

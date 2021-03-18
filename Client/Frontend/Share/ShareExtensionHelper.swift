@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import OnePasswordExtension
 
-private let log = Logger.browserLogger
+
 
 class ShareExtensionHelper: NSObject {
     fileprivate weak var selectedTab: Tab?
@@ -133,7 +133,7 @@ private extension ShareExtensionHelper {
         // Add 1Password to share sheet
         OnePasswordExtension.shared().createExtensionItem(forWebView: selectedWebView, completion: {(extensionItem, error) -> Void in
             if extensionItem == nil {
-                log.error("Failed to create the password manager extension item: \(error.debugDescription).")
+                //log.error("Failed to create the password manager extension item: \(error.debugDescription).")
                 return
             }
 
@@ -149,7 +149,7 @@ private extension ShareExtensionHelper {
 
         OnePasswordExtension.shared().fillReturnedItems(returnedItems, intoWebView: selectedWebView, completion: { (success, returnedItemsError) -> Void in
             if !success {
-                log.error("Failed to fill item into webview: \(returnedItemsError ??? "nil").")
+                //log.error("Failed to fill item into webview: \(returnedItemsError ??? "nil").")
             }
         })
     }

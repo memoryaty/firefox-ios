@@ -8,7 +8,7 @@ import SnapKit
 import Storage
 import SDWebImage
 
-private let log = Logger.browserLogger
+
 
 class CustomSearchError: MaybeErrorType {
 

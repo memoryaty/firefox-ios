@@ -7,7 +7,7 @@ import Shared
 
 public let ActivityStreamTopSiteCacheSize: Int32 = 32
 
-private let log = Logger.browserLogger
+
 
 protocol DataObserver {
     var profile: Profile { get }
@@ -82,7 +82,8 @@ class ActivityStreamDataObserver: DataObserver {
         case .ProfileDidFinishSyncing, .FirefoxAccountChanged, .PrivateDataClearedHistory:
              refreshIfNeeded(forceTopSites: true)
         default:
-            log.warning("Received unexpected notification \(notification.name)")
+            break
+            //log.warning("Received unexpected notification \(notification.name)")
         }
     }
 }

@@ -12,7 +12,7 @@ private let NumberOfSections = 3
 private let SectionHeaderFooterIdentifier = "SectionHeaderFooterIdentifier"
 private let TogglesPrefKey = "clearprivatedata.toggles"
 
-private let log = Logger.browserLogger
+
 
 private let HistoryClearableIndex = 0
 
@@ -138,7 +138,7 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
                         guard toggles[i] else {
                             return nil
                         }
-                        log.debug("Clearing \(pair.clearable).")
+                        //log.debug("Clearing \(pair.clearable).")
                         return pair.clearable.clear()
                     }
                     .allSucceed()

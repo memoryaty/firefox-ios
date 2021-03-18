@@ -11,7 +11,7 @@ protocol PhotonActionSheetProtocol {
     var profile: Profile { get }
 }
 
-private let log = Logger.browserLogger
+
 
 extension PhotonActionSheetProtocol {
     typealias PresentableVC = UIViewController & UIPopoverPresentationControllerDelegate

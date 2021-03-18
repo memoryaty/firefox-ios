@@ -8,9 +8,9 @@ import Shared
 import SnapKit
 import Storage
 import Sync
-import XCGLogger
 
-private let log = Logger.browserLogger
+
+
 
 private struct RemoteTabsPanelUX {
     static let HeaderHeight = SiteTableViewControllerUX.RowHeight // Not HeaderHeight!
@@ -79,7 +79,7 @@ class RemoteTabsPanel: SiteTableViewController, LibraryPanel {
             break
         default:
             // no need to do anything at all
-            log.warning("Received unexpected notification \(notification.name)")
+            //log.warning("Received unexpected notification \(notification.name)")
             break
         }
     }

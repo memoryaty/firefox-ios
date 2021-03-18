@@ -6,7 +6,7 @@ import Foundation
 import Storage
 
 import Shared
-import XCGLogger
+
 
 enum ShortcutType: String {
     case newTab = "NewTab"
@@ -30,8 +30,6 @@ protocol QuickActionHandlerDelegate {
 }
 
 class QuickActions: NSObject {
-
-    fileprivate let log = Logger.browserLogger
 
     static let QuickActionsVersion = "1.0"
     static let QuickActionsVersionKey = "dynamicQuickActionsVersion"
@@ -71,7 +69,7 @@ class QuickActions: NSObject {
                 dynamicShortcutItems.append(openLastBookmarkShortcut)
             }
         default:
-            log.warning("Cannot add static shortcut item of type \(type)")
+            //log.warning("Cannot add static shortcut item of type \(type)")
             return false
         }
         application.shortcutItems = dynamicShortcutItems
