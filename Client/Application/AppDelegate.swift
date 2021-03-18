@@ -505,7 +505,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
 
         if AppConstants.IsRunningTest || AppConstants.IsRunningPerfTest {
-            registerHandlersForTestMethods(server: server.server)
+//            registerHandlersForTestMethods(server: server.server)
         }
 
         // Bug 1223009 was an issue whereby CGDWebserver crashed when moving to a background task
