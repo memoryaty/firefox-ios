@@ -218,12 +218,12 @@ extension SyncOperationStatsSession: DictionaryRepresentable {
 
 public enum SyncPingError: MaybeErrorType {
     case failedToRestoreScratchpad
-    case emptyPing
+//    case emptyPing
 
     public var description: String {
         switch self {
         case .failedToRestoreScratchpad: return "Failed to restore Scratchpad from prefs"
-        case .emptyPing: return "Can't send ping without events or syncs"
+//        case .emptyPing: return "Can't send ping without events or syncs"
         }
     }
 }
@@ -286,16 +286,16 @@ public struct SyncPing: SyncTelemetryPing {
         }
     }
 
-    public static func fromQueuedEvents(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
+//    public static func fromQueuedEvents(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
 //        if !Event.hasQueuedEvents(inPrefs: prefs) {
-            return deferMaybe(SyncPingError.emptyPing)
+//            return deferMaybe(SyncPingError.emptyPing)
 //        }
 //        return pingFields(prefs: prefs, why: why) >>== { (_, fields) in
 //            var ping = fields
 //            ping["events"] = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
 //            return deferMaybe(SyncPing(payload: JSON(ping)))
 //        }
-    }
+//    }
 
     static func pingCommonData(why: SyncPingReason, hashedUID: String, hashedDeviceID: String) -> [String: Any] {
          return [
