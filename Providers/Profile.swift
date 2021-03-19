@@ -13,7 +13,7 @@ import Storage
 import Sync
 
 import SwiftKeychainWrapper
-import SyncTelemetry
+
 
 // Import these dependencies ONLY for the main `Client` application target.
 #if MOZ_TARGET_CLIENT
@@ -499,10 +499,10 @@ open class BrowserProfile: Profile {
                     constellation.sendEventToDevice(targetDeviceId: id, e: .sendTab(title: item.title ?? "", url: item.url))
                 }
             }
-            if let json = try? accountManager.gatherTelemetry() {
-                let events = FxATelemetry.parseTelemetry(fromJSONString: json)
-                events.forEach { $0.record(intoPrefs: self.prefs) }
-            }
+//            if let json = try? accountManager.gatherTelemetry() {
+//                let events = FxATelemetry.parseTelemetry(fromJSONString: json)
+//                events.forEach { $0.record(intoPrefs: self.prefs) }
+//            }
             self.sendQueuedSyncEvents()
             deferred.fill(Maybe(success: ()))
         }

@@ -7,7 +7,7 @@ import UIKit
 import Storage
 import SDWebImage
 
-import SyncTelemetry
+
 import SnapKit
 
 

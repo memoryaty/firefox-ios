@@ -9,9 +9,9 @@ import AVFoundation
 import MessageUI
 import SDWebImage
 import SwiftKeychainWrapper
-import SyncTelemetry
+
 import LocalAuthentication
-import SyncTelemetry
+
 import Sync
 import CoreSpotlight
 import UserNotifications

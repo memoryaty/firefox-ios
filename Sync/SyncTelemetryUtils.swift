@@ -7,7 +7,7 @@ import Shared
 import Account
 import Storage
 import SwiftyJSON
-import SyncTelemetry
+
 
 
 public enum SyncReason: String {
@@ -239,6 +239,10 @@ public protocol SyncPingFailureFormattable {
     var failureReasonName: SyncPingFailureReasonName { get }
 }
 
+public protocol SyncTelemetryPing {
+    var payload: JSON { get }
+}
+
 public struct SyncPing: SyncTelemetryPing {
     public private(set) var payload: JSON
 
@@ -271,8 +275,8 @@ public struct SyncPing: SyncTelemetryPing {
             // TODO: We don't cache our sync pings so if it fails, it fails. Once we add
             // some kind of caching we'll want to make sure we don't dump the events if
             // the ping has failed.
-            let events = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
-            ping["events"] = events
+//            let events = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
+//            ping["events"] = events
 
             return dictionaryFrom(result: result, storage: remoteClientsAndTabs, token: token) >>== { syncDict in
                 // TODO: Split the sync ping metadata from storing a single sync.
@@ -283,14 +287,14 @@ public struct SyncPing: SyncTelemetryPing {
     }
 
     public static func fromQueuedEvents(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
-        if !Event.hasQueuedEvents(inPrefs: prefs) {
+//        if !Event.hasQueuedEvents(inPrefs: prefs) {
             return deferMaybe(SyncPingError.emptyPing)
-        }
-        return pingFields(prefs: prefs, why: why) >>== { (_, fields) in
-            var ping = fields
-            ping["events"] = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
-            return deferMaybe(SyncPing(payload: JSON(ping)))
-        }
+//        }
+//        return pingFields(prefs: prefs, why: why) >>== { (_, fields) in
+//            var ping = fields
+//            ping["events"] = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
+//            return deferMaybe(SyncPing(payload: JSON(ping)))
+//        }
     }
 
     static func pingCommonData(why: SyncPingReason, hashedUID: String, hashedDeviceID: String) -> [String: Any] {

@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import UIKit
 import Storage
-import SyncTelemetry
+
 import WidgetKit
 
 struct TopSitesHandler {
