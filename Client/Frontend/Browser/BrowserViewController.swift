@@ -66,8 +66,8 @@ class BrowserViewController: UIViewController {
     var searchLoader: SearchLoader?
     let alertStackView = UIStackView() // All content that appears above the footer should be added to this view. (Find In Page/SnackBars)
     var findInPageBar: FindInPageBar?
-    private var newTabUserResearch: NewTabUserResearch?
-    var chronTabsUserResearch: ChronTabsUserResearch?
+//    private var newTabUserResearch: NewTabUserResearch?
+//    var chronTabsUserResearch: ChronTabsUserResearch?
     lazy var mailtoLinkHandler = MailtoLinkHandler()
     var urlFromAnotherApp: UrlToOpenModel?
     var isCrashAlertShowing: Bool = false
@@ -490,12 +490,12 @@ class BrowserViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.appMenuBadgeUpdate), name: .FirefoxAccountStateChange, object: nil)
         
         // Setup New Tab user research for A/B testing
-        newTabUserResearch = NewTabUserResearch()
-        newTabUserResearch?.lpVariableObserver()
-        urlBar.newTabUserResearch = newTabUserResearch
-        // Setup chron tabs A/B test
-        chronTabsUserResearch = ChronTabsUserResearch()
-        chronTabsUserResearch?.lpVariableObserver()
+//        newTabUserResearch = NewTabUserResearch()
+//        newTabUserResearch?.lpVariableObserver()
+//        urlBar.newTabUserResearch = newTabUserResearch
+//        // Setup chron tabs A/B test
+//        chronTabsUserResearch = ChronTabsUserResearch()
+//        chronTabsUserResearch?.lpVariableObserver()
         searchTelemetry = SearchTelemetry()
     }
 
@@ -1163,7 +1163,7 @@ class BrowserViewController: UIViewController {
         }
 
         present(controller, animated: true, completion: nil)
-        LeanPlumClient.shared.track(event: .userSharedWebpage)
+//        LeanPlumClient.shared.track(event: .userSharedWebpage)
     }
 
     @objc fileprivate func openSettings() {
@@ -1955,7 +1955,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
 
             let addTab = { (rURL: URL, isPrivate: Bool) in
                     let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
-                    LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "Long Press Context Menu"])
+//                    LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "Long Press Context Menu"])
                     guard !self.topTabsVisible else {
                         return
                     }
@@ -2123,7 +2123,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
 extension BrowserViewController {
     @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
         if error == nil {
-            LeanPlumClient.shared.track(event: .saveImage)
+//            LeanPlumClient.shared.track(event: .saveImage)
         }
     }
 }

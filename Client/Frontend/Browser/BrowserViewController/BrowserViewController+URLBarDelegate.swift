@@ -14,7 +14,7 @@ extension BrowserViewController: URLBarDelegate {
         
         var shouldShowChronTabs = false // default don't show
         let chronDebugValue = profile.prefs.boolForKey(PrefsKeys.ChronTabsPrefKey)
-        let chronLPValue = chronTabsUserResearch?.chronTabsState ?? false
+//        let chronLPValue = chronTabsUserResearch?.chronTabsState ?? false
         // Only allow chron tabs on iPhone
         if UIDevice.current.userInterfaceIdiom == .phone {
             // Respect debug mode chron tab value on
@@ -26,7 +26,8 @@ extension BrowserViewController: URLBarDelegate {
                     shouldShowChronTabs = true
                 } else {
                     // Respect LP value
-                    shouldShowChronTabs = chronLPValue
+//                    shouldShowChronTabs = chronLPValue
+                    shouldShowChronTabs = false
                 }
             }
         }
@@ -127,7 +128,7 @@ extension BrowserViewController: URLBarDelegate {
         if let tab = self.tabManager.selectedTab {
             let trackingProtectionMenu = self.getTrackingSubMenu(for: tab)
             let title = String.localizedStringWithFormat(Strings.TPPageMenuTitle, tab.url?.host ?? "")
-            LeanPlumClient.shared.track(event: .trackingProtectionMenu)
+//            LeanPlumClient.shared.track(event: .trackingProtectionMenu)
             //TelemetryWrapper.recordEvent(category: .action, method: .press, object: .trackingProtectionMenu)
             self.presentSheetWith(title: title, actions: trackingProtectionMenu, on: self, from: urlBar)
         }
@@ -151,7 +152,7 @@ extension BrowserViewController: URLBarDelegate {
         case .available:
             enableReaderMode()
             //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeOpenButton)
-            LeanPlumClient.shared.track(event: .useReaderView)
+//            LeanPlumClient.shared.track(event: .useReaderView)
         case .active:
             disableReaderMode()
             //TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .readerModeCloseButton)
@@ -326,7 +327,7 @@ extension BrowserViewController: URLBarDelegate {
             showFirefoxHome(inline: false)
         }
 
-        LeanPlumClient.shared.track(event: .interactWithURLBar)
+//        LeanPlumClient.shared.track(event: .interactWithURLBar)
     }
 
     func urlBarDidLeaveOverlayMode(_ urlBar: URLBarView) {

@@ -212,17 +212,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         pushNotificationSetup()
 
         // Leanplum user research variable setup for New tab user research
-        _ = NewTabUserResearch()
+//        _ = NewTabUserResearch()
         // Leanplum user research variable setup for Chron tabs user research
-        _ = ChronTabsUserResearch()
+//        _ = ChronTabsUserResearch()
         // Leanplum setup
 
         if let profile = self.profile {
-            // Leanplum setup
-            if LeanPlumClient.shouldEnable(profile: profile) {
-                LeanPlumClient.shared.setup(profile: profile)
-                LeanPlumClient.shared.set(enabled: true)
-            }
             
             let persistedCurrentVersion = InstallType.persistedCurrentVersion()
             let introScreen = profile.prefs.intForKey(PrefsKeys.IntroSeen)
@@ -240,10 +235,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 InstallType.updateCurrentVersion(version: AppInfo.appVersion)
                 // Profile and leanplum setup
                 profile.prefs.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
-                LeanPlumClient.shared.track(event: .firstRun)
+//                LeanPlumClient.shared.track(event: .firstRun)
             } else if profile.prefs.boolForKey(PrefsKeys.KeySecondRun) == nil {
                 profile.prefs.setBool(true, forKey: PrefsKeys.KeySecondRun)
-                LeanPlumClient.shared.track(event: .secondRun)
+//                LeanPlumClient.shared.track(event: .secondRun)
             }
         }
 

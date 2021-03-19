@@ -59,7 +59,7 @@ class LoginListViewController: SensitiveViewController {
 
         func fillDeferred(ok: Bool) {
             if ok {
-                LeanPlumClient.shared.track(event: .openedLogins)
+//                LeanPlumClient.shared.track(event: .openedLogins)
                 let viewController = LoginListViewController(profile: profile, webpageNavigationHandler: webpageNavigationHandler)
                 viewController.settingsDelegate = settingsDelegate
                 deferred.fill(viewController)

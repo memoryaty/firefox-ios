@@ -544,9 +544,10 @@ class ShowEtpCoverSheet: HiddenSetting {
 }
 
 class LeanplumStatus: HiddenSetting {
-    let lplumSetupType = LeanPlumClient.shared.lpSetupType()
+//    let lplumSetupType = LeanPlumClient.shared.lpSetupType()
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "LP Setup: \(lplumSetupType) | Started: \(LeanPlumClient.shared.isRunning()) | Device ID: \(LeanPlumClient.shared.leanplumDeviceId ?? "")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+//        return NSAttributedString(string: "LP Setup: \(lplumSetupType) | Started: \(LeanPlumClient.shared.isRunning()) | Device ID: \(LeanPlumClient.shared.leanplumDeviceId ?? "")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "LeanplumStatus")
     }
     
     override func onClick(_ navigationController: UINavigationController?) {
@@ -556,7 +557,7 @@ class LeanplumStatus: HiddenSetting {
     func copyLeanplumDeviceIDAndPresentAlert(by navigationController: UINavigationController?) {
         let alertTitle = Strings.SettingsCopyAppVersionAlertTitle
         let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
-        UIPasteboard.general.string = "\(LeanPlumClient.shared.leanplumDeviceId ?? "")"
+        UIPasteboard.general.string = ""//"\(LeanPlumClient.shared.leanplumDeviceId ?? "")"
         navigationController?.topViewController?.present(alert, animated: true) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 alert.dismiss(animated: true)
@@ -725,8 +726,8 @@ class SendAnonymousUsageDataSetting: BoolSetting {
             attributedTitleText: NSAttributedString(string: Strings.SendUsageSettingTitle),
             attributedStatusText: statusText,
             settingDidChange: {
-                LeanPlumClient.shared.set(attributes: [LPAttributeKey.telemetryOptIn: $0])
-                LeanPlumClient.shared.set(enabled: $0)
+//                LeanPlumClient.shared.set(attributes: [LPAttributeKey.telemetryOptIn: $0])
+//                LeanPlumClient.shared.set(enabled: $0)
                 Glean.shared.setUploadEnabled($0)
             }
         )
@@ -819,7 +820,7 @@ class LoginsSetting: Setting {
         }
         LoginListViewController.create(authenticateInNavigationController: navController, profile: profile, settingsDelegate: BrowserViewController.foregroundBVC(), webpageNavigationHandler: navigationHandler).uponQueue(.main) { loginsVC in
             guard let loginsVC = loginsVC else { return }
-            LeanPlumClient.shared.track(event: .openedLogins)
+//            LeanPlumClient.shared.track(event: .openedLogins)
             navController.pushViewController(loginsVC, animated: true)
         }
     }
@@ -1067,7 +1068,7 @@ class DefaultBrowserSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         //TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .settingsMenuSetAsDefaultBrowser)
-        LeanPlumClient.shared.track(event: .settingsSetAsDefaultBrowser)
+//        LeanPlumClient.shared.track(event: .settingsSetAsDefaultBrowser)
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
     }
 }
