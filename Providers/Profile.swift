@@ -477,7 +477,9 @@ open class BrowserProfile: Profile {
         let sendUsageData = prefs.boolForKey(AppConstants.PrefSendUsageData) ?? true
         if sendUsageData {
             SyncPing.fromQueuedEvents(prefs: self.prefs,
-                                      why: .schedule) >>== { SyncTelemetry.send(ping: $0, docType: .sync) }
+                                      why: .schedule) >>== {_ in
+//                                        SyncTelemetry.send(ping: $0, docType: .sync)
+                                      }
         }
     }
 
@@ -659,7 +661,9 @@ open class BrowserProfile: Profile {
                     SyncPing.from(result: result,
                                   remoteClientsAndTabs: profile.remoteClientsAndTabs,
                                   prefs: prefs,
-                                  why: .schedule) >>== { SyncTelemetry.send(ping: $0, docType: .sync) }
+                                  why: .schedule) >>== {_ in 
+//                                    SyncTelemetry.send(ping: $0, docType: .sync)
+                                  }
                 } else {
                     //log.debug("Profile isn't sending usage data. Not sending sync status event.")
                 }
