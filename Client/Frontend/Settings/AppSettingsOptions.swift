@@ -320,7 +320,7 @@ class AccountStatusSetting: WithAccountSetting {
 //            return NSAttributedString(string: email, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
 //        }
 
-        return nil
+        return NSAttributedString(string: "这。。。")
     }
 
     override var status: NSAttributedString? {
