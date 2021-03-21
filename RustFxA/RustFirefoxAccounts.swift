@@ -231,10 +231,8 @@ open class RustFirefoxAccounts {
     /// Rust FxA notification handlers can call this to update caches and the UI.
     private func update() {
         guard let accountManager = accountManager.peek() else { return }
-        let avatarUrl = accountManager.accountProfile()?.avatar?.url
-        if let str = avatarUrl, let url = URL(string: str) {
-            avatar = Avatar(url: url)
-        }
+
+        
 
         // The userProfile (email, display name, etc) and the device name need to be cached for when the app starts in an offline state. Now is a good time to update those caches.
 

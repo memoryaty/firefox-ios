@@ -359,9 +359,6 @@ class AccountStatusSetting: WithAccountSetting {
 
             imageView.image = UIImage(named: "placeholder-avatar")!.createScaled(CGSize(width: 30, height: 30))
 
-            RustFirefoxAccounts.shared.avatar?.image.uponQueue(.main) { image in
-                imageView.image = image.createScaled(CGSize(width: 30, height: 30))
-            }
         }
     }
 }
