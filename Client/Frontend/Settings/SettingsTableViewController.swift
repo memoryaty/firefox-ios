@@ -552,14 +552,6 @@ class AccountSetting: Setting {
     override var accessoryType: UITableViewCell.AccessoryType { return .none }
 }
 
-class WithAccountSetting: AccountSetting {
-    override var hidden: Bool { return !profile.hasAccount() }
-}
-
-class WithoutAccountSetting: AccountSetting {
-    override var hidden: Bool { return profile.hasAccount() }
-}
-
 @objc
 protocol SettingsDelegate: AnyObject {
     func settingsOpenURLInNewTab(_ url: URL)

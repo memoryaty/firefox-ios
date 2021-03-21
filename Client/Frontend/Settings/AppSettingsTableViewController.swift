@@ -54,15 +54,6 @@ class AppSettingsTableViewController: SettingsTableViewController {
             generalSettings.insert(SiriPageSetting(settings: self), at: 5)
         }
 
-        let accountChinaSyncSetting: [Setting]
-        if !AppInfo.isChinaEdition {
-            accountChinaSyncSetting = []
-        } else {
-            accountChinaSyncSetting = [
-                // Show China sync service setting:
-                ChinaSyncServiceSetting(settings: self)
-            ]
-        }
         // There is nothing to show in the Customize section if we don't include the compact tab layout
         // setting on iPad. When more options are added that work on both device types, this logic can
         // be changed.
@@ -82,18 +73,6 @@ class AppSettingsTableViewController: SettingsTableViewController {
             ]
         }
         
-        let accountSectionTitle = NSAttributedString(string: Strings.FxAFirefoxAccount)
-
-        let footerText = !profile.hasAccount() ? NSAttributedString(string: Strings.FxASyncUsageDetails) : nil
-        settings += [
-            SettingSection(title: accountSectionTitle, footerTitle: footerText, children: [
-                // Without a Firefox Account:
-                AdvancedAccountSetting(settings: self),
-                // With a Firefox Account:
-                AccountStatusSetting(settings: self),
-                SyncNowSetting(settings: self)
-            ] + accountChinaSyncSetting )]
-
         settings += [ SettingSection(title: NSAttributedString(string: Strings.SettingsGeneralSectionTitle), children: generalSettings)]
 
         var privacySettings = [Setting]()
@@ -135,7 +114,7 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 SlowTheDatabase(settings: self),
                 ForgetSyncAuthStateDebugSetting(settings: self),
                 SentryIDSetting(settings: self),
-                ChangeToChinaSetting(settings: self),
+
                 ShowEtpCoverSheet(settings: self),
                 LeanplumStatus(settings: self),
                 ToggleChronTabs(settings: self)

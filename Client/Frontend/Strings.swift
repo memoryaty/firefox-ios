@@ -104,11 +104,11 @@ extension Strings {
     public static let SettingsEditWebsiteSearchButton = MZLocalizedString("Settings.WebsiteData.ButtonEdit", value: "Edit", comment: "Button to edit website search results")
     public static let SettingsDeleteWebsiteSearchButton = MZLocalizedString("Settings.WebsiteData.ButtonDelete", value: "Delete", comment: "Button to delete website in search results")
     public static let SettingsDoneWebsiteSearchButton = MZLocalizedString("Settings.WebsiteData.ButtonDone", value: "Done", comment: "Button to exit edit website search results")
-    public static let SettingsDisconnectSyncAlertTitle = MZLocalizedString("Settings.Disconnect.Title", value: "Disconnect Sync?", comment: "Title of the alert when prompting the user asking to disconnect.")
-    public static let SettingsDisconnectSyncAlertBody = MZLocalizedString("Settings.Disconnect.Body", value: "Firefox will stop syncing with your account, but won’t delete any of your browsing data on this device.", comment: "Body of the alert when prompting the user asking to disconnect.")
+//    public static let SettingsDisconnectSyncAlertTitle = MZLocalizedString("Settings.Disconnect.Title", value: "Disconnect Sync?", comment: "Title of the alert when prompting the user asking to disconnect.")
+//    public static let SettingsDisconnectSyncAlertBody = MZLocalizedString("Settings.Disconnect.Body", value: "Firefox will stop syncing with your account, but won’t delete any of your browsing data on this device.", comment: "Body of the alert when prompting the user asking to disconnect.")
     public static let SettingsDisconnectSyncButton = MZLocalizedString("Settings.Disconnect.Button", value: "Disconnect Sync", comment: "Button displayed at the bottom of settings page allowing users to Disconnect from FxA")
-    public static let SettingsDisconnectCancelAction = MZLocalizedString("Settings.Disconnect.CancelButton", value: "Cancel", comment: "Cancel action button in alert when user is prompted for disconnect")
-    public static let SettingsDisconnectDestructiveAction = MZLocalizedString("Settings.Disconnect.DestructiveButton", value: "Disconnect", comment: "Destructive action button in alert when user is prompted for disconnect")
+//    public static let SettingsDisconnectCancelAction = MZLocalizedString("Settings.Disconnect.CancelButton", value: "Cancel", comment: "Cancel action button in alert when user is prompted for disconnect")
+//    public static let SettingsDisconnectDestructiveAction = MZLocalizedString("Settings.Disconnect.DestructiveButton", value: "Disconnect", comment: "Destructive action button in alert when user is prompted for disconnect")
     public static let SettingsSearchDoneButton = MZLocalizedString("Settings.Search.Done.Button", value: "Done", comment: "Button displayed at the top of the search settings.")
     public static let SettingsSearchEditButton = MZLocalizedString("Settings.Search.Edit.Button", value: "Edit", comment: "Button displayed at the top of the search settings.")
     public static let UseTouchID = MZLocalizedString("Use Touch ID", tableName: "AuthenticationManager", comment: "List section title for when to use Touch ID")
@@ -175,7 +175,7 @@ extension Strings {
 
 // Syncing
 extension Strings {
-    public static let SyncingMessageWithEllipsis = MZLocalizedString("Sync.SyncingEllipsis.Label", value: "Syncing…", comment: "Message displayed when the user's account is syncing with ellipsis at the end")
+//    public static let SyncingMessageWithEllipsis = MZLocalizedString("Sync.SyncingEllipsis.Label", value: "Syncing…", comment: "Message displayed when the user's account is syncing with ellipsis at the end")
     public static let SyncingMessageWithoutEllipsis = MZLocalizedString("Sync.Syncing.Label", value: "Syncing", comment: "Message displayed when the user's account is syncing with no ellipsis")
 
     public static let FirstTimeSyncLongTime = MZLocalizedString("Sync.FirstTimeMessage.Label", value: "Your first sync may take a while", comment: "Message displayed when the user syncs for the first time")
@@ -184,13 +184,13 @@ extension Strings {
     public static let FirefoxSyncNotStartedTitle = MZLocalizedString("SyncState.NotStarted.Title", value: "Sync is unavailable", comment: "Title for Sync status message when Sync failed to start.")
     public static let FirefoxSyncPartialTitle = MZLocalizedString("SyncState.Partial.Title", value: "Sync is experiencing issues syncing %@", comment: "Title for Sync status message when a component of Sync failed to complete, where %@ represents the name of the component, i.e. Sync is experiencing issues syncing Bookmarks")
     public static let FirefoxSyncFailedTitle = MZLocalizedString("SyncState.Failed.Title", value: "Syncing has failed", comment: "Title for Sync status message when synchronization failed to complete")
-    public static let FirefoxSyncTroubleshootTitle = MZLocalizedString("Settings.TroubleShootSync.Title", value: "Troubleshoot", comment: "Title of link to help page to find out how to solve Sync issues")
+//    public static let FirefoxSyncTroubleshootTitle = MZLocalizedString("Settings.TroubleShootSync.Title", value: "Troubleshoot", comment: "Title of link to help page to find out how to solve Sync issues")
     public static let FirefoxSyncCreateAccount = MZLocalizedString("Sync.NoAccount.Description", value: "No account? Create one to sync Firefox between devices.", comment: "String displayed on Sign In to Sync page that allows the user to create a new account.")
 
-    public static let FirefoxSyncBookmarksEngine = MZLocalizedString("Bookmarks", comment: "Toggle bookmarks syncing setting")
-    public static let FirefoxSyncHistoryEngine = MZLocalizedString("History", comment: "Toggle history syncing setting")
-    public static let FirefoxSyncTabsEngine = MZLocalizedString("Open Tabs", comment: "Toggle tabs syncing setting")
-    public static let FirefoxSyncLoginsEngine = MZLocalizedString("Logins", comment: "Toggle logins syncing setting")
+//    public static let FirefoxSyncBookmarksEngine = MZLocalizedString("Bookmarks", comment: "Toggle bookmarks syncing setting")
+//    public static let FirefoxSyncHistoryEngine = MZLocalizedString("History", comment: "Toggle history syncing setting")
+//    public static let FirefoxSyncTabsEngine = MZLocalizedString("Open Tabs", comment: "Toggle tabs syncing setting")
+//    public static let FirefoxSyncLoginsEngine = MZLocalizedString("Logins", comment: "Toggle logins syncing setting")
 
     public static func localizedStringForSyncComponent(_ componentName: String) -> String? {
         switch componentName {
@@ -245,18 +245,18 @@ extension Strings {
 // Firefox Account
 extension Strings {
     // Settings strings
-    public static let FxAFirefoxAccount = MZLocalizedString("FxA.FirefoxAccount", value: "Firefox Account", comment: "Settings section title for Firefox Account")
+//    public static let FxAFirefoxAccount = MZLocalizedString("FxA.FirefoxAccount", value: "Firefox Account", comment: "Settings section title for Firefox Account")
     public static let FxASignInToSync = MZLocalizedString("FxA.SignIntoSync", value: "Sign in to Sync", comment: "Button label to sign into Sync")
     public static let FxATakeYourWebWithYou = MZLocalizedString("FxA.TakeYourWebWithYou", value: "Take Your Web With You", comment: "Call to action for sign into sync button")
-    public static let FxASyncUsageDetails = MZLocalizedString("FxA.SyncExplain", value: "Get your tabs, bookmarks, and passwords from your other devices.", comment: "Label explaining what sync does")
+//    public static let FxASyncUsageDetails = MZLocalizedString("FxA.SyncExplain", value: "Get your tabs, bookmarks, and passwords from your other devices.", comment: "Label explaining what sync does")
     public static let FxAAccountVerificationRequired = MZLocalizedString("FxA.AccountVerificationRequired", value: "Account Verification Required", comment: "Label stating your account is not verified")
     public static let FxAAccountVerificationDetails = MZLocalizedString("FxA.AccountVerificationDetails", value: "Wrong email? Disconnect below to start over.", comment: "Label stating how to disconnect account")
     public static let FxAManageAccount = MZLocalizedString("FxA.ManageAccount", value: "Manage Account & Devices", comment: "Button label to go to Firefox Account settings")
     public static let FxASyncNow = MZLocalizedString("FxA.SyncNow", value: "Sync Now", comment: "Button label to Sync your Firefox Account")
     public static let FxANoInternetConnection = MZLocalizedString("FxA.NoInternetConnection", value: "No Internet Connection", comment: "Label when no internet is present")
     public static let FxASettingsTitle = MZLocalizedString("Settings.FxA.Title", value: "Firefox Account", comment: "Title displayed in header of the FxA settings panel.")
-    public static let FxASettingsSyncSettings = MZLocalizedString("Settings.FxA.Sync.SectionName", value: "Sync Settings", comment: "Label used as a section title in the Firefox Accounts Settings screen.")
-    public static let FxASettingsDeviceName = MZLocalizedString("Settings.FxA.DeviceName", value: "Device Name", comment: "Label used for the device name settings section.")
+//    public static let FxASettingsSyncSettings = MZLocalizedString("Settings.FxA.Sync.SectionName", value: "Sync Settings", comment: "Label used as a section title in the Firefox Accounts Settings screen.")
+//    public static let FxASettingsDeviceName = MZLocalizedString("Settings.FxA.DeviceName", value: "Device Name", comment: "Label used for the device name settings section.")
     public static let FxAOpenSyncPreferences = MZLocalizedString("FxA.OpenSyncPreferences", value: "Open Sync Preferences", comment: "Button label to open Sync preferences")
     public static let FxAConnectAnotherDevice = MZLocalizedString("FxA.ConnectAnotherDevice", value: "Connect Another Device", comment: "Button label to connect another device to Sync")
     public static let FxARemoveAccountButton = MZLocalizedString("FxA.RemoveAccount", value: "Remove", comment: "Remove button is displayed on firefox account page under certain scenarios where user would like to remove their account.")
@@ -317,11 +317,11 @@ extension Strings {
 
 // For 'Advanced Sync Settings' view, which is a debug setting. English only, there is little value in maintaining L10N strings for these.
 extension Strings {
-    public static let SettingsAdvancedAccountTitle = "Advanced Sync Settings"
+//    public static let SettingsAdvancedAccountTitle = "Advanced Sync Settings"
     public static let SettingsAdvancedAccountCustomFxAContentServerURI = "Custom Firefox Account Content Server URI"
-    public static let SettingsAdvancedAccountUseCustomFxAContentServerURITitle = "Use Custom FxA Content Server"
+//    public static let SettingsAdvancedAccountUseCustomFxAContentServerURITitle = "Use Custom FxA Content Server"
     public static let SettingsAdvancedAccountCustomSyncTokenServerURI = "Custom Sync Token Server URI"
-    public static let SettingsAdvancedAccountUseCustomSyncTokenServerTitle = "Use Custom Sync Token Server"
+//    public static let SettingsAdvancedAccountUseCustomSyncTokenServerTitle = "Use Custom Sync Token Server"
 }
 
 // Open With Settings
@@ -1212,7 +1212,7 @@ extension String {
 
 // Advanced Account Setting
 extension String {
-    public static let AdvancedAccountUseStageServer = MZLocalizedString("Use stage servers", comment: "Debug option")
+//    public static let AdvancedAccountUseStageServer = MZLocalizedString("Use stage servers", comment: "Debug option")
 }
 
 // App Settings

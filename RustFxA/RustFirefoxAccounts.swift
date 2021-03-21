@@ -111,34 +111,23 @@ open class RustFirefoxAccounts {
     }
 
     public var isChinaSyncServiceEnabled: Bool {
-        return RustFirefoxAccounts.prefs?.boolForKey(PrefsKeys.KeyEnableChinaSyncService) ?? AppInfo.isChinaEdition
+//        return RustFirefoxAccounts.prefs?.boolForKey(PrefsKeys.KeyEnableChinaSyncService) ?? AppInfo.isChinaEdition
+        return AppInfo.isChinaEdition
     }
 
     private func createAccountManager() -> FxAccountManager {
         let prefs = RustFirefoxAccounts.prefs
         assert(prefs != nil)
         let server: FxAConfig.Server
-        if prefs?.intForKey(PrefsKeys.UseStageServer) == 1 {
+        if prefs?.intForKey("PrefsKeys.UseStageServer") == 1 {
             server = FxAConfig.Server.stage
         } else {
             server = isChinaSyncServiceEnabled ? FxAConfig.Server.china : FxAConfig.Server.release
         }
 
         let config: FxAConfig
-        let useCustom = prefs?.boolForKey(PrefsKeys.KeyUseCustomFxAContentServer) ?? false || prefs?.boolForKey(PrefsKeys.KeyUseCustomSyncTokenServerOverride) ?? false
-        if useCustom {
-            let contentUrl: String
-            if prefs?.boolForKey(PrefsKeys.KeyUseCustomFxAContentServer) ?? false, let url = prefs?.stringForKey(PrefsKeys.KeyCustomFxAContentServer) {
-                contentUrl = url
-            } else {
-                contentUrl = "https://stable.dev.lcip.org"
-            }
-
-            let tokenServer = prefs?.boolForKey(PrefsKeys.KeyUseCustomSyncTokenServerOverride) ?? false ? prefs?.stringForKey(PrefsKeys.KeyCustomSyncTokenServerOverride) : nil
-            config = FxAConfig(contentUrl: contentUrl, clientId: RustFirefoxAccounts.clientID, redirectUri: RustFirefoxAccounts.redirectURL, tokenServerUrlOverride: tokenServer)
-        } else {
+        
             config = FxAConfig(server: server, clientId: RustFirefoxAccounts.clientID, redirectUri: RustFirefoxAccounts.redirectURL)
-        }
 
         let type = UIDevice.current.userInterfaceIdiom == .pad ? DeviceType.tablet : DeviceType.mobile
         let deviceConfig = DeviceConfig(name: DeviceInfo.defaultClientName(), type: type, capabilities: [.sendTab])
@@ -236,9 +225,9 @@ open class RustFirefoxAccounts {
         // The userProfile (email, display name, etc) and the device name need to be cached for when the app starts in an offline state. Now is a good time to update those caches.
 
         // Update the device name cache
-        if let deviceName = accountManager.deviceConstellation()?.state()?.localDevice?.displayName {
-            UserDefaults.standard.set(deviceName, forKey: RustFirefoxAccounts.prefKeyLastDeviceName)
-        }
+//        if let deviceName = accountManager.deviceConstellation()?.state()?.localDevice?.displayName {
+//            UserDefaults.standard.set(deviceName, forKey: RustFirefoxAccounts.prefKeyLastDeviceName)
+//        }
 
         // The legacy system had both of these notifications for UI updates. Possibly they could be made into a single notification
         NotificationCenter.default.post(name: .FirefoxAccountProfileChanged, object: self)

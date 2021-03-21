@@ -1904,7 +1904,7 @@ extension BrowserViewController {
     func getSignInOrFxASettingsVC(_ deepLinkParams: FxALaunchParams? = nil, flowType: FxAPageType, referringPage: ReferringPage) -> UIViewController {
         // Show the settings page if we have already signed in. If we haven't then show the signin page
         let parentType: FxASignInParentType
-        guard profile.hasSyncableAccount() else {
+
             switch referringPage {
             case .appMenu, .none:
                 parentType = .appMenu
@@ -1917,11 +1917,7 @@ extension BrowserViewController {
             let signInVC = FirefoxAccountSignInViewController(profile: profile, parentType: parentType, deepLinkParams: deepLinkParams)
             //TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: object)
             return signInVC
-        }
-
-        let settingsTableViewController = SyncContentSettingsViewController()
-        settingsTableViewController.profile = profile
-        return settingsTableViewController
+        
     }
 
     func presentSignInViewController(_ fxaOptions: FxALaunchParams? = nil, flowType: FxAPageType = .emailLoginFlow, referringPage: ReferringPage = .none) {
