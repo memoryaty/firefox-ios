@@ -28,7 +28,6 @@ open class RustFirefoxAccounts {
     public static var shared = RustFirefoxAccounts()
     public var accountManager = Deferred<FxAccountManager>()
     private static var isInitializingAccountManager = false
-    public var avatar: Avatar?
     public let syncAuthState: SyncAuthState
     fileprivate static var prefs: Prefs?
     public let pushNotifications = PushNotificationSetup()
