@@ -238,9 +238,6 @@ open class RustFirefoxAccounts {
 
         // The userProfile (email, display name, etc) and the device name need to be cached for when the app starts in an offline state. Now is a good time to update those caches.
 
-        // Accessing the profile will trigger a cache update if needed
-        _ = userProfile
-
         // Update the device name cache
         if let deviceName = accountManager.deviceConstellation()?.state()?.localDevice?.displayName {
             UserDefaults.standard.set(deviceName, forKey: RustFirefoxAccounts.prefKeyLastDeviceName)
@@ -251,40 +248,13 @@ open class RustFirefoxAccounts {
         NotificationCenter.default.post(name: .FirefoxAccountStateChange, object: self)
     }
 
-    /// Cache the user profile (i.e. email, user name) for when the app starts offline. Notice this gets cleared when an account is disconnected.
-    private let prefKeyCachedUserProfile = "prefKeyCachedUserProfile"
-    private var cachedUserProfile: FxAUserProfile?
-    public var userProfile: FxAUserProfile? {
-        get {
-            let prefs = RustFirefoxAccounts.prefs
-
-            if let accountManager = accountManager.peek(), let profile = accountManager.accountProfile() {
-                if let p = cachedUserProfile, FxAUserProfile(profile: profile) == p {
-                    return cachedUserProfile
-                }
-
-                cachedUserProfile = FxAUserProfile(profile: profile)
-                if let data = try? JSONEncoder().encode(cachedUserProfile!) {
-                    prefs?.setObject(data, forKey: prefKeyCachedUserProfile)
-                }
-            } else if cachedUserProfile == nil {
-                if let data: Data = prefs?.objectForKey(prefKeyCachedUserProfile) {
-                    cachedUserProfile = try? JSONDecoder().decode(FxAUserProfile.self, from: data)
-                }
-            }
-
-            return cachedUserProfile
-        }
-    }
-
     public func disconnect() {
         guard let accountManager = accountManager.peek() else { return }
         accountManager.logout() { _ in }
         let prefs = RustFirefoxAccounts.prefs
         prefs?.removeObjectForKey(RustFirefoxAccounts.prefKeySyncAuthStateUniqueID)
-        prefs?.removeObjectForKey(prefKeyCachedUserProfile)
         prefs?.removeObjectForKey(PendingAccountDisconnectedKey)
-        cachedUserProfile = nil
+
         pushNotifications.unregister()
         KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
     }
@@ -300,20 +270,3 @@ open class RustFirefoxAccounts {
     }
 }
 
-/**
- Wrap MozillaAppServices.Profile in an easy-to-serialize (and cache) FxAUserProfile.
- Caching of this is required for when the app starts offline.
- */
-public struct FxAUserProfile: Codable, Equatable {
-    public let uid: String
-    public let email: String
-    public let avatarUrl: String?
-    public let displayName: String?
-
-    init(profile: MozillaAppServices.Profile) {
-        uid = profile.uid
-        email = profile.email
-        avatarUrl = profile.avatar?.url
-        displayName = profile.displayName
-    }
-}

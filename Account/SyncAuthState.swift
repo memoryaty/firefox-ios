@@ -9,10 +9,6 @@ import SwiftyJSON
 import MozillaAppServices
 
 
-public let FxAClientErrorDomain = "org.mozilla.fxa.error"
-public let FxAClientUnknownError = NSError(domain: FxAClientErrorDomain, code: 999,
-    userInfo: [NSLocalizedDescriptionKey: "Invalid server response"])
-
 public struct FxAccountRemoteError {
     static let AttemptToOperateOnAnUnverifiedAccount: Int32     = 104
     static let InvalidAuthenticationToken: Int32                = 110

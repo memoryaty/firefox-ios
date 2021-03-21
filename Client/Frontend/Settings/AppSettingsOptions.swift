@@ -312,13 +312,13 @@ class AccountStatusSetting: WithAccountSetting {
     }
 
     override var title: NSAttributedString? {
-        if let displayName = RustFirefoxAccounts.shared.userProfile?.displayName {
-            return NSAttributedString(string: displayName, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
-        }
-
-        if let email = RustFirefoxAccounts.shared.userProfile?.email {
-            return NSAttributedString(string: email, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
-        }
+//        if let displayName = RustFirefoxAccounts.shared.userProfile?.displayName {
+//            return NSAttributedString(string: displayName, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
+//        }
+//
+//        if let email = RustFirefoxAccounts.shared.userProfile?.email {
+//            return NSAttributedString(string: email, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
+//        }
 
         return nil
     }

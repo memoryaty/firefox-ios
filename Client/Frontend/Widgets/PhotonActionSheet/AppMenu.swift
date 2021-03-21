@@ -90,22 +90,19 @@ extension PhotonActionSheetProtocol {
         let rustAccount = RustFirefoxAccounts.shared
         let needsReauth = rustAccount.accountNeedsReauth()
 
-        guard let userProfile = rustAccount.userProfile else {
-            return PhotonActionSheetItem(title: Strings.FxASignInToSync, iconString: "menu-sync", handler: action)
-        }
+//        guard let userProfile = rustAccount.userProfile else {
+//            return PhotonActionSheetItem(title: Strings.FxASignInToSync, iconString: "menu-sync", handler: action)
+//        }
         let title: String = {
             if rustAccount.accountNeedsReauth() {
                 return Strings.FxAAccountVerifyPassword
             }
-            return userProfile.displayName ?? userProfile.email
+            return ""
         }()
 
         let iconString = needsReauth ? "menu-warning" : "placeholder-avatar"
 
         var iconURL: URL? = nil
-        if let str = rustAccount.userProfile?.avatarUrl, let url = URL(string: str) {
-            iconURL = url
-        }
         let iconType: PhotonActionSheetIconType = needsReauth ? .Image : .URL
         let iconTint: UIColor? = needsReauth ? UIColor.Photon.Yellow60 : nil
         let syncOption = PhotonActionSheetItem(title: title, iconString: iconString, iconURL: iconURL, iconType: iconType, iconTint: iconTint, accessory: .Sync, handler: action)
