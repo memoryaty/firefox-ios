@@ -87,7 +87,7 @@ class TestAppDelegate: AppDelegate {
 
         // Don't show the ETP Coversheet New page.
         if launchArguments.contains(LaunchArguments.SkipETPCoverSheet) {
-            profile.prefs.setString(ETPCoverSheetShowType.DoNotShow.rawValue, forKey: PrefsKeys.KeyETPCoverSheetShowType)
+//            profile.prefs.setString(ETPCoverSheetShowType.DoNotShow.rawValue, forKey: PrefsKeys.KeyETPCoverSheetShowType)
         }
         
         // Don't show the What's New page.

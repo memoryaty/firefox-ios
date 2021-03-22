@@ -138,27 +138,6 @@ class ForgetSyncAuthStateDebugSetting: HiddenSetting {
     }
 }
 
-class ShowEtpCoverSheet: HiddenSetting {
-    let profile: Profile
-    
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: ETP Cover Sheet On", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-    
-    override init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-        super.init(settings: settings)
-    }
-    
-    override func onClick(_ navigationController: UINavigationController?) {
-        BrowserViewController.foregroundBVC().hasTriedToPresentETPAlready = false
-        // ETP is shown when user opens app for 3rd time on clean install.
-        // Hence setting session to 2 (0,1,2) for 3rd install as it starts from 0 being 1st session
-        self.profile.prefs.setInt(2, forKey: PrefsKeys.KeyInstallSession)
-        self.profile.prefs.setString(ETPCoverSheetShowType.CleanInstall.rawValue, forKey: PrefsKeys.KeyETPCoverSheetShowType)
-    }
-}
-
 ///Note: We have disabed it until we find best way to test newTabToolbarButton
 //class ToggleNewTabToolbarButton: HiddenSetting {
 //    override var title: NSAttributedString? {

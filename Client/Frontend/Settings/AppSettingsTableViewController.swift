@@ -115,8 +115,6 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 ForgetSyncAuthStateDebugSetting(settings: self),
 
 
-                ShowEtpCoverSheet(settings: self),
-
                 ToggleChronTabs(settings: self)
             ])]
 

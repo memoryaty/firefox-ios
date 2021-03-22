@@ -104,7 +104,6 @@ class BrowserViewController: UIViewController {
     var scrollController = TabScrollingController()
 
     fileprivate var keyboardState: KeyboardState?
-    var hasTriedToPresentETPAlready = false
     var hasTriedToPresentDBCardAlready = false
     var pendingToast: Toast? // A toast that might be waiting for BVC to appear before displaying
     var downloadToast: DownloadToast? // A toast that is showing the combined download progress
@@ -1760,43 +1759,6 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
-    
-    func presentETPCoverSheetViewController(_ force: Bool = false) {
-        guard !hasTriedToPresentETPAlready else {
-            return
-        }
-        hasTriedToPresentETPAlready = true
-//        let cleanInstall = UpdateViewModel.isCleanInstall(userPrefs: profile.prefs)
-        let cleanInstall = true
-        let shouldShow = ETPViewModel.shouldShowETPCoverSheet(userPrefs: profile.prefs, isCleanInstall: cleanInstall)
-        guard force || shouldShow else {
-            return
-        }
-        let etpCoverSheetViewController = ETPCoverSheetViewController()
-        if topTabsVisible {
-            etpCoverSheetViewController.preferredContentSize = CGSize(width: ViewControllerConsts.PreferredSize.UpdateViewController.width, height: ViewControllerConsts.PreferredSize.UpdateViewController.height)
-            etpCoverSheetViewController.modalPresentationStyle = .formSheet
-        } else {
-            etpCoverSheetViewController.modalPresentationStyle = .fullScreen
-        }
-        etpCoverSheetViewController.viewModel.startBrowsing = {
-            etpCoverSheetViewController.dismiss(animated: true) {
-            if self.navigationController?.viewControllers.count ?? 0 > 1 {
-                _ = self.navigationController?.popToRootViewController(animated: true)
-                }
-            }
-        }
-        etpCoverSheetViewController.viewModel.goToSettings = {
-            etpCoverSheetViewController.dismiss(animated: true) {
-                let settingsTableViewController = ContentBlockerSettingViewController(prefs: self.profile.prefs)
-                settingsTableViewController.profile = self.profile
-                settingsTableViewController.tabManager = self.tabManager
-                settingsTableViewController.settingsDelegate = self
-                self.presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: settingsTableViewController, topTabsVisible: self.topTabsVisible)
-            }
-        }
-        present(etpCoverSheetViewController, animated: true, completion: nil)
-    }
     
     // Default browser onboarding
     func presentDBOnboardingViewController(_ force: Bool = false) {
