@@ -665,9 +665,9 @@ extension Strings {
 
 // Settings Home
 extension Strings {
-    public static let SendUsageSettingTitle = MZLocalizedString("Settings.SendUsage.Title", value: "Send Usage Data", comment: "The title for the setting to send usage data.")
-    public static let SendUsageSettingLink = MZLocalizedString("Settings.SendUsage.Link", value: "Learn More.", comment: "title for a link that explains how mozilla collects telemetry")
-    public static let SendUsageSettingMessage = MZLocalizedString("Settings.SendUsage.Message", value: "Mozilla strives to only collect what we need to provide and improve Firefox for everyone.", comment: "A short description that explains why mozilla collects usage data.")
+//    public static let SendUsageSettingTitle = MZLocalizedString("Settings.SendUsage.Title", value: "Send Usage Data", comment: "The title for the setting to send usage data.")
+//    public static let SendUsageSettingLink = MZLocalizedString("Settings.SendUsage.Link", value: "Learn More.", comment: "title for a link that explains how mozilla collects telemetry")
+//    public static let SendUsageSettingMessage = MZLocalizedString("Settings.SendUsage.Message", value: "Mozilla strives to only collect what we need to provide and improve Firefox for everyone.", comment: "A short description that explains why mozilla collects usage data.")
     public static let SettingsSiriSectionName = MZLocalizedString("Settings.Siri.SectionName", value: "Siri Shortcuts", comment: "The option that takes you to the siri shortcuts settings page")
     public static let SettingsSiriSectionDescription = MZLocalizedString("Settings.Siri.SectionDescription", value: "Use Siri shortcuts to quickly open Firefox via Siri", comment: "The description that describes what siri shortcuts are")
     public static let SettingsSiriOpenURL = MZLocalizedString("Settings.Siri.OpenTabShortcut", value: "Open New Tab", comment: "The description of the open new tab siri shortcut")
@@ -1231,7 +1231,7 @@ extension String {
     public static let AppSettingsBlockPopups = MZLocalizedString("Block Pop-up Windows", comment: "Block pop-up windows setting")
     public static let AppSettingsClosePrivateTabsTitle = MZLocalizedString("Close Private Tabs", tableName: "PrivateBrowsing", comment: "Setting for closing private tabs")
     public static let AppSettingsClosePrivateTabsDescription = MZLocalizedString("When Leaving Private Browsing", tableName: "PrivateBrowsing", comment: "Will be displayed in Settings under 'Close Private Tabs'")
-    public static let AppSettingsSupport = MZLocalizedString("Support", comment: "Support section title")
+//    public static let AppSettingsSupport = MZLocalizedString("Support", comment: "Support section title")
     public static let AppSettingsAbout = MZLocalizedString("About", comment: "About settings section title")
 }
 

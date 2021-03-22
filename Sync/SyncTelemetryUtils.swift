@@ -265,6 +265,7 @@ public struct SyncPing: SyncTelemetryPing {
         }
     }
 
+    //del
     public static func from(result: SyncOperationResult,
                             remoteClientsAndTabs: RemoteClientsAndTabs,
                             prefs: Prefs,

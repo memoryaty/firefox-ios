@@ -64,7 +64,7 @@ public struct AppConstants {
         return scheme
     }()
 
-    public static let PrefSendUsageData = "settings.sendUsageData"
+//    public static let PrefSendUsageData = "settings.sendUsageData"
 
     /// Enables support for International Domain Names (IDN)
     /// Disabled because of https://bugzilla.mozilla.org/show_bug.cgi?id=1312294

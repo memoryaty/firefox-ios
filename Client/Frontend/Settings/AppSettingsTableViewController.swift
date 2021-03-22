@@ -97,12 +97,12 @@ class AppSettingsTableViewController: SettingsTableViewController {
 
         settings += [
             SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle), children: privacySettings),
-            SettingSection(title: NSAttributedString(string: .AppSettingsSupport), children: [
-                ShowIntroductionSetting(settings: self),
-                SendFeedbackSetting(),
-                SendAnonymousUsageDataSetting(prefs: prefs, delegate: settingsDelegate),
-                OpenSupportPageSetting(delegate: settingsDelegate),
-            ]),
+//            SettingSection(title: NSAttributedString(string: .AppSettingsSupport), children: [
+//                ShowIntroductionSetting(settings: self),
+//                SendFeedbackSetting(),
+//                SendAnonymousUsageDataSetting(prefs: prefs, delegate: settingsDelegate),
+//                OpenSupportPageSetting(delegate: settingsDelegate),
+//            ]),
             SettingSection(title: NSAttributedString(string: .AppSettingsAbout), children: [
                 VersionSetting(settings: self),
                 LicenseAndAcknowledgementsSetting(),
@@ -110,13 +110,13 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 ExportBrowserDataSetting(settings: self),
                 ExportLogDataSetting(settings: self),
                 DeleteExportedDataSetting(settings: self),
-                ForceCrashSetting(settings: self),
+//                ForceCrashSetting(settings: self),
                 SlowTheDatabase(settings: self),
                 ForgetSyncAuthStateDebugSetting(settings: self),
-                SentryIDSetting(settings: self),
+
 
                 ShowEtpCoverSheet(settings: self),
-                LeanplumStatus(settings: self),
+
                 ToggleChronTabs(settings: self)
             ])]
 

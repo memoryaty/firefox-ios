@@ -630,18 +630,18 @@ open class BrowserProfile: Profile {
 
             syncDisplayState = SyncStatusResolver(engineResults: result.engineResults).resolveResults()
 
-            #if MOZ_TARGET_CLIENT
-                if canSendUsageData() {
-                    SyncPing.from(result: result,
-                                  remoteClientsAndTabs: profile.remoteClientsAndTabs,
-                                  prefs: prefs,
-                                  why: .schedule) >>== {_ in 
-//                                    SyncTelemetry.send(ping: $0, docType: .sync)
-                                  }
-                } else {
-                    //log.debug("Profile isn't sending usage data. Not sending sync status event.")
-                }
-            #endif
+//            #if MOZ_TARGET_CLIENT
+//                if canSendUsageData() {
+//                    SyncPing.from(result: result,
+//                                  remoteClientsAndTabs: profile.remoteClientsAndTabs,
+//                                  prefs: prefs,
+//                                  why: .schedule) >>== {_ in 
+////                                    SyncTelemetry.send(ping: $0, docType: .sync)
+//                                  }
+//                } else {
+//                    //log.debug("Profile isn't sending usage data. Not sending sync status event.")
+//                }
+//            #endif
 
             // Dont notify if we are performing a sync in the background. This prevents more db access from happening
             if !self.backgrounded {
@@ -650,9 +650,9 @@ open class BrowserProfile: Profile {
             syncReducer = nil
         }
 
-        func canSendUsageData() -> Bool {
-            return profile.prefs.boolForKey(AppConstants.PrefSendUsageData) ?? true
-        }
+//        func canSendUsageData() -> Bool {
+//            return profile.prefs.boolForKey(AppConstants.PrefSendUsageData) ?? true
+//        }
 
         private func notifySyncing(notification: Notification.Name) {
             NotificationCenter.default.post(name: notification, object: syncDisplayState?.asObject())

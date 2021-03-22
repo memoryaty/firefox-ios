@@ -117,16 +117,6 @@ class FeatureSwitchSetting: BoolSetting {
 
 }
 
-class ForceCrashSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Force Crash", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        //Sentry.shared.crash()
-    }
-}
-
 class SlowTheDatabase: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: simulate slow database operations", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
@@ -148,36 +138,6 @@ class ForgetSyncAuthStateDebugSetting: HiddenSetting {
     }
 }
 
-class SentryIDSetting: HiddenSetting {
-    let deviceAppHash = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)?.string(forKey: "SentryDeviceAppHash") ?? "0000000000000000000000000000000000000000"
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Sentry ID: \(deviceAppHash)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10)])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        copyAppDeviceIDAndPresentAlert(by: navigationController)
-    }
-
-    func copyAppDeviceIDAndPresentAlert(by navigationController: UINavigationController?) {
-        let alertTitle = Strings.SettingsCopyAppVersionAlertTitle
-        let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
-        getSelectedCell(by: navigationController)?.setSelected(false, animated: true)
-        UIPasteboard.general.string = deviceAppHash
-        navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                alert.dismiss(animated: true)
-            }
-        }
-    }
-
-    func getSelectedCell(by navigationController: UINavigationController?) -> UITableViewCell? {
-        let controller = navigationController?.topViewController
-        let tableView = (controller as? AppSettingsTableViewController)?.tableView
-        guard let indexPath = tableView?.indexPathForSelectedRow else { return nil }
-        return tableView?.cellForRow(at: indexPath)
-    }
-}
-
 class ShowEtpCoverSheet: HiddenSetting {
     let profile: Profile
     
@@ -196,29 +156,6 @@ class ShowEtpCoverSheet: HiddenSetting {
         // Hence setting session to 2 (0,1,2) for 3rd install as it starts from 0 being 1st session
         self.profile.prefs.setInt(2, forKey: PrefsKeys.KeyInstallSession)
         self.profile.prefs.setString(ETPCoverSheetShowType.CleanInstall.rawValue, forKey: PrefsKeys.KeyETPCoverSheetShowType)
-    }
-}
-
-class LeanplumStatus: HiddenSetting {
-//    let lplumSetupType = LeanPlumClient.shared.lpSetupType()
-    override var title: NSAttributedString? {
-//        return NSAttributedString(string: "LP Setup: \(lplumSetupType) | Started: \(LeanPlumClient.shared.isRunning()) | Device ID: \(LeanPlumClient.shared.leanplumDeviceId ?? "")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-        return NSAttributedString(string: "LeanplumStatus")
-    }
-    
-    override func onClick(_ navigationController: UINavigationController?) {
-        copyLeanplumDeviceIDAndPresentAlert(by: navigationController)
-    }
-    
-    func copyLeanplumDeviceIDAndPresentAlert(by navigationController: UINavigationController?) {
-        let alertTitle = Strings.SettingsCopyAppVersionAlertTitle
-        let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
-        UIPasteboard.general.string = ""//"\(LeanPlumClient.shared.leanplumDeviceId ?? "")"
-        navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                alert.dismiss(animated: true)
-            }
-        }
     }
 }
 
@@ -334,83 +271,6 @@ class YourRightsSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         setUpAndPushSettingsContentViewController(navigationController, self.url)
-    }
-}
-
-// Opens the on-boarding screen again
-class ShowIntroductionSetting: Setting {
-    let profile: Profile
-
-    override var accessibilityIdentifier: String? { return "ShowTour" }
-
-    init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-        super.init(title: NSAttributedString(string: .AppSettingsShowTour, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        navigationController?.dismiss(animated: true, completion: {
-            BrowserViewController.foregroundBVC().presentIntroViewController(true)
-        })
-    }
-}
-
-class SendFeedbackSetting: Setting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: .AppSettingsSendFeedback, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override var url: URL? {
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-        return URL(string: "https://input.mozilla.org/feedback/fxios/\(appVersion)")
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        setUpAndPushSettingsContentViewController(navigationController, self.url)
-    }
-}
-
-class SendAnonymousUsageDataSetting: BoolSetting {
-    init(prefs: Prefs, delegate: SettingsDelegate?) {
-        let statusText = NSMutableAttributedString()
-        statusText.append(NSAttributedString(string: Strings.SendUsageSettingMessage, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextLight]))
-        statusText.append(NSAttributedString(string: " "))
-        statusText.append(NSAttributedString(string: Strings.SendUsageSettingLink, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.general.highlightBlue]))
-
-        super.init(
-            prefs: prefs, prefKey: AppConstants.PrefSendUsageData, defaultValue: true,
-            attributedTitleText: NSAttributedString(string: Strings.SendUsageSettingTitle),
-            attributedStatusText: statusText,
-            settingDidChange: {
-//                LeanPlumClient.shared.set(attributes: [LPAttributeKey.telemetryOptIn: $0])
-//                LeanPlumClient.shared.set(enabled: $0)
-                Glean.shared.setUploadEnabled($0)
-            }
-        )
-    }
-
-    override var url: URL? {
-        return SupportUtils.URLForTopic("adjust")
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        setUpAndPushSettingsContentViewController(navigationController, self.url)
-    }
-}
-
-// Opens the SUMO page in a new tab
-class OpenSupportPageSetting: Setting {
-    init(delegate: SettingsDelegate?) {
-        super.init(title: NSAttributedString(string: .AppSettingsHelp, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]),
-            delegate: delegate)
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        navigationController?.dismiss(animated: true) {
-            if let url = URL(string: "https://support.mozilla.org/products/ios") {
-                self.delegate?.settingsOpenURLInNewTab(url)
-            }
-        }
     }
 }
 
