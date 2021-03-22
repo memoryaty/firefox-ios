@@ -92,7 +92,7 @@ class TestAppDelegate: AppDelegate {
         
         // Don't show the What's New page.
         if launchArguments.contains(LaunchArguments.SkipWhatsNew) {
-            profile.prefs.setInt(1, forKey: PrefsKeys.KeyLastVersionNumber)
+//            profile.prefs.setInt(1, forKey: PrefsKeys.KeyLastVersionNumber)
         }
 
         // Skip the intro when requested by for example tests or automation

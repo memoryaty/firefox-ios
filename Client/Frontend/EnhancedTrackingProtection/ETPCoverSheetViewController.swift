@@ -7,6 +7,39 @@ import UIKit
 import SnapKit
 import Shared
 
+struct UpdateViewControllerUX {
+    struct DoneButton {
+        static let paddingTop = 20
+        static let paddingRight = 20
+        static let height = 20
+    }
+     
+    struct ImageView {
+        static let paddingTop = 50
+        static let paddingLeft = 18
+        static let height = 70
+    }
+    
+    struct TitleLabel {
+        static let paddingTop = 15
+        static let paddingLeft = 18
+        static let height = 40
+    }
+    
+    struct MidTableView {
+        static let cellIdentifier = "UpdatedCoverSheetTableViewCellIdentifier"
+        static let paddingTop = 20
+        static let paddingBottom = -10
+    }
+    
+    struct StartBrowsingButton {
+        static let colour = UIColor.Photon.Blue50
+        static let cornerRadius:CGFloat = 10
+        static let font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        static let height = 46
+        static let edgeInset = 18
+    }
+}
 
 /* The layout for ETP Cover Sheet
     

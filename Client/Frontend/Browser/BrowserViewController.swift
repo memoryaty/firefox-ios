@@ -624,9 +624,7 @@ class BrowserViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        presentIntroViewController()
         presentDBOnboardingViewController()
-        presentUpdateViewController()
         screenshotHelper.viewIsVisible = true
         screenshotHelper.takePendingScreenshots(tabManager.tabs)
 
@@ -1762,18 +1760,14 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
-    func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if alwaysShow || profile.prefs.intForKey(PrefsKeys.IntroSeen) == 0 {
-            showProperIntroVC()
-        }
-    }
     
     func presentETPCoverSheetViewController(_ force: Bool = false) {
         guard !hasTriedToPresentETPAlready else {
             return
         }
         hasTriedToPresentETPAlready = true
-        let cleanInstall = UpdateViewModel.isCleanInstall(userPrefs: profile.prefs)
+//        let cleanInstall = UpdateViewModel.isCleanInstall(userPrefs: profile.prefs)
+        let cleanInstall = true
         let shouldShow = ETPViewModel.shouldShowETPCoverSheet(userPrefs: profile.prefs, isCleanInstall: cleanInstall)
         guard force || shouldShow else {
             return
@@ -1827,41 +1821,6 @@ extension BrowserViewController {
             }
         }
         present(dBOnboardingViewController, animated: true, completion: nil)
-    }
-    
-    @discardableResult func presentUpdateViewController(_ force: Bool = false, animated: Bool = true) -> Bool {
-        let cleanInstall = UpdateViewModel.isCleanInstall(userPrefs: profile.prefs)
-        let coverSheetSupportedAppVersion = UpdateViewModel.coverSheetSupportedAppVersion
-        if force || UpdateViewModel.shouldShowUpdateSheet(userPrefs: profile.prefs, isCleanInstall: cleanInstall, supportedAppVersions: coverSheetSupportedAppVersion) {
-            let updateViewController = UpdateViewController()
-            
-            updateViewController.viewModel.startBrowsing = {
-                updateViewController.dismiss(animated: true) {
-                if self.navigationController?.viewControllers.count ?? 0 > 1 {
-                    _ = self.navigationController?.popToRootViewController(animated: true)
-                    }
-                }
-            }
-            
-            if topTabsVisible {
-                updateViewController.preferredContentSize = CGSize(width: ViewControllerConsts.PreferredSize.UpdateViewController.width, height: ViewControllerConsts.PreferredSize.UpdateViewController.height)
-                updateViewController.modalPresentationStyle = .formSheet
-            } else {
-                updateViewController.modalPresentationStyle = .fullScreen
-            }
-            
-            // On iPad we present it modally in a controller
-            present(updateViewController, animated: animated) {
-                // On first run (and forced) open up the homepage in the background.
-                if let homePageURL = NewTabHomePageAccessors.getHomePage(self.profile.prefs), let tab = self.tabManager.selectedTab, DeviceInfo.hasConnectivity() {
-                    tab.loadRequest(URLRequest(url: homePageURL))
-                }
-            }
-
-            return true
-        }
-        
-        return false
     }
 
     /// This function is called to determine if FxA sign in flow or settings page should be shown
