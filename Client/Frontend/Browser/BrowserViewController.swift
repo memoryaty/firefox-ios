@@ -398,6 +398,7 @@ class BrowserViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.profile.prefs.setInt(0, forKey: PrefsKeys.IntroSeen)
         NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActiveNotification), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActiveNotification), name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackgroundNotification), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -1762,7 +1763,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if alwaysShow || profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil {
+        if alwaysShow || profile.prefs.intForKey(PrefsKeys.IntroSeen) == 0 {
             showProperIntroVC()
         }
     }
@@ -1861,39 +1862,6 @@ extension BrowserViewController {
         }
         
         return false
-    }
-    
-    private func showProperIntroVC() {
-        let introViewController = IntroViewController()
-        introViewController.didFinishClosure = { controller, fxaLoginFlow in
-            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            controller.dismiss(animated: true) {
-                if self.navigationController?.viewControllers.count ?? 0 > 1 {
-                    _ = self.navigationController?.popToRootViewController(animated: true)
-                }
-                if let flow = fxaLoginFlow {
-                    let fxaParams = FxALaunchParams(query: ["entrypoint": "firstrun"])
-                    self.presentSignInViewController(fxaParams, flowType: flow, referringPage: .onboarding)
-                }
-            }
-        }
-        self.introVCPresentHelper(introViewController: introViewController)
-    }
-    
-    private func introVCPresentHelper(introViewController: UIViewController) {
-        // On iPad we present it modally in a controller
-        if topTabsVisible {
-            introViewController.preferredContentSize = CGSize(width: ViewControllerConsts.PreferredSize.IntroViewController.width, height: ViewControllerConsts.PreferredSize.IntroViewController.height)
-            introViewController.modalPresentationStyle = .formSheet
-        } else {
-            introViewController.modalPresentationStyle = .fullScreen
-        }
-        present(introViewController, animated: true) {
-            // On first run (and forced) open up the homepage in the background.
-            if let homePageURL = NewTabHomePageAccessors.getHomePage(self.profile.prefs), let tab = self.tabManager.selectedTab, DeviceInfo.hasConnectivity() {
-                tab.loadRequest(URLRequest(url: homePageURL))
-            }
-        }
     }
 
     /// This function is called to determine if FxA sign in flow or settings page should be shown
