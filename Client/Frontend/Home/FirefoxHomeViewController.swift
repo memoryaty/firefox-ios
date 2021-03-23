@@ -142,12 +142,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         return customCell
     }()
 
-    lazy var defaultBrowserCard: DefaultBrowserCard = {
-        let card = DefaultBrowserCard()
-        card.backgroundColor = UIColor.theme.homePanel.topSitesBackground
-        return card
-    }()
-
     var pocketStories: [PocketStory] = []
 
     init(profile: Profile) {
@@ -174,34 +168,14 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         self.collectionView?.register(ASFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView?.keyboardDismissMode = .onDrag
 
-        if #available(iOS 14.0, *), !UserDefaults.standard.bool(forKey: "DidDismissDefaultBrowserCard") {
-            self.view.addSubview(defaultBrowserCard)
-            defaultBrowserCard.snp.makeConstraints { make in
-                make.top.equalToSuperview()
-                make.bottom.equalTo(collectionView.snp.top)
-                make.width.lessThanOrEqualTo(508)
-                make.centerX.equalTo(self.view)
-            }
-            collectionView.snp.makeConstraints { make in
-                make.top.equalTo(defaultBrowserCard.snp.bottom)
-                make.bottom.left.right.equalToSuperview()
-            }
-            defaultBrowserCard.dismissClosure = {
-                self.dismissDefaultBrowserCard()
-            }
+        collectionView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.bottom.left.right.equalToSuperview()
         }
         self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         self.profile.panelDataObservers.activityStream.delegate = self
 
         applyTheme()
-    }
-
-    public func dismissDefaultBrowserCard() {
-        self.defaultBrowserCard.removeFromSuperview()
-        self.collectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.bottom.left.right.equalToSuperview()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -238,7 +212,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     }
 
     func applyTheme() {
-        defaultBrowserCard.applyTheme()
         collectionView?.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         topSiteCell.collectionView.reloadData()

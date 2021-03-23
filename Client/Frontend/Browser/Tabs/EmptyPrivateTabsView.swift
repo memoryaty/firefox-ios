@@ -9,9 +9,7 @@ import Foundation
 struct EmptyPrivateTabsViewUX {
     static let TitleFont = UIFont.systemFont(ofSize: 22, weight: UIFont.Weight.medium)
     static let DescriptionFont = UIFont.systemFont(ofSize: 17)
-    static let LearnMoreFont = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.medium)
     static let TextMargin: CGFloat = 18
-    static let LearnMoreMargin: CGFloat = 30
     static let MaxDescriptionWidth: CGFloat = 250
     static let MinBottomMargin: CGFloat = 10
 }
@@ -36,16 +34,6 @@ class EmptyPrivateTabsView: UIView {
         return label
     }()
 
-    var learnMoreButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle(
-            .PrivateBrowsingLearnMore,
-            for: [])
-        button.setTitleColor(UIColor.theme.tabTray.privateModeLearnMore, for: [])
-        button.titleLabel?.font = EmptyPrivateTabsViewUX.LearnMoreFont
-        return button
-    }()
-
     fileprivate var iconImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.templateImageNamed("largePrivateMask"))
         imageView.tintColor = UIColor.Photon.Grey60
@@ -61,7 +49,6 @@ class EmptyPrivateTabsView: UIView {
         addSubview(titleLabel)
         addSubview(descriptionLabel)
         addSubview(iconImageView)
-        addSubview(learnMoreButton)
 
         titleLabel.snp.makeConstraints { make in
             make.center.equalTo(self)
@@ -75,12 +62,6 @@ class EmptyPrivateTabsView: UIView {
 
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(EmptyPrivateTabsViewUX.TextMargin)
-            make.centerX.equalTo(self)
-        }
-
-        learnMoreButton.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(EmptyPrivateTabsViewUX.LearnMoreMargin).priority(10)
-            make.bottom.lessThanOrEqualTo(self).offset(-EmptyPrivateTabsViewUX.MinBottomMargin).priority(1000)
             make.centerX.equalTo(self)
         }
     }

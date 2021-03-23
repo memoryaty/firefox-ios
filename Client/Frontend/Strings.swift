@@ -809,7 +809,7 @@ extension Strings {
     // ETP Cover Sheet
 //    public static let CoverSheetETPTitle = MZLocalizedString("CoverSheet.v24.ETP.Title", value: "Protection Against Ad Tracking", comment: "Title for the new ETP mode i.e. standard vs strict")
 //    public static let CoverSheetETPDescription = MZLocalizedString("CoverSheet.v24.ETP.Description", value: "Built-in Enhanced Tracking Protection helps stop ads from following you around. Turn on Strict to block even more trackers, ads, and popups. ", comment: "Description for the new ETP mode i.e. standard vs strict")
-    public static let CoverSheetETPSettingsButton = MZLocalizedString("CoverSheet.v24.ETP.Settings.Button", value: "Go to Settings", comment: "Text for the new ETP settings button")
+//    public static let CoverSheetETPSettingsButton = MZLocalizedString("CoverSheet.v24.ETP.Settings.Button", value: "Go to Settings", comment: "Text for the new ETP settings button")
 }
 
 // FxA Signin screen
@@ -908,15 +908,15 @@ extension String {
 
 // Default Browser
 extension String {
-    public static let DefaultBrowserCardTitle = MZLocalizedString("DefaultBrowserCard.Title", tableName: "Default Browser", value: "Switch Your Default Browser", comment: "Title for small card shown that allows user to switch their default browser to Firefox.")
+//    public static let DefaultBrowserCardTitle = MZLocalizedString("DefaultBrowserCard.Title", tableName: "Default Browser", value: "Switch Your Default Browser", comment: "Title for small card shown that allows user to switch their default browser to Firefox.")
     public static let DefaultBrowserCardDescription = MZLocalizedString("DefaultBrowserCard.Description", tableName: "Default Browser", value: "Set links from websites, emails, and Messages to open automatically in Firefox.", comment: "Description for small card shown that allows user to switch their default browser to Firefox.")
-    public static let DefaultBrowserCardButton = MZLocalizedString("DefaultBrowserCard.Button.v2", tableName: "Default Browser", value: "Learn How", comment: "Button string to learn how to set your default browser.")
+//    public static let DefaultBrowserCardButton = MZLocalizedString("DefaultBrowserCard.Button.v2", tableName: "Default Browser", value: "Learn How", comment: "Button string to learn how to set your default browser.")
     public static let DefaultBrowserMenuItem = MZLocalizedString("Settings.DefaultBrowserMenuItem", tableName: "Default Browser", value: "Set as Default Browser", comment: "Menu option for setting Firefox as default browser.")
-    public static let DefaultBrowserOnboardingScreenshot = MZLocalizedString("DefaultBrowserOnboarding.Screenshot", tableName: "Default Browser", value: "Default Browser App", comment: "Text for the screenshot of the iOS system settings page for Firefox.")
-    public static let DefaultBrowserOnboardingDescriptionStep1 = MZLocalizedString("DefaultBrowserOnboarding.Description1", tableName: "Default Browser", value: "1. Go to Settings", comment: "Description for default browser onboarding card.")
-    public static let DefaultBrowserOnboardingDescriptionStep2 = MZLocalizedString("DefaultBrowserOnboarding.Description2", tableName: "Default Browser", value: "2. Tap Default Browser App", comment: "Description for default browser onboarding card.")
-    public static let DefaultBrowserOnboardingDescriptionStep3 = MZLocalizedString("DefaultBrowserOnboarding.Description3", tableName: "Default Browser", value: "3. Select Firefox", comment: "Description for default browser onboarding card.")
-    public static let DefaultBrowserOnboardingButton = MZLocalizedString("DefaultBrowserOnboarding.Button", tableName: "Default Browser", value: "Go to Settings", comment: "Button string to open settings that allows user to switch their default browser to Firefox.")
+//    public static let DefaultBrowserOnboardingScreenshot = MZLocalizedString("DefaultBrowserOnboarding.Screenshot", tableName: "Default Browser", value: "Default Browser App", comment: "Text for the screenshot of the iOS system settings page for Firefox.")
+//    public static let DefaultBrowserOnboardingDescriptionStep1 = MZLocalizedString("DefaultBrowserOnboarding.Description1", tableName: "Default Browser", value: "1. Go to Settings", comment: "Description for default browser onboarding card.")
+//    public static let DefaultBrowserOnboardingDescriptionStep2 = MZLocalizedString("DefaultBrowserOnboarding.Description2", tableName: "Default Browser", value: "2. Tap Default Browser App", comment: "Description for default browser onboarding card.")
+//    public static let DefaultBrowserOnboardingDescriptionStep3 = MZLocalizedString("DefaultBrowserOnboarding.Description3", tableName: "Default Browser", value: "3. Select Firefox", comment: "Description for default browser onboarding card.")
+//    public static let DefaultBrowserOnboardingButton = MZLocalizedString("DefaultBrowserOnboarding.Button", tableName: "Default Browser", value: "Go to Settings", comment: "Button string to open settings that allows user to switch their default browser to Firefox.")
 }
 
 // FxAWebViewController
@@ -1205,7 +1205,7 @@ extension String {
 
 // Empty Private tab view
 extension String {
-    public static let PrivateBrowsingLearnMore = MZLocalizedString("Learn More", tableName: "PrivateBrowsing", comment: "Text button displayed when there are no tabs open while in private mode")
+//    public static let PrivateBrowsingLearnMore = MZLocalizedString("Learn More", tableName: "PrivateBrowsing", comment: "Text button displayed when there are no tabs open while in private mode")
     public static let PrivateBrowsingTitle = MZLocalizedString("Private Browsing", tableName: "PrivateBrowsing", comment: "Title displayed for when there are no open tabs while in private mode")
     public static let PrivateBrowsingDescription = MZLocalizedString("Firefox won’t remember any of your history or cookies, but new bookmarks will be saved.", tableName: "PrivateBrowsing", comment: "Description text displayed when there are no open tabs while in private mode")
 }

@@ -104,7 +104,6 @@ class BrowserViewController: UIViewController {
     var scrollController = TabScrollingController()
 
     fileprivate var keyboardState: KeyboardState?
-    var hasTriedToPresentDBCardAlready = false
     var pendingToast: Toast? // A toast that might be waiting for BVC to appear before displaying
     var downloadToast: DownloadToast? // A toast that is showing the combined download progress
 
@@ -623,7 +622,6 @@ class BrowserViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        presentDBOnboardingViewController()
         screenshotHelper.viewIsVisible = true
         screenshotHelper.takePendingScreenshots(tabManager.tabs)
 
@@ -1759,31 +1757,6 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
-    
-    // Default browser onboarding
-    func presentDBOnboardingViewController(_ force: Bool = false) {
-        guard #available(iOS 14.0, *) else { return }
-        guard !hasTriedToPresentDBCardAlready || force else { return }
-        hasTriedToPresentDBCardAlready = true
-        let shouldShow = DefaultBrowserOnboardingViewModel.shouldShowDefaultBrowserOnboarding(userPrefs: profile.prefs)
-        guard force || shouldShow else {
-            return
-        }
-        let dBOnboardingViewController = DefaultBrowserOnboardingViewController()
-        if topTabsVisible {
-            dBOnboardingViewController.preferredContentSize = CGSize(width: ViewControllerConsts.PreferredSize.DBOnboardingViewController.width, height: ViewControllerConsts.PreferredSize.DBOnboardingViewController.height)
-            dBOnboardingViewController.modalPresentationStyle = .formSheet
-        } else {
-            dBOnboardingViewController.modalPresentationStyle = .popover
-        }
-        dBOnboardingViewController.viewModel.goToSettings = {
-            self.firefoxHomeViewController?.dismissDefaultBrowserCard()
-            dBOnboardingViewController.dismiss(animated: true) {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
-            }
-        }
-        present(dBOnboardingViewController, animated: true, completion: nil)
-    }
 
     /// This function is called to determine if FxA sign in flow or settings page should be shown
     /// - Parameters:

@@ -40,7 +40,6 @@ class TabTrayV2ViewController: UIViewController, Themeable {
     }()
     lazy var emptyPrivateTabsView: EmptyPrivateTabsView = {
         let emptyView = EmptyPrivateTabsView()
-        emptyView.learnMoreButton.addTarget(self, action: #selector(didTapLearnMore), for: .touchUpInside)
         return emptyView
     }()
     lazy var countLabel: UILabel = {
@@ -285,14 +284,6 @@ extension TabTrayV2ViewController: UITableViewDataSource {
         // We check if there is private tab then add one if user dismisses
         viewModel.addPrivateTab()
         navigationController?.dismiss(animated: true, completion: nil)
-    }
-    
-    @objc func didTapLearnMore() {
-        if let privateBrowsingUrl = SupportUtils.URLForTopic("private-browsing-ios") {
-            let learnMoreRequest = URLRequest(url: privateBrowsingUrl)
-            viewModel.addTab(learnMoreRequest)
-        }
-        self.dismissTabTray()
     }
     
     @objc func panelChanged() {

@@ -85,7 +85,6 @@ class TabTrayControllerV1: UIViewController {
 
     fileprivate lazy var emptyPrivateTabsView: EmptyPrivateTabsView = {
         let emptyView = EmptyPrivateTabsView()
-        emptyView.learnMoreButton.addTarget(self, action: #selector(didTapLearnMore), for: .touchUpInside)
         return emptyView
     }()
 
@@ -476,14 +475,6 @@ extension TabTrayControllerV1: TabDisplayer {
 }
 
 extension TabTrayControllerV1 {
-
-    @objc func didTapLearnMore() {
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        if let langID = Locale.preferredLanguages.first {
-            let learnMoreRequest = URLRequest(url: "https://support.mozilla.org/1/mobile/\(appVersion ?? "0.0")/iOS/\(langID)/private-browsing-ios".asURL!)
-            openNewTab(learnMoreRequest)
-        }
-    }
 
     func closeTabsForCurrentTray() {
         let tabs = self.tabDisplayManager.dataStore.compactMap { $0 }

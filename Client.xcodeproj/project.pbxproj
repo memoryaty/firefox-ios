@@ -47,8 +47,6 @@
 		1DF4266E251BC46D0086386A /* FaviconFetcher+Non-Bundled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF4266D251BC46D0086386A /* FaviconFetcher+Non-Bundled.swift */; };
 		1DF42682251BDB3A0086386A /* FaviconFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075561E37F714006961AC /* FaviconFetcher.swift */; };
 		1DF426CF251BDF6A0086386A /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
-		2328616825C9BD3D0015EA47 /* DefaultBrowserOnboarding.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2328616725C9BD3D0015EA47 /* DefaultBrowserOnboarding.xcassets */; };
-		2386E4E624F8358E0072EF17 /* DefaultBrowserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */; };
 		23A50958253F782E008FEBD9 /* NewTabButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A50957253F782E008FEBD9 /* NewTabButton.swift */; };
 		23AE36632475A0EF00ACB7BA /* TabTrayV2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AE36612475A0EF00ACB7BA /* TabTrayV2ViewController.swift */; };
 		23B5B499254C955E009AE055 /* TabMoreMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B5B498254C955E009AE055 /* TabMoreMenuViewController.swift */; };
@@ -57,7 +55,6 @@
 		23BEA768251A99ED00A014BF /* NewYorkMedium-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23BEA765251A99E200A014BF /* NewYorkMedium-BoldItalic.otf */; };
 		23BEA769251A99ED00A014BF /* NewYorkMedium-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23BEA763251A99E200A014BF /* NewYorkMedium-Regular.otf */; };
 		23BEA76A251A99ED00A014BF /* NewYorkMedium-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23BEA764251A99E200A014BF /* NewYorkMedium-RegularItalic.otf */; };
-		23ED80FF25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23ED80FE25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift */; };
 		23F2C36A244E463C00FA4496 /* TabTrayV2ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F2C369244E463C00FA4496 /* TabTrayV2ViewModel.swift */; };
 		274A36C9239EB94000A21587 /* LibraryPanelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274A36C8239EB94000A21587 /* LibraryPanelButton.swift */; };
 		274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274A36CB239EB99400A21587 /* LibraryPanelContextMenu.swift */; };
@@ -1013,10 +1010,8 @@
 		22A0463AA064A7ADBA9B137E /* oc */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = oc; path = oc.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		22F64C3593390E78C05FF0D8 /* my */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = my; path = my.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		230E478DAFE5E352010F5A6D /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearHistoryConfirm.strings"; sourceTree = "<group>"; };
-		2328616725C9BD3D0015EA47 /* DefaultBrowserOnboarding.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DefaultBrowserOnboarding.xcassets; sourceTree = "<group>"; };
 		232A46BAAA89E4AD19492352 /* az */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = az; path = az.lproj/PrivateBrowsing.strings; sourceTree = "<group>"; };
 		235F4611A612DE8043F84B6E /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
-		2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBrowserCard.swift; sourceTree = "<group>"; };
 		23A50957253F782E008FEBD9 /* NewTabButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabButton.swift; sourceTree = "<group>"; };
 		23AE36612475A0EF00ACB7BA /* TabTrayV2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabTrayV2ViewController.swift; sourceTree = "<group>"; };
 		23AE4C7C9BB6BF18049F49B0 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/PrivateBrowsing.strings"; sourceTree = "<group>"; };
@@ -1026,7 +1021,6 @@
 		23BEA764251A99E200A014BF /* NewYorkMedium-RegularItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NewYorkMedium-RegularItalic.otf"; sourceTree = "<group>"; };
 		23BEA765251A99E200A014BF /* NewYorkMedium-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NewYorkMedium-BoldItalic.otf"; sourceTree = "<group>"; };
 		23BEA766251A99E300A014BF /* NewYorkMedium-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NewYorkMedium-Bold.otf"; sourceTree = "<group>"; };
-		23ED80FE25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBrowserOnboardingViewController.swift; sourceTree = "<group>"; };
 		23F2C369244E463C00FA4496 /* TabTrayV2ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabTrayV2ViewModel.swift; sourceTree = "<group>"; };
 		23FA403CAE33C6C9B19A8BCC /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		24094609ACA55825A07B8040 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/Search.strings; sourceTree = "<group>"; };
@@ -3393,9 +3387,7 @@
 		23ED80FD25C899D700D0E9D5 /* DefaultBrowserOnboarding */ = {
 			isa = PBXGroup;
 			children = (
-				2328616725C9BD3D0015EA47 /* DefaultBrowserOnboarding.xcassets */,
 				431C0CA825C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift */,
-				23ED80FE25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift */,
 			);
 			path = DefaultBrowserOnboarding;
 			sourceTree = "<group>";
@@ -4704,7 +4696,6 @@
 				3BB50E1F1D627539004B33DF /* FirefoxHomeViewController.swift */,
 				74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */,
 				3BB50E101D6274CD004B33DF /* FirefoxHomeTopSitesCell.swift */,
-				2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */,
 				43AB6F9D25DC53D20016B015 /* ASFooterView.swift */,
 				43AB6F9E25DC53D20016B015 /* ASHeaderView.swift */,
 				43AB6F9F25DC53D30016B015 /* ASLibraryCell.swift */,
@@ -5243,7 +5234,6 @@
 				F35B8D2B1D6380EA008E3D61 /* SessionRestore.html in Resources */,
 				7B42406E1CA04CAC009B5C28 /* Menu.xcassets in Resources */,
 				23BEA767251A99ED00A014BF /* NewYorkMedium-Bold.otf in Resources */,
-				2328616825C9BD3D0015EA47 /* DefaultBrowserOnboarding.xcassets in Resources */,
 				3BC659591E5BA505006D560F /* top_sites.json in Resources */,
 				C8399D9522DE5E6200EFA5CA /* disconnect-block-social.json in Resources */,
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
@@ -5699,7 +5689,6 @@
 				274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */,
 				D314E7F71A37B98700426A76 /* TabToolbar.swift in Sources */,
 				048B4C7924A53E7B001B56E8 /* TodayModel.swift in Sources */,
-				2386E4E624F8358E0072EF17 /* DefaultBrowserCard.swift in Sources */,
 				E60D03181D511398002FE3F6 /* SyncStatusResolver.swift in Sources */,
 				C4E3983D1D21F1E7004E89BA /* TopTabsViews.swift in Sources */,
 				FA9293D41D6580E100AC8D33 /* QRCodeViewController.swift in Sources */,
@@ -5802,7 +5791,6 @@
 				E47616C71AB74CA600E7DD25 /* ReaderModeBarView.swift in Sources */,
 				D821E90E2141B71C00452C55 /* SiriSettingsViewController.swift in Sources */,
 				EBB89507219398E500EB91A0 /* ContentBlocker.swift in Sources */,
-				23ED80FF25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift in Sources */,
 				D88FDA9F1F4E2B9200FD9709 /* PhotonActionSheetProtocol.swift in Sources */,
 				E65075511E37F6D1006961AC /* NSURLExtensionsMailTo.swift in Sources */,
 				63306D432110B3CD00F25400 /* TabManagerStore.swift in Sources */,
