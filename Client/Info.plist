@@ -30,12 +30,8 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLName</key>
-			<string>org.mozilla.Client</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>firefox</string>
-				<string>$(MOZ_INTERNAL_URL_SCHEME)</string>
 				<string>http</string>
 				<string>https</string>
 			</array>

@@ -6,10 +6,6 @@ import Foundation
 import Shared
 import MozillaAppServices
 
-struct FxALaunchParams {
-    var query: [String: String]
-}
-
 // An enum to route to HomePanels
 enum HomePanelPath: String {
     case bookmarks = "bookmarks"
@@ -70,7 +66,6 @@ extension URLComponents {
 enum NavigationPath {
     case url(webURL: URL?, isPrivate: Bool)
     case widgetUrl(webURL: URL?, uuid: String)
-    case fxa(params: FxALaunchParams)
     case deepLink(DeepLink)
     case text(String)
     case glean(url: URL)
@@ -94,9 +89,7 @@ enum NavigationPath {
 
         if urlString.starts(with: "\(scheme)://deep-link"), let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
             self = .deepLink(link)
-        } else if urlString.starts(with: "\(scheme)://fxa-signin"), components.valueForQuery("signin") != nil {
-            self = .fxa(params: FxALaunchParams(query: url.getQuery()))
-        } else if urlString.starts(with: "\(scheme)://open-url") {
+        }  else if urlString.starts(with: "\(scheme)://open-url") {
             self = .openUrlFromComponents(components: components)
         } else if let widgetKitNavPath = NavigationPath.handleWidgetKitQuery(urlString: urlString, scheme: scheme, components: components) {
             self = widgetKitNavPath
@@ -118,7 +111,6 @@ enum NavigationPath {
 
     static func handle(nav: NavigationPath, with bvc: BrowserViewController, tray: TabTrayControllerV1) {
         switch nav {
-        case .fxa(let params): NavigationPath.handleFxA(params: params, with: bvc)
         case .deepLink(let link): NavigationPath.handleDeepLink(link, with: bvc)
         case .url(let url, let isPrivate): NavigationPath.handleURL(url: url, isPrivate: isPrivate, with: bvc)
         case .text(let text): NavigationPath.handleText(text: text, with: bvc)
@@ -206,10 +198,6 @@ enum NavigationPath {
         }
         let tab = tabs[uuid]
         return .widgetUrl(webURL: tab?.url, uuid: uuid)
-    }
-    
-    private static func handleFxA(params: FxALaunchParams, with bvc: BrowserViewController) {
-//        bvc.presentSignInViewController(params)
     }
 
     private static func handleClosePrivateTabs(with bvc: BrowserViewController, tray: TabTrayControllerV1) {
@@ -313,8 +301,6 @@ func == (lhs: NavigationPath, rhs: NavigationPath) -> Bool {
     switch (lhs, rhs) {
     case let (.url(lhsURL, lhsPrivate), .url(rhsURL, rhsPrivate)):
         return lhsURL == rhsURL && lhsPrivate == rhsPrivate
-    case let (.fxa(lhs), .fxa(rhs)):
-        return lhs.query == rhs.query
     case let (.deepLink(lhs), .deepLink(rhs)):
         return lhs == rhs
     default:

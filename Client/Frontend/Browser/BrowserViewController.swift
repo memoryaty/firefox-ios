@@ -1441,12 +1441,12 @@ extension BrowserViewController: TabDelegate {
 
 extension BrowserViewController: LibraryPanelDelegate {
     func libraryPanelDidRequestToSignIn() {
-        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
+//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
 //        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
     func libraryPanelDidRequestToCreateAccount() {
-        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
+//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
 //        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
