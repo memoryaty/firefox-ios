@@ -29,7 +29,6 @@ enum SettingsPage: String {
     case mailto = "mailto"
     case search = "search"
     case clearPrivateData = "clear-private-data"
-    case fxa = "fxa"
     case theme = "theme"
 }
 
@@ -210,7 +209,7 @@ enum NavigationPath {
     }
     
     private static func handleFxA(params: FxALaunchParams, with bvc: BrowserViewController) {
-        bvc.presentSignInViewController(params)
+//        bvc.presentSignInViewController(params)
     }
 
     private static func handleClosePrivateTabs(with bvc: BrowserViewController, tray: TabTrayControllerV1) {
@@ -294,9 +293,6 @@ enum NavigationPath {
             let viewController = ClearPrivateDataTableViewController()
             viewController.profile = profile
             viewController.tabManager = tabManager
-            controller.pushViewController(viewController, animated: true)
-        case .fxa:
-            let viewController = bvc.getSignInOrFxASettingsVC(flowType: .emailLoginFlow, referringPage: .settings)
             controller.pushViewController(viewController, animated: true)
         case .theme:
             controller.pushViewController(ThemeSettingsController(), animated: true)

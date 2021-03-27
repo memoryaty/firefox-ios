@@ -79,28 +79,4 @@ extension PhotonActionSheetProtocol {
         return items
     }
 
-    func syncMenuButton(showFxA: @escaping (_ params: FxALaunchParams?, _ flowType: FxAPageType,_ referringPage: ReferringPage) -> Void) -> PhotonActionSheetItem? {
-        //profile.getAccount()?.updateProfile()
-
-        let action: ((PhotonActionSheetItem, UITableViewCell) -> Void) = { action,_ in
-            let fxaParams = FxALaunchParams(query: ["entrypoint": "browsermenu"])
-            showFxA(fxaParams, .emailLoginFlow, .appMenu)
-        }
-
-
-//        guard let userProfile = rustAccount.userProfile else {
-//            return PhotonActionSheetItem(title: Strings.FxASignInToSync, iconString: "menu-sync", handler: action)
-//        }
-        let title: String = {
-            
-            return "这。。"
-        }()
-
-
-        var iconURL: URL? = nil
-        let iconType: PhotonActionSheetIconType =  .URL
-        let iconTint: UIColor? =  UIColor.Photon.Yellow60 
-        let syncOption = PhotonActionSheetItem(title: title, iconString: nil, iconURL: iconURL, iconType: iconType, iconTint: iconTint, accessory: .Sync, handler: action)
-        return syncOption
-    }
 }

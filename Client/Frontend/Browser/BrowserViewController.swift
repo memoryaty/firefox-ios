@@ -40,14 +40,6 @@ struct UrlToOpenModel {
     var isPrivate: Bool
 }
 
-/// Enum used to track flow for telemetry events
-enum ReferringPage {
-    case onboarding
-    case appMenu
-    case settings
-    case none
-}
-
 class BrowserViewController: UIViewController {
     var firefoxHomeViewController: FirefoxHomeViewController?
     var libraryViewController: LibraryViewController?
@@ -1450,12 +1442,12 @@ extension BrowserViewController: TabDelegate {
 extension BrowserViewController: LibraryPanelDelegate {
     func libraryPanelDidRequestToSignIn() {
         let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
     func libraryPanelDidRequestToCreateAccount() {
         let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
     func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
@@ -1754,43 +1746,6 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         return .none
     }
-}
-
-extension BrowserViewController {
-
-    /// This function is called to determine if FxA sign in flow or settings page should be shown
-    /// - Parameters:
-    ///     - deepLinkParams: FxALaunchParams from deeplink query
-    ///     - flowType: FxAPageType is used to determine if email login, qr code login, or user settings page should be presented
-    ///     - referringPage: ReferringPage enum is used to handle telemetry events correctly for the view event and the FxA sign in tap events, need to know which route we took to get to them
-    func getSignInOrFxASettingsVC(_ deepLinkParams: FxALaunchParams? = nil, flowType: FxAPageType, referringPage: ReferringPage) -> UIViewController {
-        // Show the settings page if we have already signed in. If we haven't then show the signin page
-        let parentType: FxASignInParentType
-
-            switch referringPage {
-            case .appMenu, .none:
-                parentType = .appMenu
-            case .onboarding:
-                parentType = .onboarding
-            case .settings:
-                parentType = .settings
-            }
-
-            let signInVC = FirefoxAccountSignInViewController(profile: profile, parentType: parentType, deepLinkParams: deepLinkParams)
-            //TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: object)
-            return signInVC
-        
-    }
-
-    func presentSignInViewController(_ fxaOptions: FxALaunchParams? = nil, flowType: FxAPageType = .emailLoginFlow, referringPage: ReferringPage = .none) {
-        let vcToPresent = getSignInOrFxASettingsVC(fxaOptions, flowType: flowType, referringPage: referringPage)
-        presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: vcToPresent, topTabsVisible: UIDevice.current.userInterfaceIdiom == .pad)
-    }
-
-    @objc func dismissSignInViewController() {
-        self.dismiss(animated: true, completion: nil)
-    }
-
 }
 
 extension BrowserViewController: ContextMenuHelperDelegate {

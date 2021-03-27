@@ -92,13 +92,13 @@ public extension String {
         return self.replacingOccurrences(of: string ?? "", with: "")
     }
 
-    func replaceFirstOccurrence(of original: String, with replacement: String) -> String {
-        guard let range = self.range(of: original) else {
-            return self
-        }
-
-        return self.replacingCharacters(in: range, with: replacement)
-    }
+//    func replaceFirstOccurrence(of original: String, with replacement: String) -> String {
+//        guard let range = self.range(of: original) else {
+//            return self
+//        }
+//
+//        return self.replacingCharacters(in: range, with: replacement)
+//    }
     
     func isEmptyOrWhitespace() -> Bool {
         // Check empty string

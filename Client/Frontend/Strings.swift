@@ -814,9 +814,9 @@ extension Strings {
 
 // FxA Signin screen
 extension Strings {
-    public static let FxASignin_Title = MZLocalizedString("fxa.signin.turn-on-sync", value: "Turn on Sync", comment: "FxA sign in view title")
+//    public static let FxASignin_Title = MZLocalizedString("fxa.signin.turn-on-sync", value: "Turn on Sync", comment: "FxA sign in view title")
     public static let FxASignin_Subtitle = MZLocalizedString("fxa.signin.camera-signin", value: "Sign In with Your Camera", comment: "FxA sign in view subtitle")
-    public static let FxASignin_QRInstructions = MZLocalizedString("fxa.signin.qr-link-instruction", value: "On your computer open Firefox and go to firefox.com/pair", comment: "FxA sign in view qr code instructions")
+//    public static let FxASignin_QRInstructions = MZLocalizedString("fxa.signin.qr-link-instruction", value: "On your computer open Firefox and go to firefox.com/pair", comment: "FxA sign in view qr code instructions")
     public static let FxASignin_QRScanSignin = MZLocalizedString("fxa.signin.ready-to-scan", value: "Ready to Scan", comment: "FxA sign in view qr code scan button")
     public static let FxASignin_EmailSignin = MZLocalizedString("fxa.signin.use-email-instead", value: "Use Email Instead", comment: "FxA sign in view email login button")
     public static let FxASignin_CreateAccountPt1 = MZLocalizedString("fxa.signin.create-account-pt-1", value: "Sync Firefox between devices with an account.", comment: "FxA sign in create account label.")
@@ -921,7 +921,7 @@ extension String {
 
 // FxAWebViewController
 extension String {
-    public static let FxAWebContentAccessibilityLabel = MZLocalizedString("Web content", comment: "Accessibility label for the main web content view")
+//    public static let FxAWebContentAccessibilityLabel = MZLocalizedString("Web content", comment: "Accessibility label for the main web content view")
 }
 
 // QuickActions
