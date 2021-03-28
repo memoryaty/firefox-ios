@@ -159,7 +159,7 @@ extension TabMoreMenuViewController: UITableViewDataSource {
         return 3
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 3 }
+        if section == 0 { return 2 }
         else if section == 1 { return 3 }
         else { return 1 }
     }
