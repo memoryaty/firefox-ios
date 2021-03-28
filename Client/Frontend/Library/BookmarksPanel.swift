@@ -61,8 +61,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
         super.init(profile: profile)
 
-        [ Notification.Name.FirefoxAccountChanged,
-          Notification.Name.DynamicFontChanged ].forEach {
+        [   Notification.Name.DynamicFontChanged ].forEach {
             NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived), name: $0, object: nil)
         }
 
@@ -310,7 +309,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     @objc fileprivate func notificationReceived(_ notification: Notification) {
         switch notification.name {
-        case .FirefoxAccountChanged, .DynamicFontChanged:
+        case .DynamicFontChanged:
             reloadData()
         default:
             //log.warning("Received unexpected notification \(notification.name)")

@@ -15,8 +15,6 @@ struct LibraryPanelUX {
 }
 
 protocol LibraryPanelDelegate: AnyObject {
-    func libraryPanelDidRequestToSignIn()
-    func libraryPanelDidRequestToCreateAccount()
     func libraryPanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool)
     func libraryPanel(didSelectURL url: URL, visitType: VisitType)
     func libraryPanel(didSelectURLString url: String, visitType: VisitType)
@@ -27,7 +25,7 @@ enum LibraryPanelType: Int {
     case history = 1
     case readingList = 2
     case downloads = 3
-    case syncedTabs = 4
+//    case syncedTabs = 4
 }
 
 /**
@@ -106,13 +104,13 @@ class LibraryPanels {
             accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
             accessibilityIdentifier: "LibraryPanels.Downloads"),
 
-        LibraryPanelDescriptor(
-            makeViewController: { profile in
-                return RemoteTabsPanel(profile: profile)
-            },
-            profile: profile,
-            imageName: "SyncedTabs",
-            accessibilityLabel: .LibraryPanelSyncedTabsAccessibilityLabel,
-            accessibilityIdentifier: "LibraryPanels.SyncedTabs"),
+//        LibraryPanelDescriptor(
+//            makeViewController: { profile in
+//                return RemoteTabsPanel(profile: profile)
+//            },
+//            profile: profile,
+//            imageName: "SyncedTabs",
+//            accessibilityLabel: .LibraryPanelSyncedTabsAccessibilityLabel,
+//            accessibilityIdentifier: "LibraryPanels.SyncedTabs"),
     ]
 }

@@ -146,12 +146,12 @@ extension Strings {
 extension Strings {
     public static let SyncedTabsTableViewCellTitle = MZLocalizedString("HistoryPanel.SyncedTabsCell.Title", value: "Synced Devices", comment: "Title for the Synced Tabs Cell in the History Panel")
     public static let HistoryBackButtonTitle = MZLocalizedString("HistoryPanel.HistoryBackButton.Title", value: "History", comment: "Title for the Back to History button in the History Panel")
-    public static let EmptySyncedTabsPanelStateTitle = MZLocalizedString("HistoryPanel.EmptySyncedTabsState.Title", value: "Firefox Sync", comment: "Title for the empty synced tabs state in the History Panel")
-    public static let EmptySyncedTabsPanelNotSignedInStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description", value: "Sign in to view a list of tabs from your other devices.", comment: "Description for the empty synced tabs 'not signed in' state in the History Panel")
+//    public static let EmptySyncedTabsPanelStateTitle = MZLocalizedString("HistoryPanel.EmptySyncedTabsState.Title", value: "Firefox Sync", comment: "Title for the empty synced tabs state in the History Panel")
+//    public static let EmptySyncedTabsPanelNotSignedInStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsPanelNotSignedInState.Description", value: "Sign in to view a list of tabs from your other devices.", comment: "Description for the empty synced tabs 'not signed in' state in the History Panel")
     public static let EmptySyncedTabsPanelNotYetVerifiedStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsPanelNotYetVerifiedState.Description", value: "Your account needs to be verified.", comment: "Description for the empty synced tabs 'not yet verified' state in the History Panel")
     public static let EmptySyncedTabsPanelSingleDeviceSyncStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsPanelSingleDeviceSyncState.Description", value: "Want to see your tabs from other devices here?", comment: "Description for the empty synced tabs 'single device Sync' state in the History Panel")
     public static let EmptySyncedTabsPanelTabSyncDisabledStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsPanelTabSyncDisabledState.Description", value: "Turn on tab syncing to view a list of tabs from your other devices.", comment: "Description for the empty synced tabs 'tab sync disabled' state in the History Panel")
-    public static let EmptySyncedTabsPanelNullStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsNullState.Description", value: "Your tabs from other devices show up here.", comment: "Description for the empty synced tabs null state in the History Panel")
+//    public static let EmptySyncedTabsPanelNullStateDescription = MZLocalizedString("HistoryPanel.EmptySyncedTabsNullState.Description", value: "Your tabs from other devices show up here.", comment: "Description for the empty synced tabs null state in the History Panel")
     public static let SyncedTabsTableViewCellDescription = MZLocalizedString("HistoryPanel.SyncedTabsCell.Description.Pluralized", value: "%d device(s) connected", comment: "Description that corresponds with a number of devices connected for the Synced Tabs Cell in the History Panel")
     public static let HistoryPanelEmptyStateTitle = MZLocalizedString("HistoryPanel.EmptyState.Title", value: "Websites you’ve visited recently will show up here.", comment: "Title for the History Panel empty state.")
     public static let RecentlyClosedTabsButtonTitle = MZLocalizedString("HistoryPanel.RecentlyClosedTabsButton.Title", value: "Recently Closed", comment: "Title for the Recently Closed button in the History Panel")
@@ -246,7 +246,7 @@ extension Strings {
 extension Strings {
     // Settings strings
 //    public static let FxAFirefoxAccount = MZLocalizedString("FxA.FirefoxAccount", value: "Firefox Account", comment: "Settings section title for Firefox Account")
-    public static let FxASignInToSync = MZLocalizedString("FxA.SignIntoSync", value: "Sign in to Sync", comment: "Button label to sign into Sync")
+//    public static let FxASignInToSync = MZLocalizedString("FxA.SignIntoSync", value: "Sign in to Sync", comment: "Button label to sign into Sync")
     public static let FxATakeYourWebWithYou = MZLocalizedString("FxA.TakeYourWebWithYou", value: "Take Your Web With You", comment: "Call to action for sign into sync button")
 //    public static let FxASyncUsageDetails = MZLocalizedString("FxA.SyncExplain", value: "Get your tabs, bookmarks, and passwords from your other devices.", comment: "Label explaining what sync does")
     public static let FxAAccountVerificationRequired = MZLocalizedString("FxA.AccountVerificationRequired", value: "Account Verification Required", comment: "Label stating your account is not verified")
@@ -549,7 +549,7 @@ extension Strings {
     public static let AppMenuReadingListTitleString = MZLocalizedString("Menu.OpenReadingListAction.AccessibilityLabel.v2", tableName: "Menu", value: "Reading List", comment: "Accessibility label for the button, displayed in the menu, used to open the Reading list home panel. Please keep as short as possible, <15 chars of space available.")
     public static let AppMenuHistoryTitleString = MZLocalizedString("Menu.OpenHistoryAction.AccessibilityLabel.v2", tableName: "Menu", value: "History", comment: "Accessibility label for the button, displayed in the menu, used to open the History home panel. Please keep as short as possible, <15 chars of space available.")
     public static let AppMenuDownloadsTitleString = MZLocalizedString("Menu.OpenDownloadsAction.AccessibilityLabel.v2", tableName: "Menu", value: "Downloads", comment: "Accessibility label for the button, displayed in the menu, used to open the Downloads home panel. Please keep as short as possible, <15 chars of space available.")
-    public static let AppMenuSyncedTabsTitleString = MZLocalizedString("Menu.OpenSyncedTabsAction.AccessibilityLabel.v2", tableName: "Menu", value: "Synced Tabs", comment: "Accessibility label for the button, displayed in the menu, used to open the Synced Tabs home panel. Please keep as short as possible, <15 chars of space available.")
+//    public static let AppMenuSyncedTabsTitleString = MZLocalizedString("Menu.OpenSyncedTabsAction.AccessibilityLabel.v2", tableName: "Menu", value: "Synced Tabs", comment: "Accessibility label for the button, displayed in the menu, used to open the Synced Tabs home panel. Please keep as short as possible, <15 chars of space available.")
     public static let AppMenuLibrarySeeAllTitleString = MZLocalizedString("Menu.SeeAllAction.Title", tableName: "Menu", value: "See All", comment: "Label for the button, displayed in Firefox Home, used to see all Library panels.")
     public static let AppMenuButtonAccessibilityLabel = MZLocalizedString("Toolbar.Menu.AccessibilityLabel", value: "Menu", comment: "Accessibility label for the Menu button.")
     public static let TabTrayDeleteMenuButtonAccessibilityLabel = MZLocalizedString("Toolbar.Menu.CloseAllTabs", value: "Close All Tabs", comment: "Accessibility label for the Close All Tabs menu button.")
@@ -562,7 +562,7 @@ extension Strings {
     public static let AppMenuAddPinToTopSitesConfirmMessage = MZLocalizedString("Menu.AddPin.Confirm", value: "Pinned To Top Sites", comment: "Toast displayed to the user after adding the item to the Top Sites.")
     public static let AppMenuRemovePinFromTopSitesConfirmMessage = MZLocalizedString("Menu.RemovePin.Confirm", value: "Removed From Top Sites", comment: "Toast displayed to the user after removing the item from the Top Sites.")
     public static let AppMenuAddToReadingListConfirmMessage = MZLocalizedString("Menu.AddToReadingList.Confirm", value: "Added To Reading List", comment: "Toast displayed to the user after adding the item to their reading list.")
-    public static let SendToDeviceTitle = MZLocalizedString("Send to Device", tableName: "3DTouchActions", comment: "Label for preview action on Tab Tray Tab to send the current tab to another device")
+//    public static let SendToDeviceTitle = MZLocalizedString("Send to Device", tableName: "3DTouchActions", comment: "Label for preview action on Tab Tray Tab to send the current tab to another device")
     public static let PageActionMenuTitle = MZLocalizedString("Menu.PageActions.Title", value: "Page Actions", comment: "Label for title in page action menu.")
 
     public static let AppMenuShowPageSourceString = MZLocalizedString("Menu.PageSourceAction.Title", tableName: "Menu", value: "View Page Source", comment: "Label for the button, displayed in the menu, used to show the html page source")
@@ -731,9 +731,9 @@ extension Strings {
     public static let SendToErrorOKButton = MZLocalizedString("SendTo.Error.OK.Button", value: "OK", comment: "OK button to dismiss the error prompt.")
     public static let SendToErrorTitle = MZLocalizedString("SendTo.Error.Title", value: "The link you are trying to share cannot be shared.", comment: "Title of error prompt displayed when an invalid URL is shared.")
     public static let SendToErrorMessage = MZLocalizedString("SendTo.Error.Message", value: "Only HTTP and HTTPS links can be shared.", comment: "Message in error prompt explaining why the URL is invalid.")
-    public static let SendToCloseButton = MZLocalizedString("SendTo.Cancel.Button", value: "Close", comment: "Close button in top navigation bar")
-    public static let SendToNotSignedInText = MZLocalizedString("SendTo.NotSignedIn.Title", value: "You are not signed in to your Firefox Account.", comment: "See http://mzl.la/1ISlXnU")
-    public static let SendToNotSignedInMessage = MZLocalizedString("SendTo.NotSignedIn.Message", value: "Please open Firefox, go to Settings and sign in to continue.", comment: "See http://mzl.la/1ISlXnU")
+//    public static let SendToCloseButton = MZLocalizedString("SendTo.Cancel.Button", value: "Close", comment: "Close button in top navigation bar")
+//    public static let SendToNotSignedInText = MZLocalizedString("SendTo.NotSignedIn.Title", value: "You are not signed in to your Firefox Account.", comment: "See http://mzl.la/1ISlXnU")
+//    public static let SendToNotSignedInMessage = MZLocalizedString("SendTo.NotSignedIn.Message", value: "Please open Firefox, go to Settings and sign in to continue.", comment: "See http://mzl.la/1ISlXnU")
     public static let SendToSignInButton = MZLocalizedString("SendTo.SignIn.Button", value: "Sign In to Firefox", comment: "The text for the button on the Send to Device page if you are not signed in to Firefox Accounts.")
     public static let SendToNoDevicesFound = MZLocalizedString("SendTo.NoDevicesFound.Message", value: "You don’t have any other devices connected to this Firefox Account available to sync.", comment: "Error message shown in the remote tabs panel")
     public static let SendToTitle = MZLocalizedString("SendTo.NavBar.Title", value: "Send Tab", comment: "Title of the dialog that allows you to send a tab to a different device")
@@ -1148,12 +1148,12 @@ extension String {
     public static let RemoteTabEmptyStateInstructionsSyncTabsPasswordsString = MZLocalizedString("Sync your tabs, passwords and more.", comment: "Text displayed when the Sync home panel is empty, describing the features provided by Sync to invite the user to log in.")
     public static let RemoteTabEmptyStateInstructionsGetTabsBookmarksPasswordsString = MZLocalizedString("Get your open tabs, bookmarks, and passwords from your other devices.", comment: "A re-worded offer about Sync, displayed when the Sync home panel is empty, that emphasizes one-way data transfer, not syncing.")
 
-    public static let RemoteTabErrorNoTabs = MZLocalizedString("You don’t have any tabs open in Firefox on your other devices.", comment: "Error message in the remote tabs panel")
-    public static let RemoteTabErrorFailedToSync = MZLocalizedString("There was a problem accessing tabs from your other devices. Try again in a few moments.", comment: "Error message in the remote tabs panel")
+//    public static let RemoteTabErrorNoTabs = MZLocalizedString("You don’t have any tabs open in Firefox on your other devices.", comment: "Error message in the remote tabs panel")
+//    public static let RemoteTabErrorFailedToSync = MZLocalizedString("There was a problem accessing tabs from your other devices. Try again in a few moments.", comment: "Error message in the remote tabs panel")
     public static let RemoteTabLastSync = MZLocalizedString("Last synced: %@", comment: "Remote tabs last synced time. Argument is the relative date string.")
     public static let RemoteTabComputerAccessibilityLabel = MZLocalizedString("computer", comment: "Accessibility label for Desktop Computer (PC) image in remote tabs list")
     public static let RemoteTabMobileAccessibilityLabel =  MZLocalizedString("mobile device", comment: "Accessibility label for Mobile Device image in remote tabs list")
-    public static let RemoteTabCreateAccount = MZLocalizedString("Create an account", comment: "See http://mzl.la/1Qtkf0j")
+//    public static let RemoteTabCreateAccount = MZLocalizedString("Create an account", comment: "See http://mzl.la/1Qtkf0j")
 }
 
 // Login list

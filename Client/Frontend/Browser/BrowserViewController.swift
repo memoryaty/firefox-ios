@@ -1440,15 +1440,6 @@ extension BrowserViewController: TabDelegate {
 }
 
 extension BrowserViewController: LibraryPanelDelegate {
-    func libraryPanelDidRequestToSignIn() {
-//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
-    }
-
-    func libraryPanelDidRequestToCreateAccount() {
-//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
-    }
 
     func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
         guard let tab = tabManager.selectedTab else { return }
@@ -2063,10 +2054,7 @@ extension BrowserViewController: TopTabsDelegate {
     }
 }
 
-extension BrowserViewController: DevicePickerViewControllerDelegate, InstructionsViewControllerDelegate {
-    func instructionsViewControllerDidClose(_ instructionsViewController: InstructionsViewController) {
-        self.popToBVC()
-    }
+extension BrowserViewController: DevicePickerViewControllerDelegate {
 
     func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
         self.popToBVC()

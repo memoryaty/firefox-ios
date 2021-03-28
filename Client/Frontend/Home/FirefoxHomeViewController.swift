@@ -512,7 +512,7 @@ extension FirefoxHomeViewController {
 
     func configureLibraryShortcutsCell(_ cell: UICollectionViewCell, forIndexPath indexPath: IndexPath) -> UICollectionViewCell {
         let libraryCell = cell as! ASLibraryCell
-        let targets = [#selector(openBookmarks), #selector(openReadingList), #selector(openDownloads), #selector(openSyncedTabs)]
+        let targets = [#selector(openBookmarks), #selector(openReadingList), #selector(openDownloads)]
         libraryCell.libraryButtons.map({ $0.button }).zip(targets).forEach { (button, selector) in
             button.removeTarget(nil, action: nil, for: .allEvents)
             button.addTarget(self, action: selector, for: .touchUpInside)
@@ -725,10 +725,6 @@ extension FirefoxHomeViewController {
 
     @objc func openHistory() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .history)
-    }
-
-    @objc func openSyncedTabs() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .syncedTabs)
     }
 
     @objc func openReadingList() {

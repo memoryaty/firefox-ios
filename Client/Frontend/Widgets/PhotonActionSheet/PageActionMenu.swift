@@ -126,15 +126,15 @@ extension PhotonActionSheetProtocol {
         }
 
         let sendToDevice = PhotonActionSheetItem(title: Strings.SendToDeviceTitle, iconString: "menu-Send-to-Device") { _, _ in
-            guard let bvc = presentableVC as? PresentableVC & InstructionsViewControllerDelegate & DevicePickerViewControllerDelegate else { return }
-            if !self.profile.hasAccount() {
-                let instructionsViewController = InstructionsViewController()
-                instructionsViewController.delegate = bvc
-                let navigationController = UINavigationController(rootViewController: instructionsViewController)
-                navigationController.modalPresentationStyle = .formSheet
-                bvc.present(navigationController, animated: true, completion: nil)
-                return
-            }
+            guard let bvc = presentableVC as? PresentableVC & DevicePickerViewControllerDelegate else { return }
+//            if !self.profile.hasAccount() {
+//                let instructionsViewController = InstructionsViewController()
+//                instructionsViewController.delegate = bvc
+//                let navigationController = UINavigationController(rootViewController: instructionsViewController)
+//                navigationController.modalPresentationStyle = .formSheet
+//                bvc.present(navigationController, animated: true, completion: nil)
+//                return
+//            }
 
             let devicePickerViewController = DevicePickerViewController()
             devicePickerViewController.pickerDelegate = bvc

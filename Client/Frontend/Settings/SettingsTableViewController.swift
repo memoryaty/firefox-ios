@@ -596,8 +596,6 @@ class SettingsTableViewController: ThemedTableViewController {
 
         settings = generateSettings()
         NotificationCenter.default.addObserver(self, selector: #selector(syncDidChangeState), name: .ProfileDidStartSyncing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(syncDidChangeState), name: .ProfileDidFinishSyncing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(firefoxAccountDidChange), name: .FirefoxAccountChanged, object: nil)
 
         applyTheme()
     }
@@ -615,7 +613,7 @@ class SettingsTableViewController: ThemedTableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        [Notification.Name.ProfileDidStartSyncing, Notification.Name.ProfileDidFinishSyncing, Notification.Name.FirefoxAccountChanged].forEach { name in
+        [Notification.Name.ProfileDidStartSyncing].forEach { name in
             NotificationCenter.default.removeObserver(self, name: name, object: nil)
         }
     }
@@ -635,10 +633,6 @@ class SettingsTableViewController: ThemedTableViewController {
         // Through-out, be aware that modifying the control while a refresh is in progress is /not/ supported and will likely crash the app.
         ////self.profile.rustAccount.refreshProfile()
         // TODO [rustfxa] listen to notification and refresh profile
-    }
-
-    @objc func firefoxAccountDidChange() {
-        self.tableView.reloadData()
     }
 
     @objc func didLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {

@@ -532,7 +532,7 @@ open class BrowserProfile: Profile {
         keychain.set(unlockKey, forKey: loginsUnlockKeychainKey, withAccessibility: .afterFirstUnlock)
 
         // Tell any observers that our account has changed.
-        NotificationCenter.default.post(name: .FirefoxAccountChanged, object: nil)
+//        NotificationCenter.default.post(name: .FirefoxAccountChanged, object: nil)
 
         // Trigger cleanup. Pass in the account in case we want to try to remove
         // client-specific data from the server.
@@ -645,7 +645,7 @@ open class BrowserProfile: Profile {
 
             // Dont notify if we are performing a sync in the background. This prevents more db access from happening
             if !self.backgrounded {
-                notifySyncing(notification: .ProfileDidFinishSyncing)
+//                notifySyncing(notification: .ProfileDidFinishSyncing)
             }
             syncReducer = nil
         }
@@ -669,7 +669,7 @@ open class BrowserProfile: Profile {
             center.addObserver(self, selector: #selector(onDatabaseWasRecreated), name: .DatabaseWasRecreated, object: nil)
             center.addObserver(self, selector: #selector(onLoginDidChange), name: .DataLoginDidChange, object: nil)
             center.addObserver(self, selector: #selector(onStartSyncing), name: .ProfileDidStartSyncing, object: nil)
-            center.addObserver(self, selector: #selector(onFinishSyncing), name: .ProfileDidFinishSyncing, object: nil)
+//            center.addObserver(self, selector: #selector(onFinishSyncing), name: .ProfileDidFinishSyncing, object: nil)
         }
 
         // TODO: Do we still need this/do we need to do this for our new DB too?

@@ -59,7 +59,7 @@ class DevicePickerViewController: UITableViewController {
 
         tableView.register(DevicePickerTableViewHeaderCell.self, forCellReuseIdentifier: DevicePickerTableViewHeaderCell.CellIdentifier)
         tableView.register(DevicePickerTableViewCell.self, forCellReuseIdentifier: DevicePickerTableViewCell.CellIdentifier)
-        tableView.register(DevicePickerNoClientsTableViewCell.self, forCellReuseIdentifier: DevicePickerNoClientsTableViewCell.CellIdentifier)
+//        tableView.register(DevicePickerNoClientsTableViewCell.self, forCellReuseIdentifier: DevicePickerNoClientsTableViewCell.CellIdentifier)
         tableView.tableFooterView = UIView(frame: .zero)
 
         tableView.allowsSelection = true
@@ -154,11 +154,11 @@ class DevicePickerViewController: UITableViewController {
                 cell = clientCell
             }
         } else {
-            if loadingState == .loaded {
-                cell = tableView.dequeueReusableCell(withIdentifier: DevicePickerNoClientsTableViewCell.CellIdentifier, for: indexPath) as! DevicePickerNoClientsTableViewCell
-            } else {
+//            if loadingState == .loaded {
+//                cell = tableView.dequeueReusableCell(withIdentifier: DevicePickerNoClientsTableViewCell.CellIdentifier, for: indexPath) as! DevicePickerNoClientsTableViewCell
+//            } else {
                 cell = UITableViewCell(style: .default, reuseIdentifier: "ClientCell")
-            }
+//            }
         }
 
         return cell
@@ -345,23 +345,6 @@ class DevicePickerTableViewCell: UITableViewCell {
             make.centerY.equalTo(self.snp.centerY)
             make.right.equalTo(self.snp.right).offset(-DevicePickerViewControllerUX.DeviceRowTextPaddingRight)
         }
-    }
-
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class DevicePickerNoClientsTableViewCell: UITableViewCell {
-    static let CellIdentifier = "ClientPickerNoClientsTableViewCell"
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupHelpView(contentView,
-            introText: Strings.SendToNoDevicesFound,
-            showMeText: "") // TODO We used to have a 'show me how to ...' text here. But, we cannot open web pages from the extension. So this is clear for now until we decide otherwise.
-        // Move the separator off screen
-        separatorInset = UIEdgeInsets(top: 0, left: 1000, bottom: 0, right: 0)
     }
 
     required init(coder aDecoder: NSCoder) {

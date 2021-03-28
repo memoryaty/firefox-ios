@@ -183,7 +183,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         self.profile = profile
         super.init(nibName: nil, bundle: nil)
 
-        [ Notification.Name.FirefoxAccountChanged,
+        [
           Notification.Name.DynamicFontChanged,
           Notification.Name.DatabaseWasReopened ].forEach {
             NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived), name: $0, object: nil)
@@ -219,7 +219,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
     @objc func notificationReceived(_ notification: Notification) {
         switch notification.name {
-        case .FirefoxAccountChanged, .DynamicFontChanged:
+        case .DynamicFontChanged:
             refreshReadingList()
         case .DatabaseWasReopened:
             if let dbName = notification.object as? String, dbName == "ReadingList.db" {

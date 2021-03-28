@@ -35,14 +35,14 @@ class TabMoreMenuViewModel: NSObject {
     
     func sendToDevice() {
         let bvc = BrowserViewController.foregroundBVC()
-        if !self.profile.hasAccount() {
-            let instructionsViewController = InstructionsViewController()
-            instructionsViewController.delegate = bvc
-            let navigationController = UINavigationController(rootViewController: instructionsViewController)
-            navigationController.modalPresentationStyle = .formSheet
-            bvc.present(navigationController, animated: true, completion: nil)
-            return
-        }
+//        if !self.profile.hasAccount() {
+//            let instructionsViewController = InstructionsViewController()
+//            instructionsViewController.delegate = bvc
+//            let navigationController = UINavigationController(rootViewController: instructionsViewController)
+//            navigationController.modalPresentationStyle = .formSheet
+//            bvc.present(navigationController, animated: true, completion: nil)
+//            return
+//        }
 
         let devicePickerViewController = DevicePickerViewController()
         devicePickerViewController.pickerDelegate = bvc

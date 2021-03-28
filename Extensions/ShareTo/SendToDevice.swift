@@ -6,16 +6,16 @@ import UIKit
 import Shared
 import Storage
 
-class SendToDevice: DevicePickerViewControllerDelegate, InstructionsViewControllerDelegate {
+class SendToDevice: DevicePickerViewControllerDelegate {
     var sharedItem: ShareItem?
     weak var delegate: ShareControllerDelegate?
 
     func initialViewController() -> UIViewController {
-        if !hasAccount() {
-            let instructionsViewController = InstructionsViewController()
-            instructionsViewController.delegate = self
-            return instructionsViewController
-        }
+//        if !hasAccount() {
+//            let instructionsViewController = InstructionsViewController()
+//            instructionsViewController.delegate = self
+//            return instructionsViewController
+//        }
         let devicePickerViewController = DevicePickerViewController()
         devicePickerViewController.pickerDelegate = self
         devicePickerViewController.profile = nil // This means the picker will open and close the default profile
@@ -41,10 +41,6 @@ class SendToDevice: DevicePickerViewControllerDelegate, InstructionsViewControll
     }
 
     func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
-        finish()
-    }
-
-    func instructionsViewControllerDidClose(_ instructionsViewController: InstructionsViewController) {
         finish()
     }
 

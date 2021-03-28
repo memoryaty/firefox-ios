@@ -6,7 +6,7 @@ extension Notification.Name {
     public static let DataLoginDidChange = Notification.Name("DataLoginDidChange")
 
     // add a property to allow the observation of firefox accounts
-    public static let FirefoxAccountChanged = Notification.Name("FirefoxAccountChanged")
+//    public static let FirefoxAccountChanged = Notification.Name("FirefoxAccountChanged")
 
     public static let FirefoxAccountStateChange = Notification.Name("FirefoxAccountStateChange")
 
@@ -32,7 +32,7 @@ extension Notification.Name {
     public static let OnPageMetadataFetched = Notification.Name("OnPageMetadataFetched")
 
     public static let ProfileDidStartSyncing = Notification.Name("ProfileDidStartSyncing")
-    public static let ProfileDidFinishSyncing = Notification.Name("ProfileDidFinishSyncing")
+//    public static let ProfileDidFinishSyncing = Notification.Name("ProfileDidFinishSyncing")
 
     public static let DatabaseWasRecreated = Notification.Name("DatabaseWasRecreated")
     public static let DatabaseWasClosed = Notification.Name("DatabaseWasClosed")
