@@ -32,26 +32,6 @@ class TabMoreMenuViewModel: NSObject {
         }.uponQueue(.main) { result in
         }
     }
-    
-    func sendToDevice() {
-        let bvc = BrowserViewController.foregroundBVC()
-//        if !self.profile.hasAccount() {
-//            let instructionsViewController = InstructionsViewController()
-//            instructionsViewController.delegate = bvc
-//            let navigationController = UINavigationController(rootViewController: instructionsViewController)
-//            navigationController.modalPresentationStyle = .formSheet
-//            bvc.present(navigationController, animated: true, completion: nil)
-//            return
-//        }
-
-        let devicePickerViewController = DevicePickerViewController()
-        devicePickerViewController.pickerDelegate = bvc
-        devicePickerViewController.profile = self.profile
-        devicePickerViewController.profileNeedsShutdown = false
-        let navigationController = UINavigationController(rootViewController: devicePickerViewController)
-        navigationController.modalPresentationStyle = .formSheet
-        bvc.present(navigationController, animated: true, completion: nil)
-    }
 }
 
 extension TabMoreMenuViewModel: TabManagerDelegate {

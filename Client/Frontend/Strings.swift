@@ -557,7 +557,7 @@ extension Strings {
     public static let AppMenuNoImageMode = MZLocalizedString("Menu.NoImageModeBlockImages.Label", value: "Block Images", comment: "Label for the button, displayed in the menu, hides images on the webpage when pressed.")
     public static let AppMenuCopyURLConfirmMessage = MZLocalizedString("Menu.CopyURL.Confirm", value: "URL Copied To Clipboard", comment: "Toast displayed to user after copy url pressed.")
     public static let AppMenuAddBookmarkConfirmMessage = MZLocalizedString("Menu.AddBookmark.Confirm", value: "Bookmark Added", comment: "Toast displayed to the user after a bookmark has been added.")
-    public static let AppMenuTabSentConfirmMessage = MZLocalizedString("Menu.TabSent.Confirm", value: "Tab Sent", comment: "Toast displayed to the user after a tab has been sent successfully.")
+//    public static let AppMenuTabSentConfirmMessage = MZLocalizedString("Menu.TabSent.Confirm", value: "Tab Sent", comment: "Toast displayed to the user after a tab has been sent successfully.")
     public static let AppMenuRemoveBookmarkConfirmMessage = MZLocalizedString("Menu.RemoveBookmark.Confirm", value: "Bookmark Removed", comment: "Toast displayed to the user after a bookmark has been removed.")
     public static let AppMenuAddPinToTopSitesConfirmMessage = MZLocalizedString("Menu.AddPin.Confirm", value: "Pinned To Top Sites", comment: "Toast displayed to the user after adding the item to the Top Sites.")
     public static let AppMenuRemovePinFromTopSitesConfirmMessage = MZLocalizedString("Menu.RemovePin.Confirm", value: "Removed From Top Sites", comment: "Toast displayed to the user after removing the item from the Top Sites.")
@@ -727,7 +727,7 @@ extension Strings {
 
 // Share extension
 extension Strings {
-    public static let SendToCancelButton = MZLocalizedString("SendTo.Cancel.Button", value: "Cancel", comment: "Button title for cancelling share screen")
+//    public static let SendToCancelButton = MZLocalizedString("SendTo.Cancel.Button", value: "Cancel", comment: "Button title for cancelling share screen")
     public static let SendToErrorOKButton = MZLocalizedString("SendTo.Error.OK.Button", value: "OK", comment: "OK button to dismiss the error prompt.")
     public static let SendToErrorTitle = MZLocalizedString("SendTo.Error.Title", value: "The link you are trying to share cannot be shared.", comment: "Title of error prompt displayed when an invalid URL is shared.")
     public static let SendToErrorMessage = MZLocalizedString("SendTo.Error.Message", value: "Only HTTP and HTTPS links can be shared.", comment: "Message in error prompt explaining why the URL is invalid.")
@@ -736,9 +736,9 @@ extension Strings {
 //    public static let SendToNotSignedInMessage = MZLocalizedString("SendTo.NotSignedIn.Message", value: "Please open Firefox, go to Settings and sign in to continue.", comment: "See http://mzl.la/1ISlXnU")
     public static let SendToSignInButton = MZLocalizedString("SendTo.SignIn.Button", value: "Sign In to Firefox", comment: "The text for the button on the Send to Device page if you are not signed in to Firefox Accounts.")
     public static let SendToNoDevicesFound = MZLocalizedString("SendTo.NoDevicesFound.Message", value: "You don’t have any other devices connected to this Firefox Account available to sync.", comment: "Error message shown in the remote tabs panel")
-    public static let SendToTitle = MZLocalizedString("SendTo.NavBar.Title", value: "Send Tab", comment: "Title of the dialog that allows you to send a tab to a different device")
-    public static let SendToSendButtonTitle = MZLocalizedString("SendTo.SendAction.Text", value: "Send", comment: "Navigation bar button to Send the current page to a device")
-    public static let SendToDevicesListTitle = MZLocalizedString("SendTo.DeviceList.Text", value: "Available devices:", comment: "Header for the list of devices table")
+//    public static let SendToTitle = MZLocalizedString("SendTo.NavBar.Title", value: "Send Tab", comment: "Title of the dialog that allows you to send a tab to a different device")
+//    public static let SendToSendButtonTitle = MZLocalizedString("SendTo.SendAction.Text", value: "Send", comment: "Navigation bar button to Send the current page to a device")
+//    public static let SendToDevicesListTitle = MZLocalizedString("SendTo.DeviceList.Text", value: "Available devices:", comment: "Header for the list of devices table")
 //    public static let ShareSendToDevice = Strings.SendToDeviceTitle
 
     // The above items are re-used strings from the old extension. New strings below.

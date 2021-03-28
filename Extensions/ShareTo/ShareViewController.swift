@@ -69,7 +69,6 @@ class ShareViewController: UIViewController {
     private var viewsShownDuringDoneAnimation = [UIView]()
     private var stackView: UIStackView!
     private var actionDoneRow: (row: UIStackView, label: UILabel)!
-    private var sendToDevice: SendToDevice?
     private var pageInfoHeight: Constraint?
     private var actionRowHeights = [Constraint]()
     private var pageInfoRowTitleLabel: UILabel?
@@ -295,7 +294,6 @@ class ShareViewController: UIViewController {
         navigationController?.navigationBar.setValue(true, forKey: "hidesShadow") // hide separator line
         navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
         navigationItem.titleView?.contentMode = .scaleAspectFit
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.SendToCancelButton, style: .plain, target: self, action: #selector(finish))
         navigationController?.navigationBar.barTintColor = Theme.defaultBackground.color
     }
 

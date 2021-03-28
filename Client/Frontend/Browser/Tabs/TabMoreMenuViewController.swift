@@ -21,16 +21,14 @@ class TabMoreMenuViewController: UIViewController, Themeable {
                                         Strings.PinTopsiteActionTitle],
                                     2: [Strings.CloseTabTitle],
                                     0: [Strings.CopyAddressTitle,
-                                        Strings.ShareContextMenuTitle,
-                                        "发送到设备"]
+                                        Strings.ShareContextMenuTitle]
     ]
     let imageViews: [Int: [UIImageView]] = [ 1: [UIImageView(image: UIImage.templateImageNamed("panelIconReadingList")),
                                                  UIImageView(image: UIImage.templateImageNamed("panelIconBookmarks")),
                                                  UIImageView(image: UIImage.templateImageNamed("action_pin"))],
                                              2: [UIImageView(image: UIImage.templateImageNamed("menu-CloseTabs"))],
                                              0: [UIImageView(image: UIImage.templateImageNamed("menu-Copy-Link")),
-                                                 UIImageView(image: UIImage.templateImageNamed("menu-Send")),
-                                                 UIImageView(image: UIImage.templateImageNamed("menu-Send-to-Device"))]
+                                                 UIImageView(image: UIImage.templateImageNamed("menu-Send"))]
     ]
     lazy var tableView: UITableView = {
         var tableView: UITableView
@@ -209,10 +207,6 @@ extension TabMoreMenuViewController: UITableViewDelegate {
             case 1:
                 dismissMenu()
                 self.presentActivityViewController(url, tab: tab)
-            case 2:
-                dismissMenu()
-                tabTrayV2Delegate?.closeTabTray()
-                viewModel.sendToDevice()
             default:
                 return
             }

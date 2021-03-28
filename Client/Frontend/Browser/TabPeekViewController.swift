@@ -10,7 +10,6 @@ import WebKit
 protocol TabPeekDelegate: AnyObject {
     func tabPeekDidAddBookmark(_ tab: Tab)
     @discardableResult func tabPeekDidAddToReadingList(_ tab: Tab) -> ReadingListItem?
-    func tabPeekRequestsPresentationOf(_ viewController: UIViewController)
     func tabPeekDidCloseTab(_ tab: Tab)
 }
 
@@ -18,10 +17,9 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
     weak var tab: Tab?
 
     fileprivate weak var delegate: TabPeekDelegate?
-    fileprivate var fxaDevicePicker: UINavigationController?
     fileprivate var isBookmarked: Bool = false
     fileprivate var isInReadingList: Bool = false
-    fileprivate var hasRemoteClients: Bool = false
+
     fileprivate var ignoreURL: Bool = false
 
     fileprivate var screenShot: UIImageView?
@@ -46,12 +44,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
                     wself.delegate?.tabPeekDidAddBookmark(tab)
                     })
             }
-            if self.hasRemoteClients {
-                actions.append(UIPreviewAction(title: "发送到设备", style: .default) { [weak self] previewAction, viewController in
-                    guard let wself = self, let clientPicker = wself.fxaDevicePicker else { return }
-                    wself.delegate?.tabPeekRequestsPresentationOf(clientPicker)
-                    })
-            }
+            
             // only add the copy URL action if we don't already have 3 items in our list
             // as we are only allowed 4 in total and we always want to display close tab
             if actions.count < 3 {
@@ -82,12 +75,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
                     wself.delegate?.tabPeekDidAddBookmark(tab)
                     })
             }
-            if self.hasRemoteClients {
-                actions.append(UIAction(title: "发送到设备", image: UIImage.templateImageNamed("menu-Send"), identifier: nil) { [weak self] _ in
-                    guard let wself = self, let clientPicker = wself.fxaDevicePicker else { return }
-                    wself.delegate?.tabPeekRequestsPresentationOf(clientPicker)
-                    })
-            }
+            
             actions.append(UIAction(title: .TabPeekCopyUrl, image: UIImage.templateImageNamed("menu-Copy-Link"), identifier: nil) {[weak self] _ in
                 guard let wself = self, let url = wself.tab?.canonicalURL else { return }
                 UIPasteboard.general.url = url
@@ -158,7 +146,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
         clonedWebView.load(URLRequest(url: url))
     }
 
-    func setState(withProfile browserProfile: BrowserProfile, clientPickerDelegate: DevicePickerViewControllerDelegate) {
+    func setState(withProfile browserProfile: BrowserProfile) {
         assert(Thread.current.isMainThread)
 
         guard let tab = self.tab else {
@@ -173,22 +161,22 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
             self.isBookmarked = isBookmarked
         }
 
-        browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
-            guard let clientGUIDs = $0.successValue else {
-                return
-            }
-
-            self.hasRemoteClients = !clientGUIDs.isEmpty
-            let clientPickerController = DevicePickerViewController()
-            clientPickerController.pickerDelegate = clientPickerDelegate
-            clientPickerController.profile = browserProfile
-            clientPickerController.profileNeedsShutdown = false
-            if let url = tab.url?.absoluteString {
-                clientPickerController.shareItem = ShareItem(url: url, title: tab.title, favicon: nil)
-            }
-
-            self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
-        }
+//        browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
+//            guard let clientGUIDs = $0.successValue else {
+//                return
+//            }
+//
+//            self.hasRemoteClients = !clientGUIDs.isEmpty
+//            let clientPickerController = DevicePickerViewController()
+//            clientPickerController.pickerDelegate = clientPickerDelegate
+//            clientPickerController.profile = browserProfile
+//            clientPickerController.profileNeedsShutdown = false
+//            if let url = tab.url?.absoluteString {
+//                clientPickerController.shareItem = ShareItem(url: url, title: tab.title, favicon: nil)
+//            }
+//
+//            self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
+//        }
 
         let result = browserProfile.readingList.getRecordWithURL(displayURL).value.successValue
 

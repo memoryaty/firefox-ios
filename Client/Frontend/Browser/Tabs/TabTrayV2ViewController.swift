@@ -9,7 +9,6 @@ import UIKit
 
 protocol TabTrayV2Delegate: AnyObject {
     func closeTab(forIndex index: IndexPath)
-    func closeTabTray()
 }
 
 struct TabTrayV2ControllerUX {
@@ -372,9 +371,6 @@ extension TabTrayV2ViewController: UIToolbarDelegate {
 extension TabTrayV2ViewController: TabTrayV2Delegate {
     func closeTab(forIndex index: IndexPath) {
         viewModel.removeTab(forIndex: index)
-    }
-    func closeTabTray() {
-        dismissTabTray()
     }
 }
 

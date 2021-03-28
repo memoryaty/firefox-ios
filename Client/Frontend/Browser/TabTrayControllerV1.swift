@@ -28,7 +28,6 @@ protocol TabTrayDelegate: AnyObject {
     func tabTrayDidAddTab(_ tabTray: TabTrayControllerV1, tab: Tab)
     func tabTrayDidAddBookmark(_ tab: Tab)
     func tabTrayDidAddToReadingList(_ tab: Tab) -> ReadingListItem?
-    func tabTrayRequestsPresentationOf(_ viewController: UIViewController)
 }
 
 class TabTrayControllerV1: UIViewController {
@@ -633,10 +632,6 @@ extension TabTrayControllerV1: TabPeekDelegate {
             cell.close()
         }
     }
-
-    func tabPeekRequestsPresentationOf(_ viewController: UIViewController) {
-        delegate?.tabTrayRequestsPresentationOf(viewController)
-    }
 }
 
 extension TabTrayControllerV1: UIViewControllerPreviewingDelegate {
@@ -654,7 +649,7 @@ extension TabTrayControllerV1: UIViewControllerPreviewingDelegate {
         }
         let tabVC = TabPeekViewController(tab: tab, delegate: self)
         if let browserProfile = profile as? BrowserProfile {
-            tabVC.setState(withProfile: browserProfile, clientPickerDelegate: self)
+            tabVC.setState(withProfile: browserProfile)
         }
         previewingContext.sourceRect = self.view.convert(cell.frame, from: collectionView)
 
@@ -834,19 +829,6 @@ fileprivate class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayou
 
     @objc func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tabSelectionDelegate?.didSelectTabAtIndex(indexPath.row)
-    }
-}
-
-extension TabTrayControllerV1: DevicePickerViewControllerDelegate {
-    func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
-        if let item = devicePickerViewController.shareItem {
-            _ = self.profile.sendItem(item, toDevices: devices)
-        }
-        devicePickerViewController.dismiss(animated: true, completion: nil)
-    }
-
-    func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
-        devicePickerViewController.dismiss(animated: true, completion: nil)
     }
 }
 
