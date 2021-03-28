@@ -122,7 +122,6 @@ class ShareViewController: UIViewController {
             makeActionRow(addTo: stackView, label: Strings.ShareBookmarkThisPage, imageName: "AddToBookmarks", action: #selector(actionBookmarkThisPage), hasNavigation: false)
             makeActionRow(addTo: stackView, label: Strings.ShareAddToReadingList, imageName: "AddToReadingList", action: #selector(actionAddToReadingList), hasNavigation: false)
             makeSeparator(addTo: stackView)
-            makeActionRow(addTo: stackView, label: Strings.ShareSendToDevice, imageName: "menu-Send-to-Device", action: #selector(actionSendToDevice), hasNavigation: true)
         } else {
             pageInfoRowUrlLabel?.removeFromSuperview()
             makeActionRow(addTo: stackView, label: Strings.ShareSearchInFirefox, imageName: "quickSearch", action: #selector(actionSearchInFirefox), hasNavigation: false)
@@ -359,24 +358,6 @@ extension ShareViewController {
         }
 
         finish()
-    }
-
-    @objc func actionSendToDevice(gesture: UIGestureRecognizer) {
-        guard let shareItem = shareItem, case .shareItem(let item) = shareItem else {
-            return
-        }
-
-        gesture.isEnabled = false
-        view.isUserInteractionEnabled = false
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { _ in
-            self.view.isUserInteractionEnabled = true
-            self.sendToDevice = SendToDevice()
-            guard let sendToDevice = self.sendToDevice else { return }
-            sendToDevice.sharedItem = item
-            sendToDevice.delegate = self.delegate
-            let vc = sendToDevice.initialViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
     }
 
     func openFirefox(withUrl url: String, isSearch: Bool) {

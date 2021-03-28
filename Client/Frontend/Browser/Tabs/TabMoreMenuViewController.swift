@@ -22,7 +22,7 @@ class TabMoreMenuViewController: UIViewController, Themeable {
                                     2: [Strings.CloseTabTitle],
                                     0: [Strings.CopyAddressTitle,
                                         Strings.ShareContextMenuTitle,
-                                        Strings.SendToDeviceTitle]
+                                        "发送到设备"]
     ]
     let imageViews: [Int: [UIImageView]] = [ 1: [UIImageView(image: UIImage.templateImageNamed("panelIconReadingList")),
                                                  UIImageView(image: UIImage.templateImageNamed("panelIconBookmarks")),

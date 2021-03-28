@@ -47,7 +47,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
                     })
             }
             if self.hasRemoteClients {
-                actions.append(UIPreviewAction(title: Strings.SendToDeviceTitle, style: .default) { [weak self] previewAction, viewController in
+                actions.append(UIPreviewAction(title: "发送到设备", style: .default) { [weak self] previewAction, viewController in
                     guard let wself = self, let clientPicker = wself.fxaDevicePicker else { return }
                     wself.delegate?.tabPeekRequestsPresentationOf(clientPicker)
                     })
@@ -83,7 +83,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
                     })
             }
             if self.hasRemoteClients {
-                actions.append(UIAction(title: Strings.SendToDeviceTitle, image: UIImage.templateImageNamed("menu-Send"), identifier: nil) { [weak self] _ in
+                actions.append(UIAction(title: "发送到设备", image: UIImage.templateImageNamed("menu-Send"), identifier: nil) { [weak self] _ in
                     guard let wself = self, let clientPicker = wself.fxaDevicePicker else { return }
                     wself.delegate?.tabPeekRequestsPresentationOf(clientPicker)
                     })

@@ -739,7 +739,7 @@ extension Strings {
     public static let SendToTitle = MZLocalizedString("SendTo.NavBar.Title", value: "Send Tab", comment: "Title of the dialog that allows you to send a tab to a different device")
     public static let SendToSendButtonTitle = MZLocalizedString("SendTo.SendAction.Text", value: "Send", comment: "Navigation bar button to Send the current page to a device")
     public static let SendToDevicesListTitle = MZLocalizedString("SendTo.DeviceList.Text", value: "Available devices:", comment: "Header for the list of devices table")
-    public static let ShareSendToDevice = Strings.SendToDeviceTitle
+//    public static let ShareSendToDevice = Strings.SendToDeviceTitle
 
     // The above items are re-used strings from the old extension. New strings below.
 
