@@ -14,7 +14,7 @@ func consoleLog(_ msg: String) {
 }
 
 class NotificationService: UNNotificationServiceExtension {
-    var display: SyncDataDisplay?
+//    var display: SyncDataDisplay?
     var profile: ExtensionProfile?
 
     // This is run when an APNS notification with `mutable-content` is received.
@@ -38,9 +38,9 @@ class NotificationService: UNNotificationServiceExtension {
         }
 
         let queue = profile.queue
-        let display = SyncDataDisplay(content: content, contentHandler: contentHandler, tabQueue: queue)
-        self.display = display
-        profile.syncDelegate = display
+//        let display = SyncDataDisplay(content: content, contentHandler: contentHandler, tabQueue: queue)
+//        self.display = display
+//        profile.syncDelegate = display
 
         let handler = FxAPushMessageHandler(with: profile)
 
@@ -55,21 +55,21 @@ class NotificationService: UNNotificationServiceExtension {
             // We cannot use tabqueue after the profile has shutdown;
             // however, we can't use weak references, because TabQueue isn't a class.
             // Rather than changing tabQueue, we manually nil it out here.
-            self.display?.tabQueue = nil
+//            self.display?.tabQueue = nil
 
             profile?._shutdown()
             consoleLog("push didFinish end")
         }
 
-        guard let display = self.display else {
-            return
-        }
-
-        display.messageDelivered = false
-        display.displayNotification(what, profile: profile, with: error)
-        if !display.messageDelivered {
-            display.displayUnknownMessageNotification(debugInfo: "Not delivered")
-        }
+//        guard let display = self.display else {
+//            return
+//        }
+//
+//        display.messageDelivered = false
+//        display.displayNotification(what, profile: profile, with: error)
+//        if !display.messageDelivered {
+//            display.displayUnknownMessageNotification(debugInfo: "Not delivered")
+//        }
     }
 
     override func serviceExtensionTimeWillExpire() {
