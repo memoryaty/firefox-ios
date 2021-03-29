@@ -157,7 +157,6 @@
 		3BC659591E5BA505006D560F /* top_sites.json in Resources */ = {isa = PBXBuildFile; fileRef = 3BC659581E5BA505006D560F /* top_sites.json */; };
 		3BCE6D3C1CEB9E4D0080928C /* ThirdPartySearchAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCE6D3B1CEB9E4D0080928C /* ThirdPartySearchAlerts.swift */; };
 		3BF56D271CDBBE1F00AC4D75 /* SimpleToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF56D261CDBBE1F00AC4D75 /* SimpleToast.swift */; };
-		3E82980324BE4C31000A59FF /* FxATelemetryUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E82980124BE4C31000A59FF /* FxATelemetryUtils.swift */; };
 		43118CDD251A9CA700F24376 /* Shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; };
 		43118CF3251A9CCA00F24376 /* SiteArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA3CE5E24EEE7C600422BB2 /* SiteArchiver.swift */; };
 		43118D07251A9CD100F24376 /* SavedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63306D3821103EAE00F25400 /* SavedTab.swift */; };
@@ -1294,7 +1293,6 @@
 		3E1842D9A11221805DFB13F6 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Storage.strings; sourceTree = "<group>"; };
 		3E57498E9F9EFB332D44970D /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		3E7A4F829D9254A17EEC6301 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
-		3E82980124BE4C31000A59FF /* FxATelemetryUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FxATelemetryUtils.swift; path = Account/FxATelemetryUtils.swift; sourceTree = "<group>"; };
 		3E8D410C8ECCFE86EAB4EF0E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		3ECE46D39D0DEFDCB9FB5449 /* si */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = si; path = si.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		3ED64621946EE8C3804125E1 /* rm */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = rm; path = rm.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
@@ -4485,7 +4483,6 @@
 		F84B21B51A090F8100AAB793 = {
 			isa = PBXGroup;
 			children = (
-				3E82980124BE4C31000A59FF /* FxATelemetryUtils.swift */,
 				C8E2E80623D20FB3005AACE6 /* RustFxA */,
 				E6C191D41E38F7B7000A213B /* Cartfile */,
 				E6C191D51E38F7B7000A213B /* Cartfile.resolved */,
@@ -5450,7 +5447,6 @@
 				C8340BE824EC69EE00FE91A6 /* ASNUtils.m in Sources */,
 				C8340BEF24EC69EE00FE91A6 /* NSData+KeyDerivation.m in Sources */,
 				39F99FE61E3A6F1700F353B4 /* PushRegistration.swift in Sources */,
-				3E82980324BE4C31000A59FF /* FxATelemetryUtils.swift in Sources */,
 				C8340C5E24EC6A3500FE91A6 /* trailer.c in Sources */,
 				C8340C6224EC6A3500FE91A6 /* decrypt.c in Sources */,
 				C8340BF124EC69EE00FE91A6 /* NSData+Base32.m in Sources */,
