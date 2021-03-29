@@ -52,7 +52,7 @@ extension AppDelegate {
         NotificationCenter.default.addObserver(forName: .constellationStateUpdate, object: nil, queue: nil) { notification in
             if let newState = notification.userInfo?["newState"] as? ConstellationState {
                 if newState.localDevice?.subscriptionExpired ?? false {
-                    KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
+//                    KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
                     NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
                 }
             }
@@ -62,9 +62,9 @@ extension AppDelegate {
         // The notification service extension can clear this token if there is an error, and the main app can detect this and re-register.
         NotificationCenter.default.addObserver(forName: .ProfileDidStartSyncing, object: nil, queue: .main) { _ in
             let kc = KeychainWrapper.sharedAppContainerKeychain
-            if kc.object(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock) == nil {
+//            if kc.object(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock) == nil {
                 NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
-            }
+//            }
         }
     }
 
@@ -93,24 +93,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     // Called when the user receives a tab (or any other notification) while in foreground.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        if profile?.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
-            profile?.removeAccount()
-            
-            // show the notification
-            completionHandler([.alert, .sound])
-        } else {
-            openURLsInNewTabs(notification)
-        }
+//        if profile?.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
+//            profile?.removeAccount()
+//            
+//            // show the notification
+//            completionHandler([.alert, .sound])
+//        } else {
+//            openURLsInNewTabs(notification)
+//        }
     }
 }
 
-extension AppDelegate {
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        RustFirefoxAccounts.shared.pushNotifications.didRegister(withDeviceToken: deviceToken)
-    }
-
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("failed to register. \(error)")
-        //Sentry.shared.send(message: "Failed to register for APNS")
-    }
-}

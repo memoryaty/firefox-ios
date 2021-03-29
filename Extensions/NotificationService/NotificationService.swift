@@ -32,34 +32,34 @@ class NotificationService: UNNotificationServiceExtension {
             self.profile = ExtensionProfile(localName: "profile")
         }
 
-        guard let profile = self.profile else {
-            self.didFinish(with: .noProfile)
-            return
-        }
+//        guard let profile = self.profile else {
+//            self.didFinish(with: .noProfile)
+//            return
+//        }
 
-        let queue = profile.queue
+//        let queue = profile.queue
 //        let display = SyncDataDisplay(content: content, contentHandler: contentHandler, tabQueue: queue)
 //        self.display = display
 //        profile.syncDelegate = display
 
-        let handler = FxAPushMessageHandler(with: profile)
-
-        handler.handle(userInfo: userInfo).upon { res in
-            self.didFinish(res.successValue, with: res.failureValue as? PushMessageError)
-        }
+//        let handler = FxAPushMessageHandler(with: profile)
+//
+//        handler.handle(userInfo: userInfo).upon { res in
+//            self.didFinish(res.successValue, with: res.failureValue as? PushMessageError)
+//        }
     }
-
-    func didFinish(_ what: PushMessage? = nil, with error: PushMessageError? = nil) {
-        consoleLog("push didFinish start")
-        defer {
+//
+//    func didFinish(_ what: PushMessage? = nil, with error: PushMessageError? = nil) {
+//        consoleLog("push didFinish start")
+//        defer {
             // We cannot use tabqueue after the profile has shutdown;
             // however, we can't use weak references, because TabQueue isn't a class.
             // Rather than changing tabQueue, we manually nil it out here.
 //            self.display?.tabQueue = nil
-
-            profile?._shutdown()
-            consoleLog("push didFinish end")
-        }
+//
+//            profile?._shutdown()
+//            consoleLog("push didFinish end")
+//        }
 
 //        guard let display = self.display else {
 //            return
@@ -72,12 +72,12 @@ class NotificationService: UNNotificationServiceExtension {
 //        }
     }
 
-    override func serviceExtensionTimeWillExpire() {
-        // Called just before the extension will be terminated by the system.
-        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-        didFinish(with: .timeout)
-    }
-}
+//    override func serviceExtensionTimeWillExpire() {
+//        // Called just before the extension will be terminated by the system.
+//        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
+//        didFinish(with: .timeout)
+//    }
+//}
 
 class SyncDataDisplay {
     var contentHandler: ((UNNotificationContent) -> Void)
@@ -93,25 +93,25 @@ class SyncDataDisplay {
         //Sentry.shared.setup(sendUsageData: true)
     }
 
-    func displayNotification(_ message: PushMessage? = nil, profile: ExtensionProfile?, with error: PushMessageError? = nil) {
-        guard let message = message, error == nil else {
-            return displayUnknownMessageNotification(debugInfo: "Error \(error?.description ?? "")")
-        }
-
-        switch message {
-        case .commandReceived(let tab):
-            displayNewSentTabNotification(tab: tab)
-        case .deviceConnected(let deviceName):
-            displayDeviceConnectedNotification(deviceName)
-        case .deviceDisconnected(let deviceName):
-            displayDeviceDisconnectedNotification(deviceName)
-        case .thisDeviceDisconnected:
-            displayThisDeviceDisconnectedNotification()
-        default:
-            displayUnknownMessageNotification(debugInfo: "Unknown: \(message)")
-            break
-        }
-    }
+//    func displayNotification(_ message: PushMessage? = nil, profile: ExtensionProfile?, with error: PushMessageError? = nil) {
+//        guard let message = message, error == nil else {
+//            return displayUnknownMessageNotification(debugInfo: "Error \(error?.description ?? "")")
+//        }
+//
+//        switch message {
+//        case .commandReceived(let tab):
+//            displayNewSentTabNotification(tab: tab)
+//        case .deviceConnected(let deviceName):
+//            displayDeviceConnectedNotification(deviceName)
+//        case .deviceDisconnected(let deviceName):
+//            displayDeviceDisconnectedNotification(deviceName)
+//        case .thisDeviceDisconnected:
+//            displayThisDeviceDisconnectedNotification()
+//        default:
+//            displayUnknownMessageNotification(debugInfo: "Unknown: \(message)")
+//            break
+//        }
+//    }
 }
 
 extension SyncDataDisplay {

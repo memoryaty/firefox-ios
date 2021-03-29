@@ -30,7 +30,7 @@ open class RustFirefoxAccounts {
     private static var isInitializingAccountManager = false
     public let syncAuthState: SyncAuthState
     fileprivate static var prefs: Prefs?
-    public let pushNotifications = PushNotificationSetup()
+//    public let pushNotifications = PushNotificationSetup()
 
     // This is used so that if a migration failed, show a UI indicator for the user to manually log in to their account.
     public var accountMigrationFailed: Bool {
@@ -153,7 +153,7 @@ open class RustFirefoxAccounts {
         NotificationCenter.default.addObserver(forName: .accountAuthenticated, object: nil, queue: .main) { [weak self] notification in
             // Handle account migration completed successfully. Need to clear the old stored apnsToken and re-register push.
             if let type = notification.userInfo?["authType"] as? FxaAuthType, case .migrated = type {
-                KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
+//                KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
                 NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
             }
 
@@ -241,8 +241,8 @@ open class RustFirefoxAccounts {
         prefs?.removeObjectForKey(RustFirefoxAccounts.prefKeySyncAuthStateUniqueID)
         prefs?.removeObjectForKey(PendingAccountDisconnectedKey)
 
-        pushNotifications.unregister()
-        KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
+//        pushNotifications.unregister()
+//        KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
     }
 
     public func hasAccount() -> Bool {
