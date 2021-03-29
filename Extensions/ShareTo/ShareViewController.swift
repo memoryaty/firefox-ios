@@ -54,16 +54,6 @@ protocol ShareControllerDelegate: AnyObject {
     func hidePopupWhenShowingAlert()
 }
 
-// Telemetry events are written to NSUserDefaults, and then the host app reads and clears this list.
-func addAppExtensionTelemetryEvent(forMethod method: String) {
-    let profile = BrowserProfile(localName: "profile")
-    var events = profile.prefs.arrayForKey(PrefsKeys.AppExtensionTelemetryEventArray) ?? [[String]]()
-    // Currently, only URL objects are shared.
-    let event = ["method": method, "object": "url"]
-    events.append(event)
-    profile.prefs.setObject(events, forKey: PrefsKeys.AppExtensionTelemetryEventArray)
-}
-
 class ShareViewController: UIViewController {
     var shareItem: ExtensionUtils.ExtractedShareItem?
     private var viewsShownDuringDoneAnimation = [UIView]()
@@ -320,7 +310,7 @@ extension ShareViewController {
                 profile._shutdown()
             }
 
-            addAppExtensionTelemetryEvent(forMethod: "load-in-background")
+//            addAppExtensionTelemetryEvent(forMethod: "load-in-background")
         }
 
         finish()
@@ -336,7 +326,7 @@ extension ShareViewController {
             _ = profile.places.createBookmark(parentGUID: BookmarkRoots.MobileFolderGUID, url: item.url, title: item.title).value // Intentionally block thread with database call.
             profile._shutdown()
 
-            addAppExtensionTelemetryEvent(forMethod: "bookmark-this-page")
+//            addAppExtensionTelemetryEvent(forMethod: "bookmark-this-page")
         }
 
         finish()
@@ -352,7 +342,7 @@ extension ShareViewController {
             profile.readingList.createRecordWithURL(item.url, title: item.title ?? "", addedBy: UIDevice.current.name)
             profile._shutdown()
 
-            addAppExtensionTelemetryEvent(forMethod: "add-to-reading-list")
+//            addAppExtensionTelemetryEvent(forMethod: "add-to-reading-list")
         }
 
         finish()
