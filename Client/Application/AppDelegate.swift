@@ -122,10 +122,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.updateAuthenticationInfo()
         SystemUtils.onFirstRun()
 
-        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
-            print("RustFirefoxAccounts started")
-        }
-        //log.info("startApplication end")
         return true
     }
 
@@ -205,10 +201,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         if #available(iOS 13.0, *) {
             BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
-                guard self.profile?.hasSyncableAccount() ?? false else {
+//                guard self.profile?.hasSyncableAccount() ?? false else {
                     self.shutdownProfileWhenNotActive(application)
                     return
-                }
+//                }
 
                 NSLog("background sync part 1") // NSLog to see in device console
                 let collection = ["bookmarks", "history"]
@@ -384,15 +380,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             application.endBackgroundTask(taskId)
         })
 
-        if profile.hasSyncableAccount() {
-            profile.syncManager.syncEverything(why: .backgrounded).uponQueue(.main) { _ in
-                self.shutdownProfileWhenNotActive(application)
-                application.endBackgroundTask(taskId)
-            }
-        } else {
-            profile._shutdown()
-            application.endBackgroundTask(taskId)
-        }
+
+        profile._shutdown()
+        application.endBackgroundTask(taskId)
     }
 
     fileprivate func shutdownProfileWhenNotActive(_ application: UIApplication) {

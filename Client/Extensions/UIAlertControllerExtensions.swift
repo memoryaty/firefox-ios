@@ -137,38 +137,6 @@ extension UIAlertController {
     }
 
     /**
-     Builds the Alert view that asks if the users wants to also delete history stored on their other devices.
-
-     - parameter okayCallback: Okay option handler.
-
-     - returns: UIAlertController for asking the user to restore tabs after a crash
-     */
-
-    class func clearSyncedHistoryAlert(okayCallback: @escaping (UIAlertAction) -> Void) -> UIAlertController {
-        let alert = UIAlertController(
-            title: "",
-            message: .ClearSyncedHistoryAlertMessage,
-            preferredStyle: .alert
-        )
-
-        let noOption = UIAlertAction(
-            title: .ClearSyncedHistoryAlertCancel,
-            style: .cancel,
-            handler: nil
-        )
-
-        let okayOption = UIAlertAction(
-            title: .ClearSyncedHistoryAlertOk,
-            style: .destructive,
-            handler: okayCallback
-        )
-
-        alert.addAction(okayOption)
-        alert.addAction(noOption)
-        return alert
-    }
-
-    /**
      Creates an alert view to warn the user that their logins will either be completely deleted in the
      case of local-only logins or deleted across synced devices in synced account logins.
 

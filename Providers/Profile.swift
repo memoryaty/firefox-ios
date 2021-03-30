@@ -32,20 +32,13 @@ public protocol SyncManager {
     func syncClients() -> SyncResult
     func syncClientsThenTabs() -> SyncResult
     func syncHistory() -> SyncResult
-    func syncLogins() -> SyncResult
     func syncBookmarks() -> SyncResult
     @discardableResult func syncEverything(why: SyncReason) -> Success
     func syncNamedCollections(why: SyncReason, names: [String]) -> Success
-
-    // The simplest possible approach.
-    func beginTimedSyncs()
-    func endTimedSyncs()
     func applicationDidEnterBackground()
     func applicationDidBecomeActive()
 
     func onNewProfile()
-
-    @discardableResult func onAddedAccount() -> Success
 }
 
 typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
@@ -120,12 +113,6 @@ protocol Profile: AnyObject {
     // I got really weird EXC_BAD_ACCESS errors on a non-null reference when I made this a getter.
     // Similar to <http://stackoverflow.com/questions/26029317/exc-bad-access-when-indirectly-accessing-inherited-member-in-swift>.
     func localName() -> String
-
-    // Do we have an account at all?
-    func hasAccount() -> Bool
-
-    // Do we have an account that (as far as we know) is in a syncable state?
-    func hasSyncableAccount() -> Bool
 
     var rustFxA: RustFirefoxAccounts { get }
 
@@ -282,7 +269,7 @@ open class BrowserProfile: Profile {
         //log.debug("Reopening profile.")
         isShutdown = false
 
-        if !places.isOpen && !RustFirefoxAccounts.shared.hasAccount() {
+        if !places.isOpen {
             places.migrateBookmarksIfNeeded(fromBrowserDB: db)
         }
 
@@ -336,10 +323,7 @@ open class BrowserProfile: Profile {
         self.metadata.storeMetadata(pageMetadata, forPageURL: pageURL, expireAt: defaultMetadataTTL + Date.now())
     }
 
-    deinit {
-        //log.debug("Deiniting profile \(self.localName()).")
-        self.syncManager.endTimedSyncs()
-    }
+
 
     func localName() -> String {
         return name
@@ -476,14 +460,6 @@ open class BrowserProfile: Profile {
         return RustLogins(databasePath: databasePath, encryptionKey: loginsKey, salt: salt)
     }()
 
-    func hasAccount() -> Bool {
-        return rustFxA.hasAccount()
-    }
-
-    func hasSyncableAccount() -> Bool {
-        return hasAccount() && !rustFxA.accountNeedsReauth()
-    }
-
     var rustFxA: RustFirefoxAccounts {
         return RustFirefoxAccounts.shared
     }
@@ -503,15 +479,11 @@ open class BrowserProfile: Profile {
         fileprivate let prefs: Prefs
         fileprivate var constellationStateUpdate: Any?
 
-        let FifteenMinutes = TimeInterval(60 * 15)
         let OneMinute = TimeInterval(60)
-
-        fileprivate var syncTimer: Timer?
 
         fileprivate var backgrounded: Bool = true
         public func applicationDidEnterBackground() {
             self.backgrounded = true
-            self.endTimedSyncs()
         }
 
         deinit {
@@ -522,13 +494,6 @@ open class BrowserProfile: Profile {
 
         public func applicationDidBecomeActive() {
             self.backgrounded = false
-
-            guard self.profile.hasSyncableAccount() else {
-                return
-            }
-
-            self.beginTimedSyncs()
-
         }
 
         /**
@@ -549,7 +514,7 @@ open class BrowserProfile: Profile {
             let center = NotificationCenter.default
 
             center.addObserver(self, selector: #selector(onDatabaseWasRecreated), name: .DatabaseWasRecreated, object: nil)
-            center.addObserver(self, selector: #selector(onLoginDidChange), name: .DataLoginDidChange, object: nil)
+
         }
 
         // TODO: Do we still need this/do we need to do this for our new DB too?
@@ -597,34 +562,8 @@ open class BrowserProfile: Profile {
             }
         }
 
-        // Simple in-memory rate limiting.
-        var lastTriggeredLoginSync: Timestamp = 0
-        @objc func onLoginDidChange(_ notification: NSNotification) {
-            //log.debug("Login did change.")
-            if (Date.now() - lastTriggeredLoginSync) > OneMinuteInMilliseconds {
-                lastTriggeredLoginSync = Date.now()
-
-                // Give it a few seconds.
-                // Trigger on the main queue. The bulk of the sync work runs in the background.
-                let greenLight = self.greenLight()
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(SyncConstants.SyncDelayTriggered)) {
-                    if greenLight() {
-                        self.syncLogins()
-                    }
-                }
-            }
-        }
-
         var prefsForSync: Prefs {
             return self.prefs.branch("sync")
-        }
-
-        public func onAddedAccount() -> Success {
-            // Only sync if we're green lit. This makes sure that we don't sync unverified accounts.
-            guard self.profile.hasSyncableAccount() else { return succeed() }
-
-            self.beginTimedSyncs()
-            return self.syncEverything(why: .didLogin)
         }
 
         func locallyResetCollections(_ collections: [String]) -> Success {
@@ -692,34 +631,6 @@ open class BrowserProfile: Profile {
 //            return accumulate(remove) >>> clearPrefs
 //        }
 
-        fileprivate func repeatingTimerAtInterval(_ interval: TimeInterval, selector: Selector) -> Timer {
-            return Timer.scheduledTimer(timeInterval: interval, target: self, selector: selector, userInfo: nil, repeats: true)
-        }
-
-        public func beginTimedSyncs() {
-            if self.syncTimer != nil {
-                //log.debug("Already running sync timer.")
-                return
-            }
-
-            let interval = FifteenMinutes
-            let selector = #selector(syncOnTimer)
-            //log.debug("Starting sync timer.")
-            self.syncTimer = repeatingTimerAtInterval(interval, selector: selector)
-        }
-
-        /**
-         * The caller is responsible for calling this on the same thread on which it called
-         * beginTimedSyncs.
-         */
-        public func endTimedSyncs() {
-            if let t = self.syncTimer {
-                //log.debug("Stopping sync timer.")
-                self.syncTimer = nil
-                t.invalidate()
-            }
-        }
-
         fileprivate func syncClientsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             //log.debug("Syncing clients to storage.")
 
@@ -758,7 +669,7 @@ open class BrowserProfile: Profile {
         fileprivate func syncHistoryWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             //log.debug("Syncing history to storage.")
             let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, delegate: delegate, prefs: prefs, why: why)
-            return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info, greenLight: self.greenLight())
+            return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info)
         }
 
         public class ScopedKeyError: MaybeErrorType {
@@ -1002,10 +913,6 @@ open class BrowserProfile: Profile {
             return self.syncSeveral(why: why, synchronizers: synchronizers) >>> succeed
         }
 
-        @objc func syncOnTimer() {
-            self.syncEverything(why: .scheduled)
-        }
-
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
             return self.profile.history.hasSyncedHistory()
         }
@@ -1041,22 +948,6 @@ open class BrowserProfile: Profile {
         public func syncHistory() -> SyncResult {
             // TODO: recognize .NotStarted.
             return self.sync("history", function: syncHistoryWithDelegate)
-        }
-
-        /**
-         * Return a thunk that continues to return true so long as an ongoing sync
-         * should continue.
-         */
-        func greenLight() -> () -> Bool {
-            let start = Date.now()
-
-            // Give it two minutes to run before we stop.
-            let stopBy = start + (2 * OneMinuteInMilliseconds)
-            //log.debug("Checking green light. Backgrounded: \(self.backgrounded).")
-            return {
-                Date.now() < stopBy &&
-                self.profile.hasSyncableAccount()
-            }
         }
 
         public func notify(deviceIDs: [GUID], collectionsChanged collections: [String], reason: String) -> Success {

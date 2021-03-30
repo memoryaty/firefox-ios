@@ -194,12 +194,12 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
      * so would cause us to fast-forward our last sync timestamp and skip whatever
      * we hadn't yet downloaded.
      */
-    fileprivate func go(_ info: InfoCollections, greenLight: @escaping () -> Bool, downloader: BatchingDownloader<HistoryPayload>, history: SyncableHistory) -> SyncResult {
+    fileprivate func go(_ info: InfoCollections, downloader: BatchingDownloader<HistoryPayload>, history: SyncableHistory) -> SyncResult {
 
-        if !greenLight() {
+//        if !greenLight() {
             //log.info("Green light turned red. Stopping history download.")
             return deferMaybe(.partial(self.statsSession))
-        }
+//        }
 
         func applyBatched() -> Success {
             return self.applyIncomingToStorage(history, records: downloader.retrieve())
@@ -222,7 +222,7 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
                 //log.debug("Running another batch.")
                 // This recursion is fine because Deferred always pushes callbacks onto a queue.
                 return applyBatched()
-                   >>> { self.go(info, greenLight: greenLight, downloader: downloader, history: history) }
+                   >>> { self.go(info, downloader: downloader, history: history) }
             case .interrupted:
                 //log.info("Interrupted. Aborting batching this time.")
                 return deferMaybe(.partial(self.statsSession))
@@ -237,7 +237,7 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
                          .bind(onBatchResult)
     }
 
-    open func synchronizeLocalHistory(_ history: SyncableHistory, withServer storageClient: Sync15StorageClient, info: InfoCollections, greenLight: @escaping () -> Bool) -> SyncResult {
+    open func synchronizeLocalHistory(_ history: SyncableHistory, withServer storageClient: Sync15StorageClient, info: InfoCollections) -> SyncResult {
         if let reason = self.reasonToNotSync(storageClient) {
             return deferMaybe(.notStarted(reason))
         }
@@ -262,7 +262,7 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
         }
 
         statsSession.start()
-        return self.go(info, greenLight: greenLight, downloader: downloader, history: history)
+        return self.go(info, downloader: downloader, history: history)
             >>== { syncResult in
                 switch syncResult {
                 case .completed:

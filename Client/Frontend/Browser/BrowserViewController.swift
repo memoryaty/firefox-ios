@@ -223,7 +223,7 @@ class BrowserViewController: UIViewController {
 
     @objc fileprivate func appMenuBadgeUpdate() {
         let hideImagesOn = NoImageModeHelper.isActivated(profile.prefs)
-        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        let actionNeeded = false
         let showWarningBadge = actionNeeded 
         let showMenuBadge = showWarningBadge ? false : hideImagesOn
 

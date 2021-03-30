@@ -76,8 +76,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     var groupedSites = DateGroupedTableData<Site>()
 
-    var refreshControl: UIRefreshControl?
-
     var currentFetchOffset = 0
     var isFetchInProgress = false
 
@@ -114,42 +112,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         tableView.addGestureRecognizer(longPressRecognizer)
         tableView.accessibilityIdentifier = "History List"
         tableView.prefetchDataSource = self
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        // Add a refresh control if the user is logged in and the control was not added before. If the user is not
-        // logged in, remove any existing control.
-        if profile.hasSyncableAccount() && refreshControl == nil {
-            addRefreshControl()
-        } else if !profile.hasSyncableAccount() && refreshControl != nil {
-            removeRefreshControl()
-        }
-    }
-
-    // MARK: - Refreshing TableView
-
-    func addRefreshControl() {
-        let control = UIRefreshControl()
-        control.addTarget(self, action: #selector(onRefreshPulled), for: .valueChanged)
-        refreshControl = control
-        tableView.refreshControl = control
-    }
-
-    func removeRefreshControl() {
-        tableView.refreshControl = nil
-        refreshControl = nil
-    }
-
-    func endRefreshing() {
-        // Always end refreshing, even if we failed!
-        refreshControl?.endRefreshing()
-
-        // Remove the refresh control if the user has logged out in the meantime
-        if !profile.hasSyncableAccount() {
-            removeRefreshControl()
-        }
     }
 
     // MARK: - Loading data
@@ -201,7 +163,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     func resyncHistory() {
         profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
-            self.endRefreshing()
 
             if syncResult.isSuccess {
                 self.reloadData()
@@ -249,7 +210,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         let nextController = RecentlyClosedTabsPanel(profile: profile)
         nextController.title = Strings.RecentlyClosedTabsButtonTitle
         nextController.libraryPanelDelegate = libraryPanelDelegate
-        refreshControl?.endRefreshing()
         navigationController?.pushViewController(nextController, animated: true)
     }
 
@@ -361,9 +321,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         case .PrivateDataClearedHistory:
             reloadData()
 
-            if profile.hasSyncableAccount() {
-                resyncHistory()
-            }
             break
         case .DynamicFontChanged:
             reloadData()
@@ -393,11 +350,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         if indexPath.section != Section.additionalHistoryActions.rawValue {
             presentContextMenu(for: indexPath)
         }
-    }
-
-    func onRefreshPulled() {
-        refreshControl?.beginRefreshing()
-        resyncHistory()
     }
 
     // MARK: - UITableViewDataSource

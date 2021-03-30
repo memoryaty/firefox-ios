@@ -931,10 +931,10 @@ extension String {
 
 // ClearSyncedHistoryAlert
 extension String {
-    public static let ClearSyncedHistoryAlertMessage = MZLocalizedString("This action will clear all of your private data, including history from your synced devices.", tableName: "ClearHistoryConfirm", comment: "Description of the confirmation dialog shown when a user tries to clear history that's synced to another device.")
+//    public static let ClearSyncedHistoryAlertMessage = MZLocalizedString("This action will clear all of your private data, including history from your synced devices.", tableName: "ClearHistoryConfirm", comment: "Description of the confirmation dialog shown when a user tries to clear history that's synced to another device.")
     // TODO: these look like the same as in ClearPrivateDataAlert, I think we can remove them
-    public static let ClearSyncedHistoryAlertCancel = MZLocalizedString("Cancel", tableName: "ClearHistoryConfirm", comment: "The cancel button when confirming clear history.")
-    public static let ClearSyncedHistoryAlertOk = MZLocalizedString("OK", tableName: "ClearHistoryConfirm", comment: "The confirmation button that clears history even when Sync is connected.")
+//    public static let ClearSyncedHistoryAlertCancel = MZLocalizedString("Cancel", tableName: "ClearHistoryConfirm", comment: "The cancel button when confirming clear history.")
+//    public static let ClearSyncedHistoryAlertOk = MZLocalizedString("OK", tableName: "ClearHistoryConfirm", comment: "The confirmation button that clears history even when Sync is connected.")
 }
 
 // DeleteLoginAlert
