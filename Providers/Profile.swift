@@ -33,7 +33,6 @@ public protocol SyncManager {
     func syncClientsThenTabs() -> SyncResult
     func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
-    @discardableResult func syncEverything(why: SyncReason) -> Success
     func syncNamedCollections(why: SyncReason, names: [String]) -> Success
     func applicationDidEnterBackground()
     func applicationDidBecomeActive()
@@ -860,23 +859,6 @@ open class BrowserProfile: Profile {
                     return function(delegate, self.prefsForSync, ready)
                 }
             }
-        }
-
-        @discardableResult public func syncEverything(why: SyncReason) -> Success {
-            if let accountManager = RustFirefoxAccounts.shared.accountManager.peek(), accountManager.accountMigrationInFlight() {
-                accountManager.retryMigration() { _ in }
-                return Success()
-            }
-
-            let synchronizers = [
-                ("clients", self.syncClientsWithDelegate),
-                ("tabs", self.syncTabsWithDelegate),
-                ("bookmarks", self.syncBookmarksWithDelegate),
-                ("history", self.syncHistoryWithDelegate),
-                ("logins", self.syncLoginsWithDelegate)
-            ]
-
-            return self.syncSeveral(why: why, synchronizers: synchronizers) >>> succeed
         }
 
         /**
