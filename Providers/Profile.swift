@@ -33,9 +33,6 @@ public protocol SyncManager {
     func syncClientsThenTabs() -> SyncResult
     func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
-    func syncNamedCollections(why: SyncReason, names: [String]) -> Success
-    func applicationDidEnterBackground()
-    func applicationDidBecomeActive()
 
     func onNewProfile()
 }
@@ -480,19 +477,10 @@ open class BrowserProfile: Profile {
 
         let OneMinute = TimeInterval(60)
 
-        fileprivate var backgrounded: Bool = true
-        public func applicationDidEnterBackground() {
-            self.backgrounded = true
-        }
-
         deinit {
             if let c = constellationStateUpdate {
                 NotificationCenter.default.removeObserver(c)
             }
-        }
-
-        public func applicationDidBecomeActive() {
-            self.backgrounded = false
         }
 
         /**
@@ -859,40 +847,6 @@ open class BrowserProfile: Profile {
                     return function(delegate, self.prefsForSync, ready)
                 }
             }
-        }
-
-        /**
-         * Allows selective sync of different collections, for use by external APIs.
-         * Some help is given to callers who use different namespaces (specifically: `passwords` is mapped to `logins`)
-         * and to preserve some ordering rules.
-         */
-        public func syncNamedCollections(why: SyncReason, names: [String]) -> Success {
-            // Massage the list of names into engine identifiers.
-            let engineIdentifiers = names.map { name -> [EngineIdentifier] in
-                switch name {
-                case "passwords":
-                    return ["logins"]
-                case "tabs":
-                    return ["clients", "tabs"]
-                default:
-                    return [name]
-                }
-            }.flatMap { $0 }
-
-            // By this time, `engineIdentifiers` may have duplicates in. We won't try and dedupe here
-            // because `syncSeveral` will do that for us.
-
-            let synchronizers: [(EngineIdentifier, SyncFunction)] = engineIdentifiers.compactMap {
-                switch $0 {
-                case "clients": return ("clients", self.syncClientsWithDelegate)
-                case "tabs": return ("tabs", self.syncTabsWithDelegate)
-                case "logins": return ("logins", self.syncLoginsWithDelegate)
-                case "bookmarks": return ("bookmarks", self.syncBookmarksWithDelegate)
-                case "history": return ("history", self.syncHistoryWithDelegate)
-                default: return nil
-                }
-            }
-            return self.syncSeveral(why: why, synchronizers: synchronizers) >>> succeed
         }
 
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {

@@ -15,3 +15,13 @@ public func ensureMainThread(execute work: @escaping @convention(block) () -> Sw
         }
     }
 }
+
+public func ensureGlobalThread(execute work: @escaping @convention(block) () -> Swift.Void) {
+    if Thread.isMainThread {
+        DispatchQueue.global().async {
+            work()
+        }
+    } else {
+        work()
+    }
+}
