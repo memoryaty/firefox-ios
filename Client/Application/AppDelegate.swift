@@ -23,7 +23,7 @@ import Account
 
 
 
-let LatestAppVersionProfileKey = "latestAppVersion"
+
 let AllowThirdPartyKeyboardsKey = "settings.allowThirdPartyKeyboards"
 private let InitialPingSentKey = "initialPingSent"
 
@@ -202,38 +202,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // button will be in the incorrect position and overlap with the input text. Not clear if
         // that is an iOS bug or not.
         AutocompleteTextField.appearance().semanticContentAttribute = .forceLeftToRight
-
-        // Leanplum user research variable setup for New tab user research
-//        _ = NewTabUserResearch()
-        // Leanplum user research variable setup for Chron tabs user research
-//        _ = ChronTabsUserResearch()
-        // Leanplum setup
-
-        if let profile = self.profile {
-            
-            let persistedCurrentVersion = InstallType.persistedCurrentVersion()
-//            let introScreen = profile.prefs.intForKey(PrefsKeys.IntroSeen)
-            let introScreen = false
-            // upgrade install - Intro screen shown & persisted current version does not match
-            if introScreen != nil && persistedCurrentVersion != AppInfo.appVersion {
-                InstallType.set(type: .upgrade)
-                InstallType.updateCurrentVersion(version: AppInfo.appVersion)
-            }
-            
-            // We need to check if the app is a clean install to use for
-            // preventing the What's New URL from appearing.
-            if introScreen == nil {
-                // fresh install - Intro screen not yet shown
-                InstallType.set(type: .fresh)
-                InstallType.updateCurrentVersion(version: AppInfo.appVersion)
-                // Profile and leanplum setup
-                profile.prefs.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
-//                LeanPlumClient.shared.track(event: .firstRun)
-            } else if profile.prefs.boolForKey(PrefsKeys.KeySecondRun) == nil {
-                profile.prefs.setBool(true, forKey: PrefsKeys.KeySecondRun)
-//                LeanPlumClient.shared.track(event: .secondRun)
-            }
-        }
 
         if #available(iOS 13.0, *) {
             BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
