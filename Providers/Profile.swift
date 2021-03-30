@@ -598,44 +598,6 @@ open class BrowserProfile: Profile {
         // The dispatch queue for coordinating syncing and resetting the database.
         fileprivate let syncQueue = DispatchQueue(label: "com.mozilla.firefox.sync")
 
-        fileprivate typealias EngineResults = [(EngineIdentifier, SyncStatus)]
-        fileprivate typealias EngineTasks = [(EngineIdentifier, SyncFunction)]
-
-        // Used as a task queue for syncing.
-        fileprivate var syncReducer: AsyncReducer<EngineResults, EngineTasks>?
-
-        fileprivate func endSyncing(_ result: SyncOperationResult) {
-            // loop through statuses and fill sync state
-            syncLock.lock()
-            defer { syncLock.unlock() }
-            //log.info("Ending all queued syncs.")
-
-            syncDisplayState = SyncStatusResolver(engineResults: result.engineResults).resolveResults()
-
-//            #if MOZ_TARGET_CLIENT
-//                if canSendUsageData() {
-//                    SyncPing.from(result: result,
-//                                  remoteClientsAndTabs: profile.remoteClientsAndTabs,
-//                                  prefs: prefs,
-//                                  why: .schedule) >>== {_ in 
-////                                    SyncTelemetry.send(ping: $0, docType: .sync)
-//                                  }
-//                } else {
-//                    //log.debug("Profile isn't sending usage data. Not sending sync status event.")
-//                }
-//            #endif
-
-            // Dont notify if we are performing a sync in the background. This prevents more db access from happening
-            if !self.backgrounded {
-//                notifySyncing(notification: .ProfileDidFinishSyncing)
-            }
-            syncReducer = nil
-        }
-
-//        func canSendUsageData() -> Bool {
-//            return profile.prefs.boolForKey(AppConstants.PrefSendUsageData) ?? true
-//        }
-
         private func notifySyncing(notification: Notification.Name) {
             NotificationCenter.default.post(name: notification, object: syncDisplayState?.asObject())
         }
@@ -690,17 +652,10 @@ open class BrowserProfile: Profile {
             self.doInBackgroundAfter(300) {
                 self.syncLock.lock()
                 defer { self.syncLock.unlock() }
-                // If we're syncing already, then wait for sync to end,
-                // then reset the database on the same serial queue.
-                if let reducer = self.syncReducer, !reducer.isFilled {
-                    reducer.terminal.upon { _ in
-                        self.syncQueue.async(execute: resetDatabase)
-                    }
-                } else {
+                
                     // Otherwise, reset the database on the sync queue now
                     // Sync can't start while this is still going on.
                     self.syncQueue.async(execute: resetDatabase)
-                }
             }
         }
 
@@ -990,49 +945,6 @@ open class BrowserProfile: Profile {
                 return deferMaybe(NoAccountError())
             }
 
-            // TODO: we should check if we can sync!
-
-            // TODO: Invoke `account.commandsClient.fetchMissedRemoteCommands()` to
-            // catch any missed FxA commands at time of Sync?
-
-            if !isSyncing {
-                // TODO: needs lots of clean-up
-                let uid = profile.uid
-                // A sync isn't already going on, so start another one.
-                let statsSession = SyncOperationStatsSession(why: why, uid: uid, deviceID: deviceID)
-                let reducer = AsyncReducer<EngineResults, EngineTasks>(initialValue: [], queue: syncQueue) { (statuses, synchronizers)  in
-                    let done = Set(statuses.map { $0.0 })
-                    let remaining = synchronizers.filter { !done.contains($0.0) }
-                    if remaining.isEmpty {
-                        //log.info("Nothing left to sync")
-                        return deferMaybe(statuses)
-                    }
-
-                    return self.syncWith(synchronizers: remaining, statsSession: statsSession, why: why) >>== { deferMaybe(statuses + $0) }
-                }
-
-                reducer.terminal.upon { results in
-                    let result = SyncOperationResult(
-                        engineResults: results,
-                        stats: statsSession.hasStarted() ? statsSession.end() : nil
-                    )
-                    self.endSyncing(result)
-                }
-
-                // The actual work of synchronizing doesn't start until we append
-                // the synchronizers to the reducer below.
-                self.syncReducer = reducer
-            }
-
-            do {
-                return try syncReducer!.append(synchronizers)
-            } catch let error {
-                //log.error("Synchronizers appended after sync was finished. This is a bug. \(error)")
-                let statuses = synchronizers.map {
-                    ($0.0, SyncStatus.notStarted(.unknown))
-                }
-                return deferMaybe(statuses)
-            }
         }
 
         func engineEnablementChangesForAccount() -> [String: Bool]? {

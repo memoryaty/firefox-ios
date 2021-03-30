@@ -452,7 +452,6 @@
 		E65075931E37F7AB006961AC /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075631E37F7AB006961AC /* AppConstants.swift */; };
 		E65075941E37F7AB006961AC /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075641E37F7AB006961AC /* AppInfo.swift */; };
 		E65075951E37F7AB006961AC /* GeneralUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075651E37F7AB006961AC /* GeneralUtils.swift */; };
-		E65075961E37F7AB006961AC /* AsyncReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075661E37F7AB006961AC /* AsyncReducer.swift */; };
 		E65075971E37F7AB006961AC /* AuthenticationKeychainInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075671E37F7AB006961AC /* AuthenticationKeychainInfo.swift */; };
 		E65075981E37F7AB006961AC /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075681E37F7AB006961AC /* Bytes.swift */; };
 		E65075991E37F7AB006961AC /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075691E37F7AB006961AC /* Cancellable.swift */; };
@@ -2850,7 +2849,6 @@
 		E65075631E37F7AB006961AC /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		E65075641E37F7AB006961AC /* AppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		E65075651E37F7AB006961AC /* GeneralUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralUtils.swift; sourceTree = "<group>"; };
-		E65075661E37F7AB006961AC /* AsyncReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncReducer.swift; sourceTree = "<group>"; };
 		E65075671E37F7AB006961AC /* AuthenticationKeychainInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationKeychainInfo.swift; sourceTree = "<group>"; };
 		E65075681E37F7AB006961AC /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
 		E65075691E37F7AB006961AC /* Cancellable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cancellable.swift; sourceTree = "<group>"; };
@@ -4142,7 +4140,6 @@
 				E65075631E37F7AB006961AC /* AppConstants.swift */,
 				E65075641E37F7AB006961AC /* AppInfo.swift */,
 				E65075651E37F7AB006961AC /* GeneralUtils.swift */,
-				E65075661E37F7AB006961AC /* AsyncReducer.swift */,
 				E65075671E37F7AB006961AC /* AuthenticationKeychainInfo.swift */,
 				E65075681E37F7AB006961AC /* Bytes.swift */,
 				E65075691E37F7AB006961AC /* Cancellable.swift */,
@@ -5306,7 +5303,6 @@
 				C8DFFE492294AAB600296DB1 /* NetworkUtils.swift in Sources */,
 				E65075A41E37F7AB006961AC /* NSCharacterSetExtensions.swift in Sources */,
 				EB912B9A22722B5F00DF585A /* Deferred.swift in Sources */,
-				E65075961E37F7AB006961AC /* AsyncReducer.swift in Sources */,
 				7B9BF91C1E43472E00CB24F4 /* JSONExtensions.swift in Sources */,
 				E65075BD1E37F7AB006961AC /* SystemUtils.swift in Sources */,
 				E65075AB1E37F7AB006961AC /* SetExtensions.swift in Sources */,
