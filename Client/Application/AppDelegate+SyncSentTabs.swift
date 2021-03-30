@@ -47,12 +47,12 @@ class AppSyncDelegate: SyncDelegate {
                 let notificationContent = UNMutableNotificationContent()
                 let title: String
                 if let deviceName = deviceName {
-                    title = String(format: Strings.SentTab_TabArrivingNotification_WithDevice_title, deviceName)
+                    title = String(format: "Strings.SentTab_TabArrivingNotification_WithDevice_title", deviceName)
                 } else {
-                    title = Strings.SentTab_TabArrivingNotification_NoDevice_title
+                    title = "Strings.SentTab_TabArrivingNotification_NoDevice_title"
                 }
                 notificationContent.title = title
-                notificationContent.body = url.absoluteDisplayExternalString
+                notificationContent.body = "url.absoluteDisplayExternalString"
                 notificationContent.userInfo = [SentTabAction.TabSendURLKey: url.absoluteString, SentTabAction.TabSendTitleKey: title]
                 notificationContent.categoryIdentifier = "org.mozilla.ios.SentTab.placeholder"
 

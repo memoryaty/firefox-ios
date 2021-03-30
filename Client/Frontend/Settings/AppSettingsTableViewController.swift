@@ -112,7 +112,7 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 DeleteExportedDataSetting(settings: self),
 //                ForceCrashSetting(settings: self),
                 SlowTheDatabase(settings: self),
-                ForgetSyncAuthStateDebugSetting(settings: self),
+//                ForgetSyncAuthStateDebugSetting(settings: self),
 
 
                 ToggleChronTabs(settings: self)

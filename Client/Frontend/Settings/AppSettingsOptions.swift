@@ -127,17 +127,6 @@ class SlowTheDatabase: HiddenSetting {
     }
 }
 
-class ForgetSyncAuthStateDebugSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: forget Sync auth state", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        settings.profile.rustFxA.syncAuthState.invalidate()
-        settings.tableView.reloadData()
-    }
-}
-
 ///Note: We have disabed it until we find best way to test newTabToolbarButton
 //class ToggleNewTabToolbarButton: HiddenSetting {
 //    override var title: NSAttributedString? {

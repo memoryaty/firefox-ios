@@ -156,11 +156,11 @@ open class FirefoxAccountSyncAuthState: SyncAuthState {
                                 deferred.fill(Maybe(failure: result.failureValue!))
                                 return
                             }
-                            let kSync = accessToken.key!.k.base64urlSafeDecodedData!
-                            let newCache = SyncAuthStateCache(token: token, forKey: kSync,expiresAt: now + 1000 * token.durationInSeconds)
-                            //log.debug("Fetched token server token!  Token expires at \(newCache.expiresAt).")
-                            self.cache.value = newCache
-                            deferred.fill(Maybe(success: (token: token, forKey: kSync)))
+//                            let kSync = accessToken.key!.k.base64urlSafeDecodedData!
+//                            let newCache = SyncAuthStateCache(token: token, forKey: kSync,expiresAt: now + 1000 * token.durationInSeconds)
+//                            //log.debug("Fetched token server token!  Token expires at \(newCache.expiresAt).")
+//                            self.cache.value = newCache
+//                            deferred.fill(Maybe(success: (token: token, forKey: kSync)))
                         }
                     }
                 }
