@@ -8,7 +8,7 @@ public struct PrefsKeys {
     // When this pref is set (by the user) it overrides default behaviour which is just based on app locale.
 //    public static let KeyEnableChinaSyncService = "useChinaSyncService"
     public static let KeyLastRemoteTabSyncTime = "lastRemoteTabSyncTime"
-    public static let KeyLastSyncFinishTime = "lastSyncFinishTime"
+//    public static let KeyLastSyncFinishTime = "lastSyncFinishTime"
     public static let KeyDefaultHomePageURL = "KeyDefaultHomePageURL"
     public static let KeyNoImageModeStatus = "NoImageModeStatus"
     public static let KeyNightModeButtonIsInMenu = "NightModeButtonIsInMenuPrefKey"

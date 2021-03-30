@@ -595,7 +595,6 @@ class SettingsTableViewController: ThemedTableViewController {
         super.viewWillAppear(animated)
 
         settings = generateSettings()
-        NotificationCenter.default.addObserver(self, selector: #selector(syncDidChangeState), name: .ProfileDidStartSyncing, object: nil)
 
         applyTheme()
     }
@@ -610,23 +609,9 @@ class SettingsTableViewController: ThemedTableViewController {
         refresh()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        [Notification.Name.ProfileDidStartSyncing].forEach { name in
-            NotificationCenter.default.removeObserver(self, name: name, object: nil)
-        }
-    }
-
     // Override to provide settings in subclasses
     func generateSettings() -> [SettingSection] {
         return []
-    }
-
-    @objc fileprivate func syncDidChangeState() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
     }
 
     @objc fileprivate func refresh() {

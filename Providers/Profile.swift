@@ -26,7 +26,6 @@ public let ProfileRemoteTabsSyncDelay: TimeInterval = 0.1
 
 public protocol SyncManager {
     var isSyncing: Bool { get }
-    var lastSyncFinishTime: Timestamp? { get set }
     var syncDisplayState: SyncDisplayState? { get }
 
     func hasSyncedHistory() -> Deferred<Maybe<Bool>>
@@ -580,19 +579,6 @@ open class BrowserProfile: Profile {
 
             self.beginTimedSyncs()
 
-            // Sync now if it's been more than our threshold.
-            let now = Date.now()
-            let then = self.lastSyncFinishTime ?? 0
-            guard now >= then else {
-                //log.debug("Time was modified since last sync.")
-                self.syncEverythingSoon()
-                return
-            }
-            let since = now - then
-            //log.debug("\(since)msec since last sync.")
-            if since > SyncConstants.SyncOnForegroundMinimumDelayMillis {
-                self.syncEverythingSoon()
-            }
         }
 
         /**
@@ -617,10 +603,6 @@ open class BrowserProfile: Profile {
 
         // Used as a task queue for syncing.
         fileprivate var syncReducer: AsyncReducer<EngineResults, EngineTasks>?
-
-        fileprivate func beginSyncing() {
-            notifySyncing(notification: .ProfileDidStartSyncing)
-        }
 
         fileprivate func endSyncing(_ result: SyncOperationResult) {
             // loop through statuses and fill sync state
@@ -668,8 +650,6 @@ open class BrowserProfile: Profile {
 
             center.addObserver(self, selector: #selector(onDatabaseWasRecreated), name: .DatabaseWasRecreated, object: nil)
             center.addObserver(self, selector: #selector(onLoginDidChange), name: .DataLoginDidChange, object: nil)
-            center.addObserver(self, selector: #selector(onStartSyncing), name: .ProfileDidStartSyncing, object: nil)
-//            center.addObserver(self, selector: #selector(onFinishSyncing), name: .ProfileDidFinishSyncing, object: nil)
         }
 
         // TODO: Do we still need this/do we need to do this for our new DB too?
@@ -739,34 +719,6 @@ open class BrowserProfile: Profile {
                         self.syncLogins()
                     }
                 }
-            }
-        }
-
-        public var lastSyncFinishTime: Timestamp? {
-            get {
-                return self.prefs.timestampForKey(PrefsKeys.KeyLastSyncFinishTime)
-            }
-
-            set(value) {
-                if let value = value {
-                    self.prefs.setTimestamp(value, forKey: PrefsKeys.KeyLastSyncFinishTime)
-                } else {
-                    self.prefs.removeObjectForKey(PrefsKeys.KeyLastSyncFinishTime)
-                }
-            }
-        }
-
-        @objc func onStartSyncing(_ notification: NSNotification) {
-            syncLock.lock()
-            defer { syncLock.unlock() }
-            syncDisplayState = .inProgress
-        }
-
-        @objc func onFinishSyncing(_ notification: NSNotification) {
-            syncLock.lock()
-            defer { syncLock.unlock() }
-            if let syncState = syncDisplayState, syncState == .good {
-                self.lastSyncFinishTime = Date.now()
             }
         }
 
@@ -1031,6 +983,8 @@ open class BrowserProfile: Profile {
         fileprivate func syncSeveral(why: SyncReason, synchronizers: [(EngineIdentifier, SyncFunction)]) -> Deferred<Maybe<[(EngineIdentifier, SyncStatus)]>> {
             syncLock.lock()
             defer { syncLock.unlock() }
+            
+            return deferMaybe(NoAccountError())
 
             guard let fxa = RustFirefoxAccounts.shared.accountManager.peek(), let profile = fxa.accountProfile(), let deviceID = fxa.deviceConstellation()?.state()?.localDevice?.id else {
                 return deferMaybe(NoAccountError())
@@ -1068,7 +1022,6 @@ open class BrowserProfile: Profile {
                 // The actual work of synchronizing doesn't start until we append
                 // the synchronizers to the reducer below.
                 self.syncReducer = reducer
-                self.beginSyncing()
             }
 
             do {
@@ -1163,13 +1116,6 @@ open class BrowserProfile: Profile {
             ]
 
             return self.syncSeveral(why: why, synchronizers: synchronizers) >>> succeed
-        }
-
-        func syncEverythingSoon() {
-            self.doInBackgroundAfter(SyncConstants.SyncOnForegroundAfterMillis) {
-                //log.debug("Running delayed startup sync.")
-                self.syncEverything(why: .startup)
-            }
         }
 
         /**
