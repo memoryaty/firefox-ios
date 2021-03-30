@@ -80,7 +80,7 @@ open class RustFirefoxAccounts {
 
             // After everthing is setup, register for push notifications
             if manager.hasAccount() {
-                NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
+//                NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
             }
         }
         return RustFirefoxAccounts.shared.accountManager
@@ -154,7 +154,7 @@ open class RustFirefoxAccounts {
             // Handle account migration completed successfully. Need to clear the old stored apnsToken and re-register push.
             if let type = notification.userInfo?["authType"] as? FxaAuthType, case .migrated = type {
 //                KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
-                NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
+//                NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
             }
 
             self?.update()

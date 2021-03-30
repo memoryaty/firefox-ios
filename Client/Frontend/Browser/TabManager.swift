@@ -634,7 +634,7 @@ extension TabManager {
             }
         }
         
-        guard forced || count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
+        guard forced || count == 0, !AppConstants.IsRunningTest, store.hasTabsToRestoreAtStartup else {
             return
         }
 

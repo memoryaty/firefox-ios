@@ -71,12 +71,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.backgroundColor = UIColor.theme.browser.background
 
-        // If the 'Save logs to Files app on next launch' toggle
-        // is turned on in the Settings app, copy over old logs.
-        if DebugSettingsBundleOptions.saveLogsToDocuments {
-//            Logger.copyPreviousLogsToDocuments()
-        }
-
         return startApplication(application, withLaunchOptions: launchOptions)
     }
 
@@ -177,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             return profile
         }
-        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate)
+        let p = BrowserProfile(localName: "profile")
         self.profile = p
         return p
     }
@@ -208,8 +202,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // button will be in the incorrect position and overlap with the input text. Not clear if
         // that is an iOS bug or not.
         AutocompleteTextField.appearance().semanticContentAttribute = .forceLeftToRight
-
-        pushNotificationSetup()
 
         // Leanplum user research variable setup for New tab user research
 //        _ = NewTabUserResearch()
