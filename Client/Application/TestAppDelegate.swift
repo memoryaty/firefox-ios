@@ -97,7 +97,7 @@ class TestAppDelegate: AppDelegate {
 
         // Skip the intro when requested by for example tests or automation
         if launchArguments.contains(LaunchArguments.SkipIntro) {
-            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+//            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
         }
 
         if launchArguments.contains(LaunchArguments.StageServer) {

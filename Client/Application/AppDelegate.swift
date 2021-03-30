@@ -212,7 +212,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             
             let persistedCurrentVersion = InstallType.persistedCurrentVersion()
-            let introScreen = profile.prefs.intForKey(PrefsKeys.IntroSeen)
+//            let introScreen = profile.prefs.intForKey(PrefsKeys.IntroSeen)
+            let introScreen = false
             // upgrade install - Intro screen shown & persisted current version does not match
             if introScreen != nil && persistedCurrentVersion != AppInfo.appVersion {
                 InstallType.set(type: .upgrade)
