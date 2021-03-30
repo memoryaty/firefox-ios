@@ -554,19 +554,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     @available(iOS 13.0, *)
     private func scheduleBGSync(application: UIApplication) {
-        if profile?.syncManager.isSyncing ?? false {
-            // If syncing, create a bg task because _shutdown() is blocking and might take a few seconds to complete
-            var taskId = UIBackgroundTaskIdentifier(rawValue: 0)
-            taskId = application.beginBackgroundTask(expirationHandler: {
-                self.shutdownProfileWhenNotActive(application)
-                application.endBackgroundTask(taskId)
-            })
-
-            DispatchQueue.main.async {
-                self.shutdownProfileWhenNotActive(application)
-                application.endBackgroundTask(taskId)
-            }
-        } else {
+//        if profile?.syncManager.isSyncing ?? false {
+//            // If syncing, create a bg task because _shutdown() is blocking and might take a few seconds to complete
+//            var taskId = UIBackgroundTaskIdentifier(rawValue: 0)
+//            taskId = application.beginBackgroundTask(expirationHandler: {
+//                self.shutdownProfileWhenNotActive(application)
+//                application.endBackgroundTask(taskId)
+//            })
+//
+//            DispatchQueue.main.async {
+//                self.shutdownProfileWhenNotActive(application)
+//                application.endBackgroundTask(taskId)
+//            }
+//        } else {
             // Blocking call, however without sync running it should be instantaneous
             profile?._shutdown()
 
@@ -578,7 +578,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             } catch {
                 NSLog(error.localizedDescription)
             }
-        }
+//        }
     }
 }
 

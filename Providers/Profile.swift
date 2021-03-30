@@ -25,8 +25,6 @@ import SwiftKeychainWrapper
 public let ProfileRemoteTabsSyncDelay: TimeInterval = 0.1
 
 public protocol SyncManager {
-    var isSyncing: Bool { get }
-    var syncDisplayState: SyncDisplayState? { get }
 
     func hasSyncedHistory() -> Deferred<Maybe<Bool>>
     func hasSyncedLogins() -> Deferred<Maybe<Bool>>
@@ -539,20 +537,8 @@ open class BrowserProfile: Profile {
          */
         fileprivate let syncLock = NSRecursiveLock()
 
-        public var isSyncing: Bool {
-            syncLock.lock()
-            defer { syncLock.unlock() }
-            return syncDisplayState != nil && syncDisplayState! == .inProgress
-        }
-
-        public var syncDisplayState: SyncDisplayState?
-
         // The dispatch queue for coordinating syncing and resetting the database.
         fileprivate let syncQueue = DispatchQueue(label: "com.mozilla.firefox.sync")
-
-        private func notifySyncing(notification: Notification.Name) {
-            NotificationCenter.default.post(name: notification, object: syncDisplayState?.asObject())
-        }
 
         init(profile: BrowserProfile) {
             self.profile = profile
