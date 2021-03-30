@@ -105,7 +105,7 @@ public typealias SyncResult = Deferred<Maybe<SyncStatus>>
 public typealias EngineIdentifier = String
 public typealias EngineStatus = (EngineIdentifier, SyncStatus)
 public typealias EngineResults = [EngineStatus]
-public typealias SyncOperationResult = (engineResults: Maybe<EngineResults>, stats: SyncOperationStatsSession?)
+//public typealias SyncOperationResult = (engineResults: Maybe<EngineResults>, stats: SyncOperationStatsSession?)
 
 public enum SyncNotStartedReason {
     case noAccount
