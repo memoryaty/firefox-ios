@@ -28,7 +28,7 @@ open class RustFirefoxAccounts {
     public static var shared = RustFirefoxAccounts()
     public var accountManager = Deferred<FxAccountManager>()
 //    private static var isInitializingAccountManager = false
-    public let syncAuthState: SyncAuthState
+//    public let syncAuthState: SyncAuthState
     fileprivate static var prefs: Prefs?
 //    public let pushNotifications = PushNotificationSetup()
 
@@ -70,10 +70,10 @@ open class RustFirefoxAccounts {
 
         let prefs = RustFirefoxAccounts.prefs
 
-        syncAuthState = FirefoxAccountSyncAuthState(
-            cache: KeychainCache.fromBranch("rustAccounts.syncAuthState",
-                                            withLabel: RustFirefoxAccounts.syncAuthStateUniqueId(prefs: prefs),
-                factory: syncAuthStateCachefromJSON))
+//        syncAuthState = FirefoxAccountSyncAuthState(
+//            cache: KeychainCache.fromBranch("rustAccounts.syncAuthState",
+//                                            withLabel: RustFirefoxAccounts.syncAuthStateUniqueId(prefs: prefs),
+//                factory: syncAuthStateCachefromJSON))
 
         // Called when account is logged in for the first time, on every app start when the account is found (even if offline), and when migration of an account is completed.
         NotificationCenter.default.addObserver(forName: .accountAuthenticated, object: nil, queue: .main) { [weak self] notification in

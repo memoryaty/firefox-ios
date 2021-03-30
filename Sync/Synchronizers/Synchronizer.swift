@@ -103,8 +103,8 @@ public enum SyncStatus {
 public typealias DeferredTimestamp = Deferred<Maybe<Timestamp>>
 public typealias SyncResult = Deferred<Maybe<SyncStatus>>
 public typealias EngineIdentifier = String
-public typealias EngineStatus = (EngineIdentifier, SyncStatus)
-public typealias EngineResults = [EngineStatus]
+//public typealias EngineStatus = (EngineIdentifier, SyncStatus)
+//public typealias EngineResults = [EngineStatus]
 //public typealias SyncOperationResult = (engineResults: Maybe<EngineResults>, stats: SyncOperationStatsSession?)
 
 public enum SyncNotStartedReason {

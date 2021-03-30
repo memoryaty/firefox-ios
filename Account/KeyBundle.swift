@@ -13,11 +13,6 @@ open class KeyBundle: Hashable {
     public let encKey: Data
     public let hmacKey: Data
 
-    open class func fromKSync(_ kSync: Data) -> KeyBundle {
-        return KeyBundle(encKey: kSync.subdata(in: 0..<KeyLength),
-                         hmacKey: kSync.subdata(in: KeyLength..<(2 * KeyLength)))
-    }
-
     open class func random() -> KeyBundle {
         // Bytes.generateRandomBytes uses SecRandomCopyBytes, which hits /dev/random, which
         // on iOS is populated by the OS from kernel-level sources of entropy.

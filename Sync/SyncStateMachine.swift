@@ -80,7 +80,7 @@ public func createMetaGlobal(enginesEnablements: [String: Bool]?) -> MetaGlobal 
 }
 
 public typealias TokenSource = () -> Deferred<Maybe<TokenServerToken>>
-public typealias ReadyDeferred = Deferred<Maybe<Ready>>
+//public typealias ReadyDeferred = Deferred<Maybe<Ready>>
 
 // See docs in docs/sync.md.
 
@@ -89,120 +89,7 @@ public typealias ReadyDeferred = Deferred<Maybe<Ready>>
 // acknowledge that a Sync client occasionally must migrate between two servers, preserving
 // some state from the last.
 // The resultant 'Ready' will be able to provide a suitably initialized storage client.
-open class SyncStateMachine {
-    // The keys are used as a set, to prevent cycles in the state machine.
-    var stateLabelsSeen = [SyncStateLabel: Bool]()
-    var stateLabelSequence = [SyncStateLabel]()
 
-    let stateLabelsAllowed: Set<SyncStateLabel>
-
-    let scratchpadPrefs: Prefs
-
-    /// Use this set of states to constrain the state machine to attempt the barest
-    /// minimum to get to Ready. This is suitable for extension uses. If it is not possible,
-    /// then no destructive or expensive actions are taken (e.g. total HTTP requests,
-    /// duration, records processed, database writes, fsyncs, blanking any local collections)
-    public static let OptimisticStates = Set(SyncStateLabel.optimisticValues)
-
-    /// The default set of states that the state machine is allowed to use.
-    public static let AllStates = Set(SyncStateLabel.allValues)
-
-    public init(prefs: Prefs, allowingStates labels: Set<SyncStateLabel> = SyncStateMachine.AllStates) {
-        self.scratchpadPrefs = prefs.branch("scratchpad")
-        self.stateLabelsAllowed = labels
-    }
-
-    open class func clearStateFromPrefs(_ prefs: Prefs) {
-        //log.debug("Clearing all Sync prefs.")
-        Scratchpad.clearFromPrefs(prefs.branch("scratchpad")) // XXX this is convoluted.
-        prefs.clearAll()
-    }
-
-    fileprivate func advanceFromState(_ state: SyncState) -> ReadyDeferred {
-        //log.info("advanceFromState: \(state.label)")
-
-        // Record visibility before taking any action.
-        let labelAlreadySeen = self.stateLabelsSeen.updateValue(true, forKey: state.label) != nil
-        stateLabelSequence.append(state.label)
-
-        if let ready = state as? Ready {
-            // Sweet, we made it!
-            return deferMaybe(ready)
-        }
-
-        // Cycles are not necessarily a problem, but seeing the same (recoverable) error condition is a problem.
-        if state is RecoverableSyncState && labelAlreadySeen {
-            return deferMaybe(StateMachineCycleError())
-        }
-
-        guard stateLabelsAllowed.contains(state.label) else {
-            return deferMaybe(DisallowedStateError(state.label, allowedStates: stateLabelsAllowed))
-        }
-
-        return state.advance() >>== self.advanceFromState
-    }
-
-    open func toReady(_ authState: SyncAuthState) -> ReadyDeferred {
-        let readyDeferred = ReadyDeferred()
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { accountManager in
-            authState.token(Date.now(), canBeExpired: false).uponQueue(.main) { success in
-                guard let (token, kSync) = success.successValue else {
-                    readyDeferred.fill(Maybe(failure: success.failureValue ?? FxAClientError.local(NSError())))
-                    return
-                }
-
-                let prior = Scratchpad.restoreFromPrefs(self.scratchpadPrefs, syncKeyBundle: KeyBundle.fromKSync(kSync))
-                if prior == nil {
-                   //log.info("No persisted Sync state. Starting over.")
-                }
-                var scratchpad = prior ?? Scratchpad(b: KeyBundle.fromKSync(kSync), persistingTo: self.scratchpadPrefs)
-
-                // Take the scratchpad and add the fxaDeviceId from the state, and hashedUID from the token
-                let b = Scratchpad.Builder(p: scratchpad)
-
-                if let deviceID = accountManager.deviceConstellation()?.state()?.localDevice?.id {
-                   b.fxaDeviceId = deviceID
-                } else {
-                   // Either deviceRegistration hasn't occurred yet (our bug) or
-                   // FxA has given us an UnknownDevice error.
-                   //log.warning("Device registration has not taken place before sync.")
-                }
-                b.hashedUID = token.hashedFxAUID
-
-                if let enginesEnablements = authState.enginesEnablements,
-                  !enginesEnablements.isEmpty {
-                   b.enginesEnablements = enginesEnablements
-                }
-
-                if let clientName = authState.clientName {
-                   b.clientName = clientName
-                }
-
-                // Detect if we've changed anything in our client record from the last time we synced…
-                let ourClientUnchanged = (b.fxaDeviceId == scratchpad.fxaDeviceId)
-
-                // …and if so, trigger a reset of clients.
-                if !ourClientUnchanged {
-                   b.localCommands.insert(LocalCommand.resetEngine(engine: "clients"))
-                }
-
-                scratchpad = b.build()
-
-                //log.info("Advancing to InitialWithLiveToken.")
-                let state = InitialWithLiveToken(scratchpad: scratchpad, token: token)
-
-                // Start with fresh visibility data.
-                self.stateLabelsSeen = [:]
-                self.stateLabelSequence = []
-
-                self.advanceFromState(state).uponQueue(.main) { success in
-                    readyDeferred.fill(success)
-                }
-            }
-        }
-        return readyDeferred
-    }
-}
 
 public enum SyncStateLabel: String {
     case Stub = "STUB"     // For 'abstract' base classes.
@@ -417,20 +304,6 @@ open class InvalidKeysError: SyncError {
 
     open var description: String {
         return "Downloaded crypto/keys, but couldn't parse them."
-    }
-}
-
-open class DisallowedStateError: SyncError {
-    let state: SyncStateLabel
-    let allowedStates: Set<SyncStateLabel>
-
-    public init(_ state: SyncStateLabel, allowedStates: Set<SyncStateLabel>) {
-        self.state = state
-        self.allowedStates = allowedStates
-    }
-
-    open var description: String {
-        return "Sync state machine reached \(String(describing: state)) state, which is disallowed. Legal states are: \(String(describing: allowedStates))"
     }
 }
 

@@ -34,7 +34,6 @@ public protocol SyncManager {
     func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
 
-    func onNewProfile()
 }
 
 typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
@@ -58,19 +57,6 @@ class ProfileFileAccessor: FileAccessor {
         }
 
         super.init(rootPath: URL(fileURLWithPath: rootPath).appendingPathComponent(profileDirName).path)
-    }
-}
-
-class CommandStoringSyncDelegate: SyncDelegate {
-    let profile: Profile
-
-    init(profile: Profile) {
-        self.profile = profile
-    }
-
-    public func displaySentTab(for url: URL, title: String, from deviceName: String?) {
-        let item = ShareItem(url: url.absoluteString, title: title, favicon: nil)
-        _ = self.profile.queue.addToQueue(item)
     }
 }
 
@@ -394,10 +380,6 @@ open class BrowserProfile: Profile {
         return ClosedTabsStore(prefs: self.prefs)
     }()
 
-    open func getSyncDelegate() -> SyncDelegate {
-        return syncDelegate ?? CommandStoringSyncDelegate(profile: self)
-    }
-
     public func getClients() -> Deferred<Maybe<[RemoteClient]>> {
         return self.syncManager.syncClients()
            >>> { self.remoteClientsAndTabs.getClients() }
@@ -587,37 +569,6 @@ open class BrowserProfile: Profile {
             }
         }
 
-        public func onNewProfile() {
-            SyncStateMachine.clearStateFromPrefs(self.prefsForSync)
-        }
-
-//        public func onRemovedAccount() -> Success {
-//            let profile = self.profile
-//
-//            // Run these in order, because they might write to the same DB!
-//            let remove = [
-//                profile.history.onRemovedAccount,
-//                profile.remoteClientsAndTabs.onRemovedAccount,
-//                profile.logins.reset,
-//                profile.places.resetBookmarksMetadata,
-//            ]
-//
-//            let clearPrefs: () -> Success = {
-//                withExtendedLifetime(self) {
-//                    // Clear prefs after we're done clearing everything else -- just in case
-//                    // one of them needs the prefs and we race. Clear regardless of success
-//                    // or failure.
-//
-//                    // This will remove keys from the Keychain if they exist, as well
-//                    // as wiping the Sync prefs.
-//                    SyncStateMachine.clearStateFromPrefs(self.prefsForSync)
-//                }
-//                return succeed()
-//            }
-//
-//            return accumulate(remove) >>> clearPrefs
-//        }
-
         fileprivate func syncClientsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             //log.debug("Syncing clients to storage.")
 
@@ -725,28 +676,7 @@ open class BrowserProfile: Profile {
             })
         }
 
-        func takeActionsOnEngineStateChanges<T: EngineStateChanges>(_ changes: T) -> Deferred<Maybe<T>> {
-            var needReset = Set<String>(changes.collectionsThatNeedLocalReset())
-            needReset.formUnion(changes.enginesDisabled())
-            needReset.formUnion(changes.enginesEnabled())
-            if needReset.isEmpty {
-                //log.debug("No collections need reset. Moving on.")
-                return deferMaybe(changes)
-            }
-
-            // needReset needs at most one of clients and tabs, because we reset them
-            // both if either needs reset. This is strictly an optimization to avoid
-            // doing duplicate work.
-            if needReset.contains("clients") {
-                if needReset.remove("tabs") != nil {
-                    //log.debug("Already resetting clients (and tabs); not bothering to also reset tabs again.")
-                }
-            }
-
-            return walk(Array(needReset), f: self.locallyResetCollection)
-               >>> effect(changes.clearLocalCommands)
-               >>> always(changes)
-        }
+        
 
         /**
          * Runs the single provided synchronization function and returns its status.
@@ -783,71 +713,8 @@ open class BrowserProfile: Profile {
 
         }
 
-        func engineEnablementChangesForAccount() -> [String: Bool]? {
-            var enginesEnablements: [String: Bool] = [:]
-            // We just created the account, the user went through the Choose What to Sync screen on FxA.
-            if let declined = UserDefaults.standard.stringArray(forKey: "fxa.cwts.declinedSyncEngines") {
-                declined.forEach { enginesEnablements[$0] = false }
-                UserDefaults.standard.removeObject(forKey: "fxa.cwts.declinedSyncEngines")
-            } else {
-                // Bundle in authState the engines the user activated/disabled since the last sync.
-                TogglableEngines.forEach { engine in
-                    let stateChangedPref = "engine.\(engine).enabledStateChanged"
-                    if let _ = self.prefsForSync.boolForKey(stateChangedPref),
-                        let enabled = self.prefsForSync.boolForKey("engine.\(engine).enabled") {
-                        enginesEnablements[engine] = enabled
-                        self.prefsForSync.setObject(nil, forKey: stateChangedPref)
-                    }
-                }
-            }
-            return enginesEnablements
-        }
-
         // This SHOULD NOT be called directly: use syncSeveral instead.
-        fileprivate func syncWith(synchronizers: [(EngineIdentifier, SyncFunction)],
-                                  statsSession: SyncOperationStatsSession, why: SyncReason) -> Deferred<Maybe<[(EngineIdentifier, SyncStatus)]>> {
-            //log.info("Syncing \(synchronizers.map { $0.0 })")
-            var authState = RustFirefoxAccounts.shared.syncAuthState
-            let delegate = self.profile.getSyncDelegate()
-            // TODO
-            if let enginesEnablements = self.engineEnablementChangesForAccount(),
-               !enginesEnablements.isEmpty {
-                authState.enginesEnablements = enginesEnablements
-                //log.debug("engines to enable: \(enginesEnablements.compactMap { $0.value ? $0.key : nil })")
-                //log.debug("engines to disable: \(enginesEnablements.compactMap { !$0.value ? $0.key : nil })")
-            }
-
-            // TODO
-//            authState?.clientName = account.deviceName
-
-            let readyDeferred = SyncStateMachine(prefs: self.prefsForSync).toReady(authState)
-
-            let function: (SyncDelegate, Prefs, Ready) -> Deferred<Maybe<[EngineStatus]>> = { delegate, syncPrefs, ready in
-                let thunks = synchronizers.map { (i, f) in
-                    return { () -> Deferred<Maybe<EngineStatus>> in
-                        //log.debug("Syncing \(i)…")
-                        return f(delegate, syncPrefs, ready, why) >>== { deferMaybe((i, $0)) }
-                    }
-                }
-                return accumulate(thunks)
-            }
-
-            return readyDeferred.bind { readyResult in
-                guard let success = readyResult.successValue else {
-                    return deferMaybe(readyResult.failureValue!)
-                }
-                return self.takeActionsOnEngineStateChanges(success) >>== { ready in
-                    let updateEnginePref: ((String, Bool) -> Void) = { engine, enabled in
-                        self.prefsForSync.setBool(enabled, forKey: "engine.\(engine).enabled")
-                    }
-                    ready.engineConfiguration?.enabled.forEach { updateEnginePref($0, true) }
-                    ready.engineConfiguration?.declined.forEach { updateEnginePref($0, false) }
-
-                    statsSession.start()
-                    return function(delegate, self.prefsForSync, ready)
-                }
-            }
-        }
+        
 
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
             return self.profile.history.hasSyncedHistory()
