@@ -36,7 +36,7 @@ public protocol SyncManager {
 
 }
 
-typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
+//typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
 
 class ProfileFileAccessor: FileAccessor {
     convenience init(profile: Profile) {
@@ -676,45 +676,6 @@ open class BrowserProfile: Profile {
             })
         }
 
-        
-
-        /**
-         * Runs the single provided synchronization function and returns its status.
-         */
-        fileprivate func sync(_ label: EngineIdentifier, function: @escaping SyncFunction) -> SyncResult {
-            return syncSeveral(why: .user, synchronizers: [(label, function)]) >>== { statuses in
-                let status = statuses.find { label == $0.0 }?.1
-                return deferMaybe(status ?? .notStarted(.unknown))
-            }
-        }
-
-        /**
-         * Convenience method for syncSeveral([(EngineIdentifier, SyncFunction)])
-         */
-        private func syncSeveral(why: SyncReason, synchronizers: (EngineIdentifier, SyncFunction)...) -> Deferred<Maybe<[(EngineIdentifier, SyncStatus)]>> {
-            return syncSeveral(why: why, synchronizers: synchronizers)
-        }
-
-        /**
-         * Runs each of the provided synchronization functions with the same inputs.
-         * Returns an array of IDs and SyncStatuses at least length as the input.
-         * The statuses returned will be a superset of the ones that are requested here.
-         * While a sync is ongoing, each engine from successive calls to this method will only be called once.
-         */
-        fileprivate func syncSeveral(why: SyncReason, synchronizers: [(EngineIdentifier, SyncFunction)]) -> Deferred<Maybe<[(EngineIdentifier, SyncStatus)]>> {
-            syncLock.lock()
-            defer { syncLock.unlock() }
-            
-            return deferMaybe(NoAccountError())
-
-            guard let fxa = RustFirefoxAccounts.shared.accountManager.peek(), let profile = fxa.accountProfile(), let deviceID = fxa.deviceConstellation()?.state()?.localDevice?.id else {
-                return deferMaybe(NoAccountError())
-            }
-
-        }
-
-        // This SHOULD NOT be called directly: use syncSeveral instead.
-        
 
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
             return self.profile.history.hasSyncedHistory()
@@ -726,31 +687,36 @@ open class BrowserProfile: Profile {
 
         public func syncClients() -> SyncResult {
             // TODO: recognize .NotStarted.
-            return self.sync("clients", function: syncClientsWithDelegate)
+            let d = syncClientsWithDelegate
+            return deferMaybe(NoAccountError())
         }
 
         public func syncClientsThenTabs() -> SyncResult {
-            return self.syncSeveral(
-                why: .user,
-                synchronizers:
-                ("clients", self.syncClientsWithDelegate),
-                ("tabs", self.syncTabsWithDelegate)) >>== { statuses in
-                let status = statuses.find { "tabs" == $0.0 }
-                return deferMaybe(status!.1)
-            }
+            return deferMaybe(NoAccountError())
+//            return self.syncSeveral(
+//                why: .user,
+//                synchronizers:
+//                ("clients", self.syncClientsWithDelegate),
+//                ("tabs", self.syncTabsWithDelegate)) >>== { statuses in
+//                let status = statuses.find { "tabs" == $0.0 }
+//                return deferMaybe(status!.1)
+//            }
         }
 
         @discardableResult public func syncBookmarks() -> SyncResult {
-            return self.sync("bookmarks", function: syncBookmarksWithDelegate)
+            return deferMaybe(NoAccountError())
+//            return self.sync("bookmarks", function: syncBookmarksWithDelegate)
         }
 
         @discardableResult public func syncLogins() -> SyncResult {
-            return self.sync("logins", function: syncLoginsWithDelegate)
+            return deferMaybe(NoAccountError())
+//            return self.sync("logins", function: syncLoginsWithDelegate)
         }
 
         public func syncHistory() -> SyncResult {
             // TODO: recognize .NotStarted.
-            return self.sync("history", function: syncHistoryWithDelegate)
+            return deferMaybe(NoAccountError())
+//            return self.sync("history", function: syncHistoryWithDelegate)
         }
 
         public func notify(deviceIDs: [GUID], collectionsChanged collections: [String], reason: String) -> Success {
