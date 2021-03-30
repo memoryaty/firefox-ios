@@ -31,17 +31,17 @@ public func validatedHTTPResponse(_ response: URLResponse?, contentType: String?
     return nil
 }
 
-public enum HTTPMethod: String {
-    case options = "OPTIONS"
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-    case trace   = "TRACE"
-    case connect = "CONNECT"
-}
+//public enum HTTPMethod: String {
+//    case options = "OPTIONS"
+//    case get     = "GET"
+//    case head    = "HEAD"
+//    case post    = "POST"
+//    case put     = "PUT"
+//    case patch   = "PATCH"
+//    case delete  = "DELETE"
+//    case trace   = "TRACE"
+//    case connect = "CONNECT"
+//}
 
 public enum JSONSerializeError: Error {
     case noData
