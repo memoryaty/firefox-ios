@@ -6,7 +6,7 @@ import Shared
 import MozillaAppServices
 import SwiftKeychainWrapper
 
-let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
+//let PendingAccountDisconnectedKey = "PendingAccountDisconnect"
 
 // Used to ignore unknown classes when de-archiving
 final class Unknown: NSObject, NSCoding {
@@ -232,17 +232,6 @@ open class RustFirefoxAccounts {
         // The legacy system had both of these notifications for UI updates. Possibly they could be made into a single notification
         NotificationCenter.default.post(name: .FirefoxAccountProfileChanged, object: self)
         NotificationCenter.default.post(name: .FirefoxAccountStateChange, object: self)
-    }
-
-    public func disconnect() {
-        guard let accountManager = accountManager.peek() else { return }
-        accountManager.logout() { _ in }
-        let prefs = RustFirefoxAccounts.prefs
-        prefs?.removeObjectForKey(RustFirefoxAccounts.prefKeySyncAuthStateUniqueID)
-        prefs?.removeObjectForKey(PendingAccountDisconnectedKey)
-
-//        pushNotifications.unregister()
-//        KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
     }
 
     public func hasAccount() -> Bool {

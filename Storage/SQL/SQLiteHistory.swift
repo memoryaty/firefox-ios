@@ -1023,11 +1023,3 @@ extension SQLiteHistory: ResettableSyncStorage {
         return self.db.run(flag)
     }
 }
-
-extension SQLiteHistory: AccountRemovalDelegate {
-    public func onRemovedAccount() -> Success {
-        //log.info("Clearing history metadata and deleted items after account removal.")
-        let discard = "DELETE FROM history WHERE is_deleted = 1"
-        return self.db.run(discard) >>> self.resetClient
-    }
-}

@@ -46,7 +46,7 @@ public protocol SyncManager {
     func applicationDidBecomeActive()
 
     func onNewProfile()
-    @discardableResult func onRemovedAccount() -> Success
+
     @discardableResult func onAddedAccount() -> Success
 }
 
@@ -130,8 +130,6 @@ protocol Profile: AnyObject {
     func hasSyncableAccount() -> Bool
 
     var rustFxA: RustFirefoxAccounts { get }
-
-    func removeAccount()
 
     func getClients() -> Deferred<Maybe<[RemoteClient]>>
     func getCachedClients()-> Deferred<Maybe<[RemoteClient]>>
@@ -231,22 +229,6 @@ open class BrowserProfile: Profile {
             prefs.clearAll()
         }
 
-        // Log SQLite compile_options.
-        // db.sqliteCompileOptions() >>== { compileOptions in
-        //     //log.debug("SQLite compile_options:\n\(compileOptions.joined(separator: "\n"))")
-        // }
-
-        // Set up logging from Rust.
-        if !RustLog.shared.tryEnable({ (level, tag, message) -> Bool in
-            let logString = "[RUST][\(tag ?? "no-tag")] \(message)"
-
-            return true
-        }) {
-            //log.error("ERROR: Unable to enable logging from Rust")
-        }
-
-        // By default, filter logging from Rust below `.info` level.
-        try? RustLog.shared.setLevelFilter(filter: .info)
 
         // This has to happen prior to the databases being opened, because opening them can trigger
         // events to which the SyncManager listens.
@@ -422,7 +404,7 @@ open class BrowserProfile: Profile {
         return SQLiteReadingList(db: self.readingListDB)
     }()
 
-    lazy var remoteClientsAndTabs: RemoteClientsAndTabs & ResettableSyncStorage & AccountRemovalDelegate & RemoteDevices = {
+    lazy var remoteClientsAndTabs: RemoteClientsAndTabs & ResettableSyncStorage & RemoteDevices = {
         return SQLiteRemoteClientsAndTabs(db: self.db)
     }()
 
@@ -506,36 +488,6 @@ open class BrowserProfile: Profile {
 
     var rustFxA: RustFirefoxAccounts {
         return RustFirefoxAccounts.shared
-    }
-
-    func removeAccount() {
-        RustFirefoxAccounts.shared.disconnect()
-
-        // Profile exists in extensions, UIApp is unavailable there, make this code run for the main app only
-        if let application = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as? UIApplication {
-            application.unregisterForRemoteNotifications()
-        }
-
-        // remove Account Metadata
-        prefs.removeObjectForKey(PrefsKeys.KeyLastRemoteTabSyncTime)
-
-        // Save the keys that will be restored
-        let salt = keychain.string(forKey: loginsSaltKeychainKey)
-        let unlockKey = loginsKey
-        // Remove all items, removal is not key-by-key specific (due to the risk of failing to delete something), simply restore what is needed.
-        keychain.removeAllKeys()
-        // Restore the keys that are still needed
-        if let salt = salt {
-            keychain.set(salt, forKey: loginsSaltKeychainKey, withAccessibility: .afterFirstUnlock)
-        }
-        keychain.set(unlockKey, forKey: loginsUnlockKeychainKey, withAccessibility: .afterFirstUnlock)
-
-        // Tell any observers that our account has changed.
-//        NotificationCenter.default.post(name: .FirefoxAccountChanged, object: nil)
-
-        // Trigger cleanup. Pass in the account in case we want to try to remove
-        // client-specific data from the server.
-        self.syncManager.onRemovedAccount()
     }
 
     class NoAccountError: MaybeErrorType {
@@ -727,32 +679,32 @@ open class BrowserProfile: Profile {
             SyncStateMachine.clearStateFromPrefs(self.prefsForSync)
         }
 
-        public func onRemovedAccount() -> Success {
-            let profile = self.profile
-
-            // Run these in order, because they might write to the same DB!
-            let remove = [
-                profile.history.onRemovedAccount,
-                profile.remoteClientsAndTabs.onRemovedAccount,
-                profile.logins.reset,
-                profile.places.resetBookmarksMetadata,
-            ]
-
-            let clearPrefs: () -> Success = {
-                withExtendedLifetime(self) {
-                    // Clear prefs after we're done clearing everything else -- just in case
-                    // one of them needs the prefs and we race. Clear regardless of success
-                    // or failure.
-
-                    // This will remove keys from the Keychain if they exist, as well
-                    // as wiping the Sync prefs.
-                    SyncStateMachine.clearStateFromPrefs(self.prefsForSync)
-                }
-                return succeed()
-            }
-
-            return accumulate(remove) >>> clearPrefs
-        }
+//        public func onRemovedAccount() -> Success {
+//            let profile = self.profile
+//
+//            // Run these in order, because they might write to the same DB!
+//            let remove = [
+//                profile.history.onRemovedAccount,
+//                profile.remoteClientsAndTabs.onRemovedAccount,
+//                profile.logins.reset,
+//                profile.places.resetBookmarksMetadata,
+//            ]
+//
+//            let clearPrefs: () -> Success = {
+//                withExtendedLifetime(self) {
+//                    // Clear prefs after we're done clearing everything else -- just in case
+//                    // one of them needs the prefs and we race. Clear regardless of success
+//                    // or failure.
+//
+//                    // This will remove keys from the Keychain if they exist, as well
+//                    // as wiping the Sync prefs.
+//                    SyncStateMachine.clearStateFromPrefs(self.prefsForSync)
+//                }
+//                return succeed()
+//            }
+//
+//            return accumulate(remove) >>> clearPrefs
+//        }
 
         fileprivate func repeatingTimerAtInterval(_ interval: TimeInterval, selector: Selector) -> Timer {
             return Timer.scheduledTimer(timeInterval: interval, target: self, selector: selector, userInfo: nil, repeats: true)

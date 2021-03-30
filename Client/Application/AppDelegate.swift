@@ -308,10 +308,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             profile._reopen()
 
-//            if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
-//                profile.removeAccount()
-//            }
-
             profile.syncManager.applicationDidBecomeActive()
 
             setUpWebServer(profile)
