@@ -54,10 +54,6 @@ public func ==(lhs: SyncCommand, rhs: SyncCommand) -> Bool {
 }
 
 public protocol SyncCommands {
-    func deleteCommands() -> Success
-    func deleteCommands(_ clientGUID: GUID) -> Success
-
-    func getCommands() -> Deferred<Maybe<[GUID: [SyncCommand]]>>
 
     func insertCommand(_ command: SyncCommand, forClients clients: [RemoteClient]) -> Deferred<Maybe<Int>>
     func insertCommands(_ commands: [SyncCommand], forClients clients: [RemoteClient]) -> Deferred<Maybe<Int>>

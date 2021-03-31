@@ -98,7 +98,6 @@ protocol Profile: AnyObject {
 
     var rustFxA: RustFirefoxAccounts { get }
 
-    func getClients() -> Deferred<Maybe<[RemoteClient]>>
     func getCachedClients()-> Deferred<Maybe<[RemoteClient]>>
     func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
     func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
@@ -368,7 +367,7 @@ open class BrowserProfile: Profile {
         return SQLiteReadingList(db: self.readingListDB)
     }()
 
-    lazy var remoteClientsAndTabs: RemoteClientsAndTabs & ResettableSyncStorage & RemoteDevices = {
+    lazy var remoteClientsAndTabs: RemoteClientsAndTabs & ResettableSyncStorage = {
         return SQLiteRemoteClientsAndTabs(db: self.db)
     }()
 
@@ -569,35 +568,6 @@ open class BrowserProfile: Profile {
             }
         }
 
-        fileprivate func syncClientsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            //log.debug("Syncing clients to storage.")
-
-            if constellationStateUpdate == nil {
-                constellationStateUpdate = NotificationCenter.default.addObserver(forName: .constellationStateUpdate, object: nil, queue: .main) { [weak self] notification in
-                    guard let accountManager = self?.profile.rustFxA.accountManager.peek(), let state = accountManager.deviceConstellation()?.state() else {
-                        return
-                    }
-                    guard let self = self else { return }
-                    let devices = state.remoteDevices.map { d -> RemoteDevice in
-                        let t = "\(d.deviceType)"
-                        return RemoteDevice(id: d.id, name: d.displayName, type: t, isCurrentDevice: d.isCurrentDevice, lastAccessTime: d.lastAccessTime, availableCommands: nil)
-                    }
-                    let _ = self.profile.remoteClientsAndTabs.replaceRemoteDevices(devices)
-                }
-            }
-
-            let clientSynchronizer = ready.synchronizer(ClientsSynchronizer.self, delegate: delegate, prefs: prefs, why: why)
-            return clientSynchronizer.synchronizeLocalClients(self.profile.remoteClientsAndTabs, withServer: ready.client, info: ready.info, notifier: self) >>== { result in
-                guard case .completed = result, let accountManager = self.profile.rustFxA.accountManager.peek() else {
-                    return deferMaybe(result)
-                }
-                //log.debug("Updating FxA devices list.")
-
-                accountManager.deviceConstellation()?.refreshState()
-                return deferMaybe(result)
-            }
-        }
-
         fileprivate func syncTabsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             let storage = self.profile.remoteClientsAndTabs
             let tabSynchronizer = ready.synchronizer(TabsSynchronizer.self, delegate: delegate, prefs: prefs, why: why)
@@ -687,7 +657,7 @@ open class BrowserProfile: Profile {
 
         public func syncClients() -> SyncResult {
             // TODO: recognize .NotStarted.
-            let d = syncClientsWithDelegate
+
             return deferMaybe(NoAccountError())
         }
 

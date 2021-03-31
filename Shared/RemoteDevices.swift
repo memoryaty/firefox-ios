@@ -4,9 +4,9 @@
 
 import SwiftyJSON
 
-public protocol RemoteDevices {
-    func replaceRemoteDevices(_ remoteDevices: [RemoteDevice]) -> Success
-}
+//public protocol RemoteDevices {
+//    func replaceRemoteDevices(_ remoteDevices: [RemoteDevice]) -> Success
+//}
 
 open class RemoteDevice {
     public let id: String?

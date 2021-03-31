@@ -31,7 +31,7 @@ public func ==(lhs: ClientAndTabs, rhs: ClientAndTabs) -> Bool {
 }
 
 public protocol RemoteClientsAndTabs: SyncCommands {
-    func wipeClients() -> Deferred<Maybe<()>>
+
     func wipeRemoteTabs() -> Deferred<Maybe<()>>
     func wipeTabs() -> Deferred<Maybe<()>>
     func getClientGUIDs() -> Deferred<Maybe<Set<GUID>>>

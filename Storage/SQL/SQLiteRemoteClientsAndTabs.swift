@@ -66,10 +66,6 @@ open class SQLiteRemoteClientsAndTabs: RemoteClientsAndTabs {
         return String(data: data, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
     }
 
-    open func wipeClients() -> Success {
-        return db.run("DELETE FROM clients")
-    }
-
     open func wipeRemoteTabs() -> Success {
         return db.run("DELETE FROM tabs WHERE client_guid IS NOT NULL")
     }
@@ -279,14 +275,6 @@ open class SQLiteRemoteClientsAndTabs: RemoteClientsAndTabs {
         }
     }
 
-    open func deleteCommands() -> Success {
-        return db.run("DELETE FROM commands")
-    }
-
-    open func deleteCommands(_ clientGUID: GUID) -> Success {
-        return db.run("DELETE FROM commands WHERE client_guid = ?", withArgs: [clientGUID] as Args)
-    }
-
     open func insertCommand(_ command: SyncCommand, forClients clients: [RemoteClient]) -> Deferred<Maybe<Int>> {
         return insertCommands([command], forClients: clients)
     }
@@ -316,32 +304,6 @@ open class SQLiteRemoteClientsAndTabs: RemoteClientsAndTabs {
         }
     }
 
-    open func getCommands() -> Deferred<Maybe<[GUID: [SyncCommand]]>> {
-        return db.withConnection { connection -> [GUID: [SyncCommand]] in
-            let cursor = connection.executeQuery("SELECT * FROM commands", factory: { row -> SyncCommand in
-                SyncCommand(
-                    id: row["command_id"] as? Int,
-                    value: row["value"] as! String,
-                    clientGUID: row["client_guid"] as? GUID)
-            })
-            defer {
-                cursor.close()
-            }
-
-            return self.clientsFromCommands(cursor.asArray())
-        }
-    }
-
-    func clientsFromCommands(_ commands: [SyncCommand]) -> [GUID: [SyncCommand]] {
-        var syncCommands = [GUID: [SyncCommand]]()
-        for command in commands {
-            var cmds: [SyncCommand] = syncCommands[command.clientGUID!] ?? [SyncCommand]()
-            cmds.append(command)
-            syncCommands[command.clientGUID!] = cmds
-        }
-        return syncCommands
-    }
-
     func insert(_ db: SQLiteDBConnection, sql: String, args: Args?) throws -> Int64? {
         let lastID = db.lastInsertedRowID
         try db.executeChange(sql, withArgs: args)
@@ -353,31 +315,6 @@ open class SQLiteRemoteClientsAndTabs: RemoteClientsAndTabs {
         }
 
         return id
-    }
-}
-
-extension SQLiteRemoteClientsAndTabs: RemoteDevices {
-    open func replaceRemoteDevices(_ remoteDevices: [RemoteDevice]) -> Success {
-        // Drop corrupted records and our own record too.
-        let remoteDevices = remoteDevices.filter { $0.id != nil && $0.type != nil && !$0.isCurrentDevice }
-
-        return db.transaction { conn -> Void in
-            try conn.executeChange("DELETE FROM remote_devices")
-
-            let now = Date.now()
-
-            for device in remoteDevices {
-                let sql = """
-                    INSERT INTO remote_devices (
-                        guid, name, type, is_current_device, date_created, date_modified, last_access_time, availableCommands
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """
-
-                let availableCommands = device.availableCommands?.rawString(options: []) ?? "{}"
-                let args: Args = [device.id, device.name, device.type, device.isCurrentDevice, now, now, device.lastAccessTime, availableCommands]
-                try conn.executeChange(sql, withArgs: args)
-            }
-        }
     }
 }
 
