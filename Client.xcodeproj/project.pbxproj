@@ -77,7 +77,6 @@
 		28926B3A1AC0F128009C0B1D /* CleartextPayloadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28926B391AC0F128009C0B1D /* CleartextPayloadJSON.swift */; };
 		2894C1431AE89D8900F1F92F /* HistorySynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2894C1421AE89D8900F1F92F /* HistorySynchronizer.swift */; };
 		2894C1661AE89DD200F1F92F /* TabsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2894C1651AE89DD200F1F92F /* TabsSynchronizer.swift */; };
-		2894C1691AE89DDC00F1F92F /* ClientsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2894C1681AE89DDC00F1F92F /* ClientsSynchronizer.swift */; };
 		2894C16C1AE89FD500F1F92F /* HistoryPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2894C16B1AE89FD500F1F92F /* HistoryPayload.swift */; };
 		28A17B671BEC727500BC14ED /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A17B661BEC727500BC14ED /* Downloader.swift */; };
 		28B62ACE1BC745E7004A585A /* Syncable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B62ACD1BC745E7004A585A /* Syncable.swift */; };
@@ -110,7 +109,6 @@
 		2FCAE2751ABB531100877008 /* SQLiteRemoteClientsAndTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE2581ABB531100877008 /* SQLiteRemoteClientsAndTabs.swift */; };
 		2FCAE2771ABB531100877008 /* SwiftData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE25B1ABB531100877008 /* SwiftData.swift */; };
 		2FCAE2781ABB531100877008 /* Visit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE25C1ABB531100877008 /* Visit.swift */; };
-		2FDBCF611ABFC9DE00AFF7F0 /* SyncAuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDBCF601ABFC9DE00AFF7F0 /* SyncAuthState.swift */; };
 		315D05561E58DD60001F349B /* UIPasteboardExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83E5AB61C1D993D0026D912 /* UIPasteboardExtensions.swift */; };
 		318FB6EB1DB5600D0004E40F /* SQLiteHistoryFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318FB6EA1DB5600D0004E40F /* SQLiteHistoryFactories.swift */; };
 		31ADB5DA1E58CEC300E87909 /* ClipboardBarDisplayHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ADB5D91E58CEC300E87909 /* ClipboardBarDisplayHandler.swift */; };
@@ -208,7 +206,6 @@
 		7BA4A94A1C4CEFC70091D032 /* OnePasswordExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BA4A9491C4CEFC70091D032 /* OnePasswordExtension.framework */; };
 		7BA8D1C71BA037F500C8AE9E /* OpenInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8D1C61BA037F500C8AE9E /* OpenInHelper.swift */; };
 		7BEFC6801BFF68C30059C952 /* QuickActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEFC67F1BFF68C30059C952 /* QuickActions.swift */; };
-		7BF5A1EA1B41640500EA9DD8 /* SyncQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF5A1E91B41640500EA9DD8 /* SyncQueue.swift */; };
 		884CA7492344A301002E4711 /* TextContentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CA7482344A301002E4711 /* TextContentDetector.swift */; };
 		A83E5AB71C1D993D0026D912 /* UIPasteboardExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83E5AB61C1D993D0026D912 /* UIPasteboardExtensions.swift */; };
 		A9072B801D07B34100459960 /* NoImageModeHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9072B7F1D07B34100459960 /* NoImageModeHelper.swift */; };
@@ -1009,7 +1006,6 @@
 		28926B391AC0F128009C0B1D /* CleartextPayloadJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleartextPayloadJSON.swift; sourceTree = "<group>"; };
 		2894C1421AE89D8900F1F92F /* HistorySynchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HistorySynchronizer.swift; path = Synchronizers/HistorySynchronizer.swift; sourceTree = "<group>"; };
 		2894C1651AE89DD200F1F92F /* TabsSynchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TabsSynchronizer.swift; path = Synchronizers/TabsSynchronizer.swift; sourceTree = "<group>"; };
-		2894C1681AE89DDC00F1F92F /* ClientsSynchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ClientsSynchronizer.swift; path = Synchronizers/ClientsSynchronizer.swift; sourceTree = "<group>"; };
 		2894C16B1AE89FD500F1F92F /* HistoryPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryPayload.swift; sourceTree = "<group>"; };
 		28A14F2AA37EE3FB2C1411C4 /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/Storage.strings"; sourceTree = "<group>"; };
 		28A17B661BEC727500BC14ED /* Downloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Downloader.swift; path = Synchronizers/Downloader.swift; sourceTree = "<group>"; };
@@ -1093,7 +1089,6 @@
 		2FCAE25C1ABB531100877008 /* Visit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Visit.swift; sourceTree = "<group>"; };
 		2FCAE33D1ABB5F1800877008 /* Storage-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Storage-Bridging-Header.h"; sourceTree = "<group>"; };
 		2FCF4713ABA14D85F70567AC /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/Today.strings; sourceTree = "<group>"; };
-		2FDBCF601ABFC9DE00AFF7F0 /* SyncAuthState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncAuthState.swift; sourceTree = "<group>"; };
 		2FDE46BCA5E27EF7DC02CE20 /* sq */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sq; path = sq.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		30144AD1A59EDCE27EEAC079 /* ast */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ast; path = ast.lproj/Storage.strings; sourceTree = "<group>"; };
 		307540CEA37CBA7C3163075C /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
@@ -1692,7 +1687,6 @@
 		7BC3434BA1F23258B3C6622C /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		7BD94478AB4C7DB2706F7AAF /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/PrivateBrowsing.strings; sourceTree = "<group>"; };
 		7BEFC67F1BFF68C30059C952 /* QuickActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickActions.swift; sourceTree = "<group>"; };
-		7BF5A1E91B41640500EA9DD8 /* SyncQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncQueue.swift; sourceTree = "<group>"; };
 		7C0C4902A319FAC7A18682E9 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		7C1043E3AE32A70E1EC5383A /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		7C264248AD1349E9A98D67BD /* co */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = co; path = co.lproj/Today.strings; sourceTree = "<group>"; };
@@ -3346,7 +3340,6 @@
 		2894C1641AE89DBC00F1F92F /* Synchronizers */ = {
 			isa = PBXGroup;
 			children = (
-				2894C1681AE89DDC00F1F92F /* ClientsSynchronizer.swift */,
 				28A17B661BEC727500BC14ED /* Downloader.swift */,
 				2894C1421AE89D8900F1F92F /* HistorySynchronizer.swift */,
 				28ED02281B262E0A003948B2 /* IndependentRecordSynchronizer.swift */,
@@ -3436,7 +3429,6 @@
 				2F14E1391ABB890800FF98DB /* Account-Bridging-Header.h */,
 				2FA436271ABB8436008031D1 /* HawkHelper.swift */,
 				D047C55520E1640B001A3C07 /* KeyBundle.swift */,
-				2FDBCF601ABFC9DE00AFF7F0 /* SyncAuthState.swift */,
 				2FA436281ABB8436008031D1 /* TokenServerClient.swift */,
 				2FA435FD1ABB83B4008031D1 /* Supporting Files */,
 			);
@@ -3475,7 +3467,6 @@
 				2FCAE2481ABB531100877008 /* Site.swift */,
 				0B54BD181B698B7C004C822C /* SuggestedSites.swift */,
 				28B62ACD1BC745E7004A585A /* Syncable.swift */,
-				7BF5A1E91B41640500EA9DD8 /* SyncQueue.swift */,
 				2FCAE25C1ABB531100877008 /* Visit.swift */,
 				D057B2AC22022617000614E0 /* Rust */,
 				2FCAE2491ABB531100877008 /* SQL */,
@@ -5188,7 +5179,6 @@
 				2894C16C1AE89FD500F1F92F /* HistoryPayload.swift in Sources */,
 				2885023F1AC117A500E7F670 /* SyncStateMachine.swift in Sources */,
 				EBA31D7D1F79996E0055463D /* SyncTelemetryUtils.swift in Sources */,
-				2894C1691AE89DDC00F1F92F /* ClientsSynchronizer.swift in Sources */,
 				2F3724E91ABF3C19007607FA /* Synchronizer.swift in Sources */,
 				28ED02021B26123E003948B2 /* LoginPayload.swift in Sources */,
 				28926B371AC0F0DD009C0B1D /* EnvelopeJSON.swift in Sources */,
@@ -5278,7 +5268,6 @@
 				C8340C6124EC6A3500FE91A6 /* keys.c in Sources */,
 				C8340C4624EC69EE00FE91A6 /* PublicKey.m in Sources */,
 				C8340C5224EC69EE00FE91A6 /* JSONWebTokenUtils.m in Sources */,
-				2FDBCF611ABFC9DE00AFF7F0 /* SyncAuthState.swift in Sources */,
 				C8340BEA24EC69EE00FE91A6 /* CHMutableNumber.m in Sources */,
 				C8340C4A24EC69EE00FE91A6 /* CHNumber.m in Sources */,
 				C8340C4824EC69EE00FE91A6 /* NSData+Base16.m in Sources */,
@@ -5311,7 +5300,6 @@
 				D0769743206C19E900FACFD8 /* SQLiteReadingList.swift in Sources */,
 				E65075C21E37F956006961AC /* ExtensionUtils.swift in Sources */,
 				D057B2AB220103BC000614E0 /* RustLogins.swift in Sources */,
-				7BF5A1EA1B41640500EA9DD8 /* SyncQueue.swift in Sources */,
 				E677F0541D94247300ECF1FB /* Metadata.swift in Sources */,
 				28E08C991AF44EF9009BA2FA /* SQLiteHistory.swift in Sources */,
 				285D3B901B4386520035FD22 /* SQLiteQueue.swift in Sources */,

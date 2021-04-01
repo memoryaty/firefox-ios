@@ -6,18 +6,6 @@ import Foundation
 import Shared
 import Storage
 
-
-
-
-/**
- * This exists to pass in external context: e.g., the UIApplication can
- * expose notification functionality in this way.
- */
-public protocol SyncDelegate {
-    func displaySentTab(for url: URL, title: String, from deviceName: String?)
-    // TODO: storage.
-}
-
 /**
  * We sometimes want to make a synchronizer start from scratch: to throw away any
  * metadata and reset storage to match, allowing us to respond to significant server
@@ -65,7 +53,7 @@ public protocol CollectionChangedNotifier {
  * pickle instructions for eventual delivery next time one is made and synchronized…
  */
 public protocol Synchronizer {
-    init(scratchpad: Scratchpad, delegate: SyncDelegate, basePrefs: Prefs, why: SyncReason)
+    init(scratchpad: Scratchpad, basePrefs: Prefs, why: SyncReason)
 
     /**
      * Return a reason if the current state of this synchronizer -- particularly prefs and scratchpad --
@@ -178,7 +166,6 @@ open class BaseCollectionSynchronizer {
     let collection: String
 
     let scratchpad: Scratchpad
-    let delegate: SyncDelegate
     let basePrefs: Prefs
     let prefs: Prefs
     let why: SyncReason
@@ -190,9 +177,8 @@ open class BaseCollectionSynchronizer {
         return basePrefs.branch(branchName)
     }
 
-    init(scratchpad: Scratchpad, delegate: SyncDelegate, basePrefs: Prefs, why: SyncReason, collection: String) {
+    init(scratchpad: Scratchpad, basePrefs: Prefs, why: SyncReason, collection: String) {
         self.scratchpad = scratchpad
-        self.delegate = delegate
         self.collection = collection
         self.basePrefs = basePrefs
         self.prefs = BaseCollectionSynchronizer.prefsForCollection(collection, withBasePrefs: basePrefs)

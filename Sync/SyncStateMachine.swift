@@ -26,7 +26,7 @@ private let LocalEngines: [String] = TogglableEngines + ["clients"]
 // Map collection name to engine version.  See http://docs.services.mozilla.com/sync/objectformats.html.
 private let DefaultEngines: [String: Int] = [
     "bookmarks": 2,
-    "clients": ClientsStorageVersion,
+    "clients": 1,
     "history": HistoryStorageVersion,
     "tabs": TabsStorageVersion,
     // We opt-in to syncing collections we don't know about, since no client offers to sync non-enabled,
@@ -207,8 +207,8 @@ open class BaseSyncState: SyncState {
         //log.info("Inited \(self.label.rawValue)")
     }
 
-    open func synchronizer<T: Synchronizer>(_ synchronizerClass: T.Type, delegate: SyncDelegate, prefs: Prefs, why: SyncReason) -> T {
-        return T(scratchpad: self.scratchpad, delegate: delegate, basePrefs: prefs, why: why)
+    open func synchronizer<T: Synchronizer>(_ synchronizerClass: T.Type, prefs: Prefs, why: SyncReason) -> T {
+        return T(scratchpad: self.scratchpad, basePrefs: prefs, why: why)
     }
 
     // This isn't a convenience initializer 'cos subclasses can't call convenience initializers.

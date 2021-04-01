@@ -145,8 +145,6 @@ open class BrowserProfile: Profile {
         return secret
     }()
 
-    var syncDelegate: SyncDelegate?
-
     /**
      * N.B., BrowserProfile is used from our extensions, often via a pattern like
      *
@@ -159,12 +157,11 @@ open class BrowserProfile: Profile {
      * A SyncDelegate can be provided in this initializer, or once the profile is initialized.
      * However, if we provide it here, it's assumed that we're initializing it from the application.
      */
-    init(localName: String, syncDelegate: SyncDelegate? = nil, clear: Bool = false) {
+    init(localName: String, clear: Bool = false) {
         //log.debug("Initing profile \(localName) on thread \(Thread.current).")
         self.name = localName
         self.files = ProfileFileAccessor(localName: localName)
         self.keychain = KeychainWrapper.sharedAppContainerKeychain
-        self.syncDelegate = syncDelegate
 
         if clear {
             do {
@@ -542,15 +539,15 @@ open class BrowserProfile: Profile {
             }
         }
 
-        fileprivate func syncTabsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
+        fileprivate func syncTabsWithDelegate(prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             let storage = self.profile.remoteClientsAndTabs
-            let tabSynchronizer = ready.synchronizer(TabsSynchronizer.self, delegate: delegate, prefs: prefs, why: why)
+            let tabSynchronizer = ready.synchronizer(TabsSynchronizer.self, prefs: prefs, why: why)
             return tabSynchronizer.synchronizeLocalTabs(storage, withServer: ready.client, info: ready.info)
         }
 
-        fileprivate func syncHistoryWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
+        fileprivate func syncHistoryWithDelegate(prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
             //log.debug("Syncing history to storage.")
-            let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, delegate: delegate, prefs: prefs, why: why)
+            let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, prefs: prefs, why: why)
             return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info)
         }
 

@@ -30,7 +30,7 @@ public func ==(lhs: ClientAndTabs, rhs: ClientAndTabs) -> Bool {
            (lhs.tabs == rhs.tabs)
 }
 
-public protocol RemoteClientsAndTabs: SyncCommands {
+public protocol RemoteClientsAndTabs {
 
     func wipeRemoteTabs() -> Deferred<Maybe<()>>
     func wipeTabs() -> Deferred<Maybe<()>>

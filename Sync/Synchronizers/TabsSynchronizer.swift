@@ -12,8 +12,8 @@ import SwiftyJSON
 let TabsStorageVersion = 1
 
 open class TabsSynchronizer: TimestampedSingleCollectionSynchronizer, Synchronizer {
-    public required init(scratchpad: Scratchpad, delegate: SyncDelegate, basePrefs: Prefs, why: SyncReason) {
-        super.init(scratchpad: scratchpad, delegate: delegate, basePrefs: basePrefs, why: why, collection: "tabs")
+    public required init(scratchpad: Scratchpad, basePrefs: Prefs, why: SyncReason) {
+        super.init(scratchpad: scratchpad, basePrefs: basePrefs, why: why, collection: "tabs")
     }
 
     override var storageVersion: Int {

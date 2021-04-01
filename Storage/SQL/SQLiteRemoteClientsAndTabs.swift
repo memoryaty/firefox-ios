@@ -253,35 +253,6 @@ open class SQLiteRemoteClientsAndTabs: RemoteClientsAndTabs {
         }
     }
 
-    open func insertCommand(_ command: SyncCommand, forClients clients: [RemoteClient]) -> Deferred<Maybe<Int>> {
-        return insertCommands([command], forClients: clients)
-    }
-
-    open func insertCommands(_ commands: [SyncCommand], forClients clients: [RemoteClient]) -> Deferred<Maybe<Int>> {
-        return db.transaction { connection -> Int in
-            var numberOfInserts = 0
-
-            // Update or insert client records.
-            for command in commands {
-                for client in clients {
-                    do {
-                        if let commandID = try self.insert(connection, sql: "INSERT INTO commands (client_guid, value) VALUES (?, ?)", args: [client.guid, command.value] as Args) {
-                            //log.verbose("Inserted command: \(commandID)")
-                            numberOfInserts += 1
-                        } else {
-                            //log.warning("Command not inserted, but no error!")
-                        }
-                    } catch let err as NSError {
-                        //log.error("insertCommands(_:, forClients:) failed: \(err.localizedDescription) (numberOfInserts: \(numberOfInserts)")
-                        throw err
-                    }
-                }
-            }
-
-            return numberOfInserts
-        }
-    }
-
     func insert(_ db: SQLiteDBConnection, sql: String, args: Args?) throws -> Int64? {
         let lastID = db.lastInsertedRowID
         try db.executeChange(sql, withArgs: args)
