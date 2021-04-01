@@ -95,8 +95,6 @@ class ShareViewController: UIViewController {
             self.pageInfoRowTitleLabel?.text = text.quoted
         }
 
-        let profile = BrowserProfile(localName: "profile")
-//        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in }
     }
 
     private func setupRows() {

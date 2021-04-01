@@ -475,8 +475,6 @@ class BrowserViewController: UIViewController {
                 }
             }
         }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(self.appMenuBadgeUpdate), name: .FirefoxAccountStateChange, object: nil)
         
         // Setup New Tab user research for A/B testing
 //        newTabUserResearch = NewTabUserResearch()

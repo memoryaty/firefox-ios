@@ -96,8 +96,6 @@ protocol Profile: AnyObject {
     // Similar to <http://stackoverflow.com/questions/26029317/exc-bad-access-when-indirectly-accessing-inherited-member-in-swift>.
     func localName() -> String
 
-    var rustFxA: RustFirefoxAccounts { get }
-
     func getCachedClients()-> Deferred<Maybe<[RemoteClient]>>
     func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
     func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
@@ -417,10 +415,6 @@ open class BrowserProfile: Profile {
         return RustLogins(databasePath: databasePath, encryptionKey: loginsKey, salt: salt)
     }()
 
-    var rustFxA: RustFirefoxAccounts {
-        return RustFirefoxAccounts.shared
-    }
-
     class NoAccountError: MaybeErrorType {
         var description = "No account."
     }
@@ -559,73 +553,6 @@ open class BrowserProfile: Profile {
             let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, delegate: delegate, prefs: prefs, why: why)
             return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info)
         }
-
-        public class ScopedKeyError: MaybeErrorType {
-            public var description = "No key data found for scope."
-        }
-        
-        public class SyncUnlockGetURLError: MaybeErrorType {
-            public var description = "Failed to get token server endpoint url."
-        }
-
-        fileprivate func syncUnlockInfo() -> Deferred<Maybe<SyncUnlockInfo>> {
-            let d = Deferred<Maybe<SyncUnlockInfo>>()
-            profile.rustFxA.accountManager.uponQueue(.main) { accountManager in
-                accountManager.getAccessToken(scope: OAuthScope.oldSync) { result in
-                    guard let accessTokenInfo = try? result.get(), let key = accessTokenInfo.key else {
-                        d.fill(Maybe(failure: ScopedKeyError()))
-                        return
-                    }
-
-                    accountManager.getTokenServerEndpointURL() { result in
-                        guard case .success(let tokenServerEndpointURL) = result else {
-                            d.fill(Maybe(failure: SyncUnlockGetURLError()))
-                            return
-                        }
-
-                        d.fill(Maybe(success: SyncUnlockInfo(kid: key.kid, fxaAccessToken: accessTokenInfo.token, syncKey: key.k, tokenserverURL: tokenServerEndpointURL.absoluteString)))
-                    }
-                }
-            }
-            return d
-        }
-
-        fileprivate func syncLoginsWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            //log.debug("Syncing logins to storage.")
-            return syncUnlockInfo().bind({ result in
-                guard let syncUnlockInfo = result.successValue else {
-                    return deferMaybe(SyncStatus.notStarted(.unknown))
-                }
-
-                return self.profile.logins.sync(unlockInfo: syncUnlockInfo).bind({ result in
-                    guard result.isSuccess else {
-                        return deferMaybe(SyncStatus.notStarted(.unknown))
-                    }
-
-                    let syncEngineStatsSession = SyncEngineStatsSession(collection: "logins")
-                    return deferMaybe(SyncStatus.completed(syncEngineStatsSession))
-                })
-            })
-        }
-
-        fileprivate func syncBookmarksWithDelegate(_ delegate: SyncDelegate, prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            //log.debug("Syncing bookmarks to storage.")
-            return syncUnlockInfo().bind({ result in
-                guard let syncUnlockInfo = result.successValue else {
-                    return deferMaybe(SyncStatus.notStarted(.unknown))
-                }
-
-                return self.profile.places.syncBookmarks(unlockInfo: syncUnlockInfo).bind({ result in
-                    guard result.isSuccess else {
-                        return deferMaybe(SyncStatus.notStarted(.unknown))
-                    }
-
-                    let syncEngineStatsSession = SyncEngineStatsSession(collection: "bookmarks")
-                    return deferMaybe(SyncStatus.completed(syncEngineStatsSession))
-                })
-            })
-        }
-
 
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
             return self.profile.history.hasSyncedHistory()
