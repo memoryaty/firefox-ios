@@ -106,8 +106,6 @@ protocol Profile: AnyObject {
 
     @discardableResult func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>>
 
-    func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success
-
     var syncManager: SyncManager! { get }
 }
 
@@ -403,24 +401,6 @@ open class BrowserProfile: Profile {
 
     func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
         return self.remoteClientsAndTabs.insertOrUpdateTabs(tabs)
-    }
-
-    public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {
-        let deferred = Success()
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { accountManager in
-            guard let constellation = accountManager.deviceConstellation() else {
-                deferred.fill(Maybe(failure: NoAccountError()))
-                return
-            }
-            devices.forEach {
-                if let id = $0.id {
-                    constellation.sendEventToDevice(targetDeviceId: id, e: .sendTab(title: item.title ?? "", url: item.url))
-                }
-            }
-
-            deferred.fill(Maybe(success: ()))
-        }
-        return deferred
     }
 
     lazy var logins: RustLogins = {
