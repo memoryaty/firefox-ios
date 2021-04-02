@@ -35,7 +35,6 @@ public protocol RemoteClientsAndTabs {
     func wipeRemoteTabs() -> Deferred<Maybe<()>>
     func wipeTabs() -> Deferred<Maybe<()>>
     func getClientGUIDs() -> Deferred<Maybe<Set<GUID>>>
-    func getClients() -> Deferred<Maybe<[RemoteClient]>>
     func getClient(guid: GUID) -> Deferred<Maybe<RemoteClient?>>
     func getClient(fxaDeviceId: String) -> Deferred<Maybe<RemoteClient?>>
 

@@ -29,7 +29,6 @@ public protocol SyncManager {
     func hasSyncedHistory() -> Deferred<Maybe<Bool>>
     func hasSyncedLogins() -> Deferred<Maybe<Bool>>
 
-    func syncClients() -> SyncResult
     func syncClientsThenTabs() -> SyncResult
     func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
@@ -96,7 +95,6 @@ protocol Profile: AnyObject {
     // Similar to <http://stackoverflow.com/questions/26029317/exc-bad-access-when-indirectly-accessing-inherited-member-in-swift>.
     func localName() -> String
 
-    func getCachedClients()-> Deferred<Maybe<[RemoteClient]>>
     func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
     func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
 
@@ -372,15 +370,6 @@ open class BrowserProfile: Profile {
         return ClosedTabsStore(prefs: self.prefs)
     }()
 
-    public func getClients() -> Deferred<Maybe<[RemoteClient]>> {
-        return self.syncManager.syncClients()
-           >>> { self.remoteClientsAndTabs.getClients() }
-    }
-
-    public func getCachedClients()-> Deferred<Maybe<[RemoteClient]>> {
-        return self.remoteClientsAndTabs.getClients()
-    }
-
     public func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
         return self.syncManager.syncClientsThenTabs()
            >>> { self.remoteClientsAndTabs.getClientsAndTabs() }
@@ -557,12 +546,6 @@ open class BrowserProfile: Profile {
 
         public func hasSyncedLogins() -> Deferred<Maybe<Bool>> {
             return self.profile.logins.hasSyncedLogins()
-        }
-
-        public func syncClients() -> SyncResult {
-            // TODO: recognize .NotStarted.
-
-            return deferMaybe(NoAccountError())
         }
 
         public func syncClientsThenTabs() -> SyncResult {
