@@ -5,44 +5,6 @@
 import Foundation
 import Shared
 
-public struct ClientAndTabs: Equatable, CustomStringConvertible {
-
-    public let tabs: [RemoteTab]
-
-    public var description: String {
-        return "<Client guid: ), \(tabs.count) tabs.>"
-    }
-
-    // See notes in RemoteTabsPanel.swift.
-    public func approximateLastSyncTime() -> Timestamp {
-        if tabs.isEmpty {
-//            return client.modified
-        }
-
-        return tabs.reduce(Timestamp(0), { m, tab in
-            return max(m, tab.lastUsed)
-        })
-    }
-}
-
-public func ==(lhs: ClientAndTabs, rhs: ClientAndTabs) -> Bool {
-    return (lhs.tabs == rhs.tabs)
-}
-
-public protocol RemoteClientsAndTabs {
-
-    func wipeRemoteTabs() -> Deferred<Maybe<()>>
-    func wipeTabs() -> Deferred<Maybe<()>>
-    func getClientGUIDs() -> Deferred<Maybe<Set<GUID>>>
-
-    func getTabsForClientWithGUID(_ guid: GUID?) -> Deferred<Maybe<[RemoteTab]>>
-
-    // Returns number of tabs inserted.
-    func insertOrUpdateTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> // Insert into the local client.
-    func insertOrUpdateTabsForClientGUID(_ clientGUID: String?, tabs: [RemoteTab]) -> Deferred<Maybe<Int>>
-
-}
-
 public struct RemoteTab: Equatable {
     public let clientGUID: String?
     public let URL: Foundation.URL

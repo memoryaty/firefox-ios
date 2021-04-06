@@ -96,8 +96,6 @@ protocol Profile: AnyObject {
 
     func cleanupHistoryIfNeeded()
 
-    @discardableResult func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>>
-
     var syncManager: SyncManager! { get }
 }
 
@@ -354,7 +352,7 @@ open class BrowserProfile: Profile {
         return SQLiteReadingList(db: self.readingListDB)
     }()
 
-    lazy var remoteClientsAndTabs: RemoteClientsAndTabs & ResettableSyncStorage = {
+    lazy var remoteClientsAndTabs: ResettableSyncStorage = {
         return SQLiteRemoteClientsAndTabs(db: self.db)
     }()
 
@@ -368,10 +366,6 @@ open class BrowserProfile: Profile {
 
     public func cleanupHistoryIfNeeded() {
         recommendations.cleanupHistoryIfNeeded()
-    }
-
-    func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
-        return self.remoteClientsAndTabs.insertOrUpdateTabs(tabs)
     }
 
     lazy var logins: RustLogins = {
@@ -513,12 +507,6 @@ open class BrowserProfile: Profile {
                 //log.warning("Asked to reset collection \(collection), which we don't know about.")
                 return succeed()
             }
-        }
-
-        fileprivate func syncTabsWithDelegate(prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            let storage = self.profile.remoteClientsAndTabs
-            let tabSynchronizer = ready.synchronizer(TabsSynchronizer.self, prefs: prefs, why: why)
-            return tabSynchronizer.synchronizeLocalTabs(storage, withServer: ready.client, info: ready.info)
         }
 
         fileprivate func syncHistoryWithDelegate(prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
