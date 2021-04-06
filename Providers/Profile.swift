@@ -29,7 +29,6 @@ public protocol SyncManager {
     func hasSyncedHistory() -> Deferred<Maybe<Bool>>
     func hasSyncedLogins() -> Deferred<Maybe<Bool>>
 
-    func syncClientsThenTabs() -> SyncResult
     func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
 
@@ -94,9 +93,6 @@ protocol Profile: AnyObject {
     // I got really weird EXC_BAD_ACCESS errors on a non-null reference when I made this a getter.
     // Similar to <http://stackoverflow.com/questions/26029317/exc-bad-access-when-indirectly-accessing-inherited-member-in-swift>.
     func localName() -> String
-
-    func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
-    func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
 
     func cleanupHistoryIfNeeded()
 
@@ -370,15 +366,6 @@ open class BrowserProfile: Profile {
         return ClosedTabsStore(prefs: self.prefs)
     }()
 
-    public func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
-        return self.syncManager.syncClientsThenTabs()
-           >>> { self.remoteClientsAndTabs.getClientsAndTabs() }
-    }
-
-    public func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
-        return self.remoteClientsAndTabs.getClientsAndTabs()
-    }
-
     public func cleanupHistoryIfNeeded() {
         recommendations.cleanupHistoryIfNeeded()
     }
@@ -546,18 +533,6 @@ open class BrowserProfile: Profile {
 
         public func hasSyncedLogins() -> Deferred<Maybe<Bool>> {
             return self.profile.logins.hasSyncedLogins()
-        }
-
-        public func syncClientsThenTabs() -> SyncResult {
-            return deferMaybe(NoAccountError())
-//            return self.syncSeveral(
-//                why: .user,
-//                synchronizers:
-//                ("clients", self.syncClientsWithDelegate),
-//                ("tabs", self.syncTabsWithDelegate)) >>== { statuses in
-//                let status = statuses.find { "tabs" == $0.0 }
-//                return deferMaybe(status!.1)
-//            }
         }
 
         @discardableResult public func syncBookmarks() -> SyncResult {
