@@ -207,9 +207,9 @@ open class BaseSyncState: SyncState {
         //log.info("Inited \(self.label.rawValue)")
     }
 
-    open func synchronizer<T: Synchronizer>(_ synchronizerClass: T.Type, prefs: Prefs, why: SyncReason) -> T {
-        return T(scratchpad: self.scratchpad, basePrefs: prefs, why: why)
-    }
+//    open func synchronizer<T: Synchronizer>(_ synchronizerClass: T.Type, prefs: Prefs, why: SyncReason) -> T {
+//        return T(scratchpad: self.scratchpad, basePrefs: prefs, why: why)
+//    }
 
     // This isn't a convenience initializer 'cos subclasses can't call convenience initializers.
     public init(scratchpad: Scratchpad, token: TokenServerToken) {

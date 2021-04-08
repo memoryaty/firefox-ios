@@ -81,44 +81,6 @@ open class IndependentRecordSynchronizer: TimestampedSingleCollectionSynchronize
 }
 
 extension TimestampedSingleCollectionSynchronizer {
-    /**
-     * On each chunk that we upload, we pass along the server modified timestamp to the next,
-     * chained through the provided `onUpload` function.
-     *
-     * The last chunk passes this modified timestamp out, and we assign it to lastFetched.
-     *
-     * The idea of this is twofold:
-     *
-     * 1. It does the fast-forwarding that every other Sync client does.
-     *
-     * 2. It allows us to (eventually) pass the last collection modified time as If-Unmodified-Since
-     *    on each upload batch, as we do between the download and the upload phase.
-     *    This alone allows us to detect conflicts from racing clients.
-     *
-     * In order to implement the latter, we'd need to chain the date from getSince in place of the
-     * 0 in the call to uploadOutgoingFromStorage in each synchronizer.
-     */
-    func uploadRecords<T>(_ records: [Record<T>], lastTimestamp: Timestamp, storageClient: Sync15CollectionClient<T>, onUpload: @escaping (POSTResult, Timestamp?) -> DeferredTimestamp) -> DeferredTimestamp {
-        if records.isEmpty {
-            //log.debug("No modified records to upload.")
-            return deferMaybe(lastTimestamp)
-        }
-
-        func reportUploadStatsWrap(result: POSTResult, timestamp: Timestamp?) -> DeferredTimestamp {
-            let stats = SyncUploadStats(sent: result.success.count, sentFailed: result.failed.count)
-            self.statsSession.recordUpload(stats: stats)
-            return onUpload(result, timestamp)
-        }
-
-        let batch = storageClient.newBatch(ifUnmodifiedSince: (lastTimestamp == 0) ? nil : lastTimestamp, onCollectionUploaded: reportUploadStatsWrap)
-        return batch.addRecords(records)
-            >>> batch.endBatch
-            >>> {
-                let timestamp = batch.ifUnmodifiedSince ?? lastTimestamp
-                self.setTimestamp(timestamp)
-                return deferMaybe(timestamp)
-            }
-    }
 
     func uploadRecordsSingleBatch<T>(_ records: [Record<T>], lastTimestamp: Timestamp, storageClient: Sync15CollectionClient<T>) -> Deferred<Maybe<(timestamp: Timestamp, succeeded: [GUID])>> {
         if records.isEmpty {

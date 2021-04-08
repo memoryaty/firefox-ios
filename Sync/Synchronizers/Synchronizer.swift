@@ -55,11 +55,6 @@ public protocol CollectionChangedNotifier {
 public protocol Synchronizer {
     init(scratchpad: Scratchpad, basePrefs: Prefs, why: SyncReason)
 
-    /**
-     * Return a reason if the current state of this synchronizer -- particularly prefs and scratchpad --
-     * prevent a routine sync from occurring.
-     */
-    func reasonToNotSync(_: Sync15StorageClient) -> SyncNotStartedReason?
 }
 
 /**
@@ -196,35 +191,6 @@ open class BaseCollectionSynchronizer {
     // Short-hand for returning .Complete status + recorded stats
     var completedWithStats: SyncStatus {
         return .completed(statsSession.end())
-    }
-
-    open func reasonToNotSync(_ client: Sync15StorageClient) -> SyncNotStartedReason? {
-        let now = Date.now()
-        if let until = client.backoff.isInBackoff(now) {
-            let remaining = (until - now) / 1000
-            return .backoff(remainingSeconds: Int(remaining))
-        }
-
-        if let metaGlobal = self.scratchpad.global?.value {
-            // There's no need to check the global storage format here; the state machine will already have
-            // done so.
-            if let engineMeta = metaGlobal.engines[collection] {
-                if engineMeta.version > self.storageVersion {
-                    return .engineFormatOutdated(needs: engineMeta.version)
-                }
-                if engineMeta.version < self.storageVersion {
-                    return .engineFormatTooNew(expected: engineMeta.version)
-                }
-            } else {
-                return .engineRemotelyNotEnabled(collection: self.collection)
-            }
-        } else {
-            // But a missing meta/global is a real problem.
-            return .stateMachineNotReady
-        }
-
-        // Success!
-        return nil
     }
 
     func encrypter<T>(_ encoder: RecordEncoder<T>) -> RecordEncrypter<T>? {

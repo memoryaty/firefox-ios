@@ -161,15 +161,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         }
     }
 
-    func resyncHistory() {
-        profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
-
-            if syncResult.isSuccess {
-                self.reloadData()
-            }
-        }
-    }
-
     // MARK: - Actions
 
     func removeHistoryForURLAtIndexPath(indexPath: IndexPath) {
@@ -329,7 +320,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 emptyStateOverlayView.removeFromSuperview()
             }
             emptyStateOverlayView = createEmptyStateOverlayView()
-            resyncHistory()
             break
         case .DatabaseWasReopened:
             if let dbName = notification.object as? String, dbName == "browser.db" {

@@ -98,21 +98,6 @@ open class Sync15BatchClient<T: CleartextPayloadJSON> {
         self.onCollectionUploaded = onCollectionUploaded
     }
 
-    open func endBatch() -> Success {
-        guard !records.isEmpty else {
-            return succeed()
-        }
-
-        if let token = self.batchToken {
-            return commitBatch(token) >>> succeed
-        }
-
-        let lines = self.freezePost()
-        return self.uploader(lines, self.ifUnmodifiedSince, nil)
-            >>== effect(moveForward)
-            >>> succeed
-    }
-
     // If in batch mode, will discard the batch if any record fails
     open func endSingleBatch() -> Deferred<Maybe<(succeeded: [GUID], lastModified: Timestamp?)>> {
         return self.start() >>== { response in

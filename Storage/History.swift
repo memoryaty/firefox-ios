@@ -73,17 +73,7 @@ public protocol SyncableHistory {
     func storeRemoteVisits(_ visits: [Visit], forGUID guid: GUID) -> Success
     func insertOrUpdatePlace(_ place: Place, modified: Timestamp) -> Deferred<Maybe<GUID>>
 
-    func getModifiedHistoryToUpload() -> Deferred<Maybe<[(Place, [Visit])]>>
-    func getDeletedHistoryToUpload() -> Deferred<Maybe<[GUID]>>
-
-    /**
-     * Chains through the provided timestamp.
-     */
-    func markAsSynchronized(_: [GUID], modified: Timestamp) -> Deferred<Maybe<Timestamp>>
-    func markAsDeleted(_ guids: [GUID]) -> Success
-
     func doneApplyingRecordsAfterDownload() -> Success
-    func doneUpdatingMetadataAfterUpload() -> Success
 
     /**
      * For inspecting whether we're an active participant in history sync.

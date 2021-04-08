@@ -28,8 +28,6 @@ public protocol SyncManager {
 
     func hasSyncedHistory() -> Deferred<Maybe<Bool>>
     func hasSyncedLogins() -> Deferred<Maybe<Bool>>
-
-    func syncHistory() -> SyncResult
     func syncBookmarks() -> SyncResult
 
 }
@@ -509,12 +507,6 @@ open class BrowserProfile: Profile {
             }
         }
 
-        fileprivate func syncHistoryWithDelegate(prefs: Prefs, ready: Ready, why: SyncReason) -> SyncResult {
-            //log.debug("Syncing history to storage.")
-            let historySynchronizer = ready.synchronizer(HistorySynchronizer.self, prefs: prefs, why: why)
-            return historySynchronizer.synchronizeLocalHistory(self.profile.history, withServer: ready.client, info: ready.info)
-        }
-
         public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
             return self.profile.history.hasSyncedHistory()
         }
@@ -531,12 +523,6 @@ open class BrowserProfile: Profile {
         @discardableResult public func syncLogins() -> SyncResult {
             return deferMaybe(NoAccountError())
 //            return self.sync("logins", function: syncLoginsWithDelegate)
-        }
-
-        public func syncHistory() -> SyncResult {
-            // TODO: recognize .NotStarted.
-            return deferMaybe(NoAccountError())
-//            return self.sync("history", function: syncHistoryWithDelegate)
         }
 
         public func notify(deviceIDs: [GUID], collectionsChanged collections: [String], reason: String) -> Success {

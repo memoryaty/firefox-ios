@@ -12,24 +12,6 @@ import SwiftyJSON
 private let HistoryTTLInSeconds = 5184000                   // 60 days.
 let HistoryStorageVersion = 1
 
-func makeDeletedHistoryRecord(_ guid: GUID) -> Record<HistoryPayload> {
-    // Local modified time is ignored in upload serialization.
-    let modified: Timestamp = 0
-
-    // Sortindex for history is frecency. Make deleted items more frecent than almost
-    // anything.
-    let sortindex = 5_000_000
-
-    let ttl = HistoryTTLInSeconds
-
-    let json = JSON([
-        "id": guid,
-        "deleted": true,
-        ])
-    let payload = HistoryPayload(json)
-    return Record<HistoryPayload>(id: guid, payload: payload, modified: modified, sortindex: sortindex, ttl: ttl)
-}
-
 func makeHistoryRecord(_ place: Place, visits: [Visit]) -> Record<HistoryPayload> {
     let id = place.guid
     let modified: Timestamp = 0    // Ignored in upload serialization.
@@ -110,7 +92,7 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
                               >>> { storage.storeRemoteVisits(payload.visits, forGUID: guid) }
             return placeThenVisits.map({ result in
                 if result.isFailure {
-                    let reason = result.failureValue?.description ?? "unknown reason"
+//                    let reason = result.failureValue?.description ?? "unknown reason"
                     //log.error("Record application failed: \(reason)")
                 }
                 return result
@@ -120,74 +102,6 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
         return self.applyIncomingRecords(records, apply: applyRecord)
     }
 
-    fileprivate func uploadModifiedPlaces(_ places: [(Place, [Visit])], lastTimestamp: Timestamp, fromStorage storage: SyncableHistory, withServer storageClient: Sync15CollectionClient<HistoryPayload>) -> DeferredTimestamp {
-        //log.info("Preparing upload…")
-
-        // Build sequences of 1000 history items, sequence by sequence
-        // These will be uploaded in smaller batches by the upload batcher, but we chunk here
-        // in order to bound peak memory usage when we call makeHistoryRecord below.
-        let toUpload = chunk(places, by: 1000)
-        let perChunk: (ArraySlice<(Place, [Visit])>, Timestamp) -> DeferredTimestamp = { (records, timestamp) in
-            let recs = records.map(makeHistoryRecord)
-            //log.info("Uploading \(recs.count) history items…")
-            return self.uploadRecords(recs, lastTimestamp: timestamp, storageClient: storageClient) { result, lastModified in
-                // We don't do anything with failed.
-                return storage.markAsSynchronized(result.success, modified: lastModified ?? timestamp)
-            }
-        }
-
-        let start = deferMaybe(lastTimestamp)
-        return walk(toUpload, start: start, f: perChunk)
-    }
-
-    fileprivate func uploadDeletedPlaces(_ guids: [GUID], lastTimestamp: Timestamp, fromStorage storage: SyncableHistory, withServer storageClient: Sync15CollectionClient<HistoryPayload>) -> DeferredTimestamp {
-
-        let records = guids.map(makeDeletedHistoryRecord)
-
-        // Deletions are smaller, so upload 100 at a time.
-        return self.uploadRecords(records, lastTimestamp: lastTimestamp, storageClient: storageClient) { result, lastModified in
-            storage.markAsDeleted(result.success) >>> always(lastModified ?? lastTimestamp)
-        }
-    }
-
-    fileprivate func uploadOutgoingFromStorage(_ storage: SyncableHistory, lastTimestamp: Timestamp, withServer storageClient: Sync15CollectionClient<HistoryPayload>) -> Success {
-        var workWasDone = false
-
-        let uploadDeleted: (Timestamp) -> DeferredTimestamp = { timestamp in
-            storage.getDeletedHistoryToUpload()
-            >>== { guids in
-                if !guids.isEmpty {
-                    workWasDone = true
-                }
-                //log.info("Uploading \(guids.count) deleted places.")
-                return self.uploadDeletedPlaces(guids, lastTimestamp: timestamp, fromStorage: storage, withServer: storageClient)
-            }
-        }
-
-        let uploadModified: (Timestamp) -> DeferredTimestamp = { timestamp in
-            storage.getModifiedHistoryToUpload()
-                >>== { places in
-                    if !places.isEmpty {
-                        workWasDone = true
-                    }
-                    //log.info("Uploading \(places.count) modified places.")
-                    return self.uploadModifiedPlaces(places, lastTimestamp: timestamp, fromStorage: storage, withServer: storageClient)
-            }
-        }
-
-        // The last clause will checkpoint the DB. But we just checkpointed the DB after downloading records!
-        // Yes, that's true. Either there will be lots of work to do (e.g., having just marked
-        // thousands of records as uploaded, or dropping lots of deleted rows), and so it's
-        // worthwhile… or there won't be much work to do, and the checkpoint will be cheap.
-        // If we did nothing -- uploaded no deletions, uploaded no modified records -- then we
-        // don't checkpoint at all.
-        return deferMaybe(lastTimestamp)
-          >>== uploadDeleted
-          >>== uploadModified
-           >>> effect({  })
-           >>> { workWasDone ? storage.doneUpdatingMetadataAfterUpload() : succeed() }    // A closure so we eval workWasDone after it's set!
-           >>> effect({  })
-    }
 
     /**
      * If the green light turns red, we don't want to continue to upload -- doing
@@ -237,50 +151,4 @@ open class HistorySynchronizer: IndependentRecordSynchronizer, Synchronizer {
                          .bind(onBatchResult)
     }
 
-    open func synchronizeLocalHistory(_ history: SyncableHistory, withServer storageClient: Sync15StorageClient, info: InfoCollections) -> SyncResult {
-        if let reason = self.reasonToNotSync(storageClient) {
-            return deferMaybe(.notStarted(reason))
-        }
-
-        let encoder = RecordEncoder<HistoryPayload>(decode: { HistoryPayload($0) }, encode: { $0.json })
-
-        guard let historyClient = self.collectionClient(encoder, storageClient: storageClient) else {
-            //log.error("Couldn't make history factory.")
-            return deferMaybe(FatalError(message: "Couldn't make history factory."))
-        }
-
-        let downloader = BatchingDownloader(collectionClient: historyClient, basePrefs: self.prefs, collection: "history")
-
-        // The original version of the history synchronizer tracked its
-        // own last fetched time. We need to migrate this into the
-        // batching downloader.
-        let since: Timestamp = self.lastFetched
-        if since > downloader.lastModified {
-            //log.debug("Advancing downloader lastModified to synchronizer lastFetched \(since).")
-            downloader.lastModified = since
-            self.lastFetched = 0
-        }
-
-        statsSession.start()
-        return self.go(info, downloader: downloader, history: history)
-            >>== { syncResult in
-                switch syncResult {
-                case .completed:
-                    // When we're done downloading, we can upload.
-                    return self.uploadOutgoingFromStorage(history,
-                                                          lastTimestamp: 0,
-                                                          withServer: historyClient)
-                       >>> { deferMaybe(self.completedWithStats) }
-
-                // If we didn't finish downloading, do nothing further -- just pass
-                // through the download result.
-                case .notStarted(_):
-                    return deferMaybe(syncResult)
-
-                case .partial:
-                    //log.debug("Didn't finish downloading history; not uploading yet.")
-                    return deferMaybe(syncResult)
-                }
-        }
-    }
 }
