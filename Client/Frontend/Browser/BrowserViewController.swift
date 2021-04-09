@@ -10,7 +10,7 @@ import Shared
 import Storage
 import SnapKit
 
-import Account
+//import Account
 import MobileCoreServices
 import SDWebImage
 import SwiftyJSON

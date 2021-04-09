@@ -15,7 +15,7 @@ import LocalAuthentication
 import Sync
 import CoreSpotlight
 import UserNotifications
-import Account
+//import Account
 
 #if canImport(BackgroundTasks)
  import BackgroundTasks
