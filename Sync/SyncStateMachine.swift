@@ -28,7 +28,6 @@ private let DefaultEngines: [String: Int] = [
     "bookmarks": 2,
     "clients": 1,
     "history": HistoryStorageVersion,
-    "tabs": TabsStorageVersion,
     // We opt-in to syncing collections we don't know about, since no client offers to sync non-enabled,
     // non-declined engines yet.  See Bug 969669.
     "passwords": 1,

@@ -350,10 +350,6 @@ open class BrowserProfile: Profile {
         return SQLiteReadingList(db: self.readingListDB)
     }()
 
-    lazy var remoteClientsAndTabs: ResettableSyncStorage = {
-        return SQLiteRemoteClientsAndTabs(db: self.db)
-    }()
-
     lazy var certStore: CertStore = {
         return CertStore()
     }()
@@ -483,10 +479,6 @@ open class BrowserProfile: Profile {
                 return self.profile.places.resetBookmarksMetadata()
             case "clients":
                 fallthrough
-            case "tabs":
-                // Because clients and tabs share storage, and thus we wipe data for both if we reset either,
-                // we reset the prefs for both at the same time.
-                return TabsSynchronizer.resetClientsAndTabsWithStorage(self.profile.remoteClientsAndTabs, basePrefs: self.prefsForSync)
 
             case "history":
                 return HistorySynchronizer.resetSynchronizerWithStorage(self.profile.history, basePrefs: self.prefsForSync, collection: "history")
