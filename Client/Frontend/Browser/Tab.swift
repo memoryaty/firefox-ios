@@ -578,18 +578,6 @@ class Tab: NSObject {
         UITextField.appearance().keyboardAppearance = isPrivate ? .dark : (ThemeManager.instance.currentName == .dark ? .dark : .light)
     }
     
-    func getProviderForUrl() -> SearchEngine {
-        guard let url = self.webView?.url else {
-            return .none
-        }
-        for provider in SearchEngine.allCases {
-            if (url.absoluteString.contains(provider.rawValue)) {
-                return provider
-            }
-        }
-        return .none
-    }
-    
     func updateFaviconCache() {
         guard let displayFavicon = displayFavicon?.url, let faviconUrl = URL(string: displayFavicon), let baseDomain = url?.baseDomain else {
             return

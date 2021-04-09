@@ -54,7 +54,7 @@ class BrowserViewController: UIViewController {
     var searchController: SearchViewController?
     var screenshotHelper: ScreenshotHelper!
     fileprivate var homePanelIsInline = false
-    var searchTelemetry: SearchTelemetry?
+
     var searchLoader: SearchLoader?
     let alertStackView = UIStackView() // All content that appears above the footer should be added to this view. (Find In Page/SnackBars)
     var findInPageBar: FindInPageBar?
@@ -483,7 +483,7 @@ class BrowserViewController: UIViewController {
 //        // Setup chron tabs A/B test
 //        chronTabsUserResearch = ChronTabsUserResearch()
 //        chronTabsUserResearch?.lpVariableObserver()
-        searchTelemetry = SearchTelemetry()
+
     }
 
     fileprivate func setupConstraints() {
@@ -1461,12 +1461,8 @@ extension BrowserViewController: HomePanelDelegate {
         view.endEditing(true)
     }
 
-    func homePanel(didSelectURL url: URL, visitType: VisitType, isGoogleTopSite: Bool) {
+    func homePanel(didSelectURL url: URL, visitType: VisitType) {
         guard let tab = tabManager.selectedTab else { return }
-        if isGoogleTopSite {
-            tab.urlType = .googleTopSite
-            searchTelemetry?.shouldSetGoogleTopSiteSearch = true
-        }
         finishEditingAndSubmit(url, visitType: visitType, forTab: tab)
     }
 
@@ -1490,7 +1486,6 @@ extension BrowserViewController: HomePanelDelegate {
 extension BrowserViewController: SearchViewControllerDelegate {
     func searchViewController(_ searchViewController: SearchViewController, didSelectURL url: URL) {
         guard let tab = tabManager.selectedTab else { return }
-        searchTelemetry?.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
     }
 

@@ -59,7 +59,7 @@ struct UXSizeClasses {
 
 protocol HomePanelDelegate: AnyObject {
     func homePanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool)
-    func homePanel(didSelectURL url: URL, visitType: VisitType, isGoogleTopSite: Bool)
+    func homePanel(didSelectURL url: URL, visitType: VisitType)
     func homePanelDidRequestToOpenLibrary(panel: LibraryPanelType)
 }
 
@@ -463,9 +463,9 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 0, left: insets, bottom: 0, right: insets)
     }
 
-    fileprivate func showSiteWithURLHandler(_ url: URL, isGoogleTopSite: Bool = false) {
+    fileprivate func showSiteWithURLHandler(_ url: URL) {
         let visitType = VisitType.bookmark
-        homePanelDelegate?.homePanel(didSelectURL: url, visitType: visitType, isGoogleTopSite: isGoogleTopSite)
+        homePanelDelegate?.homePanel(didSelectURL: url, visitType: visitType)
     }
 }
 
@@ -585,7 +585,7 @@ extension FirefoxHomeViewController: DataObserverDelegate {
             self.topSitesManager.urlPressedHandler = { [unowned self] url, indexPath in
                 self.longPressRecognizer.isEnabled = false
                 let isGoogleTopSiteUrl = url.absoluteString == GoogleTopSiteConstants.usUrl || url.absoluteString == GoogleTopSiteConstants.rowUrl
-                self.showSiteWithURLHandler(url as URL, isGoogleTopSite: isGoogleTopSiteUrl)
+                self.showSiteWithURLHandler(url as URL)
             }
 
             self.getPocketSites().uponQueue(.main) { _ in

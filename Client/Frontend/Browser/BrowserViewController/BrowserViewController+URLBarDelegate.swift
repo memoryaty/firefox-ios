@@ -299,10 +299,6 @@ extension BrowserViewController: URLBarDelegate {
         let engine = profile.searchEngines.defaultEngine
 
         if let searchURL = engine.searchURLForQuery(text) {
-            // We couldn't find a matching search keyword, so do a search query.
-//            Telemetry.default.recordSearch(location: .actionBar, searchEngine: engine.engineID ?? "other")
-            GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\("actionbar")"].add()
-            searchTelemetry?.shouldSetUrlTypeSearch = true
             finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         } else {
             // We still don't have a valid URL, so something is broken. Give up.
