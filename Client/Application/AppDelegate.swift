@@ -12,7 +12,7 @@ import SwiftKeychainWrapper
 
 import LocalAuthentication
 
-import Sync
+//import Sync
 import CoreSpotlight
 import UserNotifications
 //import Account

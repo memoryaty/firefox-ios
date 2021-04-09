@@ -10,7 +10,7 @@
 //import Account
 import Shared
 import Storage
-import Sync
+//import Sync
 
 import SwiftKeychainWrapper
 

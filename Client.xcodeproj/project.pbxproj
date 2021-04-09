@@ -3586,13 +3586,6 @@
 			path = Browser;
 			sourceTree = "<group>";
 		};
-		DA9FD87B24E212F500168D1E /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		DA9FD88024E213B400168D1E /* SearchQuickLinksSmall */ = {
 			isa = PBXGroup;
 			children = (
@@ -3909,7 +3902,6 @@
 				2FCAE21B1ABB51F800877008 /* Storage */,
 				28CE83B91A1D1D3200576538 /* Sync */,
 				28CE83EF1A1D246900576538 /* Third-Party Source */,
-				DA9FD87B24E212F500168D1E /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
