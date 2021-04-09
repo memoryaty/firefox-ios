@@ -110,61 +110,6 @@ open class BrowserDB {
         case InsertOrFail = "INSERT OR FAIL"
     }
 
-    /**
-     * Insert multiple sets of values into the given table.
-     *
-     * Assumptions:
-     * 1. The table exists and contains the provided columns.
-     * 2. Every item in `values` is the same length.
-     * 3. That length is the same as the length of `columns`.
-     * 4. Every value in each element of `values` is non-nil.
-     *
-     * If there are too many items to insert, multiple individual queries will run
-     * in sequence.
-     *
-     * A failure anywhere in the sequence will cause immediate return of failure, but
-     * will not roll back — use a transaction if you need one.
-     */
-    func bulkInsert(_ table: String, op: InsertOperation, columns: [String], values: [Args]) -> Success {
-        // Note that there's a limit to how many ?s can be in a single query!
-        // So here we execute 999 / (columns * rows) insertions per query.
-        // Note that we can't use variables for the column names, so those don't affect the count.
-        if values.isEmpty {
-            //log.debug("No values to insert.")
-            return succeed()
-        }
-
-        let variablesPerRow = columns.count
-
-        // Sanity check.
-        assert(values[0].count == variablesPerRow)
-
-        let cols = columns.joined(separator: ", ")
-        let queryStart = "\(op.rawValue) INTO \(table) (\(cols)) VALUES "
-
-        let varString = BrowserDB.varlist(variablesPerRow)
-
-        let insertChunk: ([Args]) -> Success = { vals -> Success in
-            let valuesString = Array(repeating: varString, count: vals.count).joined(separator: ", ")
-            let args: Args = vals.flatMap { $0 }
-            return self.run(queryStart + valuesString, withArgs: args)
-        }
-
-        let rowCount = values.count
-        if (variablesPerRow * rowCount) < BrowserDB.MaxVariableNumber {
-            return insertChunk(values)
-        }
-
-        //log.debug("Splitting bulk insert across multiple runs. I hope you started a transaction!")
-        let rowsPerInsert = (999 / variablesPerRow)
-        let chunks = chunk(values, by: rowsPerInsert)
-        //log.debug("Inserting in \(chunks.count) chunks.")
-
-        // There's no real reason why we can't pass the ArraySlice here, except that I don't
-        // want to keep fighting Swift.
-        return walk(chunks, f: { insertChunk(Array($0)) })
-    }
-
     func write(_ sql: String, withArgs args: Args? = nil) -> Deferred<Maybe<Int>> {
         return withConnection { connection -> Int in
             try connection.executeChange(sql, withArgs: args)

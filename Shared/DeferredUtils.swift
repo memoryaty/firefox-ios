@@ -49,13 +49,6 @@ public func >>> <T>(x: Deferred<Maybe<T>>, f: @escaping () -> Void) {
     }
 }
 
-/**
-* Returns a thunk that return a Deferred that resolves to the provided value.
-*/
-public func always<T>(_ t: T) -> () -> Deferred<Maybe<T>> {
-    return { deferMaybe(t) }
-}
-
 public func deferMaybe<T>(_ s: T) -> Deferred<Maybe<T>> {
     return Deferred(value: Maybe(success: s))
 }
@@ -84,48 +77,6 @@ public func walk<T>(_ items: [T], f: @escaping (T) -> Success) -> Success {
     return items.reduce(succeed()) { success, item -> Success in
         success >>> { f(item) }
     }
-}
-
-/**
- * Like `all`, but thanks to its taking thunks as input, each result is
- * generated in strict sequence. Fails immediately if any result is failure.
- */
-public func accumulate<T>(_ thunks: [() -> Deferred<Maybe<T>>]) -> Deferred<Maybe<[T]>> {
-    if thunks.isEmpty {
-        return deferMaybe([])
-    }
-
-    let combined = Deferred<Maybe<[T]>>()
-    var results: [T] = []
-    results.reserveCapacity(thunks.count)
-
-    var onValue: ((T) -> Void)!
-    var onResult: ((Maybe<T>) -> Void)!
-
-    // onValue and onResult both hold references to each other niling them out before exiting breaks a reference cycle
-    // We also cannot use unowned here because the thunks are not class types.
-    onValue = { t in
-        results.append(t)
-        if results.count == thunks.count {
-            onResult = nil
-            combined.fill(Maybe(success: results))
-        } else {
-            thunks[results.count]().upon(onResult)
-        }
-    }
-
-    onResult = { r in
-        if r.isFailure {
-            onValue = nil
-            combined.fill(Maybe(failure: r.failureValue!))
-            return
-        }
-        onValue(r.successValue!)
-    }
-
-    thunks[0]().upon(onResult)
-
-    return combined
 }
 
 /**

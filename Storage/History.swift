@@ -54,43 +54,16 @@ public protocol HistoryRecommendations {
     func repopulate(invalidateTopSites shouldInvalidateTopSites: Bool) -> Success
 }
 
-/**
- * The interface that history storage needs to provide in order to be
- * synced by a `HistorySynchronizer`.
- */
-public protocol SyncableHistory {
-    /**
-     * Make sure that the local place with the provided URL has the provided GUID.
-     * Succeeds if no place exists with that URL.
-     */
-    func ensurePlaceWithURL(_ url: String, hasGUID guid: GUID) -> Success
-
-    /**
-     * Delete the place with the provided GUID, and all of its visits. Succeeds if the GUID is unknown.
-     */
-    func deleteByGUID(_ guid: GUID, deletedAt: Timestamp) -> Success
-
-    func storeRemoteVisits(_ visits: [Visit], forGUID guid: GUID) -> Success
-    func insertOrUpdatePlace(_ place: Place, modified: Timestamp) -> Deferred<Maybe<GUID>>
-
-    func doneApplyingRecordsAfterDownload() -> Success
-
-    /**
-     * For inspecting whether we're an active participant in history sync.
-     */
-    func hasSyncedHistory() -> Deferred<Maybe<Bool>>
-}
-
 // TODO: integrate Site with this.
 
-open class Place {
-    public let guid: GUID
-    public let url: String
-    public let title: String
-
-    public init(guid: GUID, url: String, title: String) {
-        self.guid = guid
-        self.url = url
-        self.title = title
-    }
-}
+//open class Place {
+//    public let guid: GUID
+//    public let url: String
+//    public let title: String
+//
+//    public init(guid: GUID, url: String, title: String) {
+//        self.guid = guid
+//        self.url = url
+//        self.title = title
+//    }
+//}

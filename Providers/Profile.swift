@@ -26,13 +26,9 @@ public let ProfileRemoteTabsSyncDelay: TimeInterval = 0.1
 
 public protocol SyncManager {
 
-    func hasSyncedHistory() -> Deferred<Maybe<Bool>>
     func hasSyncedLogins() -> Deferred<Maybe<Bool>>
-    func syncBookmarks() -> SyncResult
 
 }
-
-//typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
 
 class ProfileFileAccessor: FileAccessor {
     convenience init(profile: Profile) {
@@ -65,7 +61,7 @@ protocol Profile: AnyObject {
     var queue: TabQueue { get }
     var searchEngines: SearchEngines { get }
     var files: FileAccessor { get }
-    var history: BrowserHistory & SyncableHistory & ResettableSyncStorage { get }
+    var history: BrowserHistory { get }
     var metadata: Metadata { get }
     var recommendations: HistoryRecommendations { get }
     var favicons: Favicons { get }
@@ -306,7 +302,7 @@ open class BrowserProfile: Profile {
      * Any other class that needs to access any one of these should ensure
      * that this is initialized first.
      */
-    fileprivate lazy var legacyPlaces: BrowserHistory & Favicons & SyncableHistory & ResettableSyncStorage & HistoryRecommendations  = {
+    fileprivate lazy var legacyPlaces: BrowserHistory & Favicons & HistoryRecommendations  = {
         return SQLiteHistory(db: self.db, prefs: self.prefs)
     }()
 
@@ -314,7 +310,7 @@ open class BrowserProfile: Profile {
         return self.legacyPlaces
     }
 
-    var history: BrowserHistory & SyncableHistory & ResettableSyncStorage {
+    var history: BrowserHistory {
         return self.legacyPlaces
     }
 
@@ -381,7 +377,7 @@ open class BrowserProfile: Profile {
     }
 
     // Extends NSObject so we can use timers.
-    public class BrowserSyncManager: NSObject, SyncManager, CollectionChangedNotifier {
+    public class BrowserSyncManager: NSObject, SyncManager {
         // We shouldn't live beyond our containing BrowserProfile, either in the main app or in
         // an extension.
         // But it's possible that we'll finish a side-effect sync after we've ditched the profile
@@ -479,9 +475,6 @@ open class BrowserProfile: Profile {
                 return self.profile.places.resetBookmarksMetadata()
             case "clients":
                 fallthrough
-
-            case "history":
-                return HistorySynchronizer.resetSynchronizerWithStorage(self.profile.history, basePrefs: self.prefsForSync, collection: "history")
             case "passwords":
                 return self.profile.logins.reset()
             case "forms":
@@ -499,30 +492,8 @@ open class BrowserProfile: Profile {
             }
         }
 
-        public func hasSyncedHistory() -> Deferred<Maybe<Bool>> {
-            return self.profile.history.hasSyncedHistory()
-        }
-
         public func hasSyncedLogins() -> Deferred<Maybe<Bool>> {
             return self.profile.logins.hasSyncedLogins()
-        }
-
-        @discardableResult public func syncBookmarks() -> SyncResult {
-            return deferMaybe(NoAccountError())
-//            return self.sync("bookmarks", function: syncBookmarksWithDelegate)
-        }
-
-        @discardableResult public func syncLogins() -> SyncResult {
-            return deferMaybe(NoAccountError())
-//            return self.sync("logins", function: syncLoginsWithDelegate)
-        }
-
-        public func notify(deviceIDs: [GUID], collectionsChanged collections: [String], reason: String) -> Success {
-           return succeed()
-        }
-
-        public func notifyAll(collectionsChanged collections: [String], reason: String) -> Success {
-            return succeed()
         }
     }
 }

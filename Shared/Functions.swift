@@ -67,22 +67,6 @@ public func •<V>(f: @escaping () -> Void, g: @escaping () -> V) -> () -> V {
     }
 }
 
-// Why not simply provide an override for ==? Well, that's scary, and can accidentally recurse.
-// This is enough to catch arrays, which Swift will delegate to element-==.
-public func optArrayEqual<T: Equatable>(_ lhs: [T]?, rhs: [T]?) -> Bool {
-    switch (lhs, rhs) {
-    case (.none, .none):
-        return true
-    case (.none, _):
-        return false
-    case (_, .none):
-        return false
-    default:
-        // This delegates to Swift's own array '==', which calls T's == on each element.
-        return lhs! == rhs!
-    }
-}
-
 /**
  * Given an array, return an array of slices of size `by` (possibly excepting the last slice).
  *
@@ -159,19 +143,6 @@ public extension Sequence {
     }
 }
 
-public func optDictionaryEqual<K, V: Equatable>(_ lhs: [K: V]?, rhs: [K: V]?) -> Bool {
-    switch (lhs, rhs) {
-    case (.none, .none):
-        return true
-    case (.none, _):
-        return false
-    case (_, .none):
-        return false
-    default:
-        return lhs! == rhs!
-    }
-}
-
 /**
  * Return members of `a` that aren't nil, changing the type of the sequence accordingly.
  */
@@ -192,17 +163,6 @@ public func optFilter<K, V>(_ source: [K: V?]) -> [K: V] {
     return m
 }
 
-/**
- * Map a function over the values of a map.
- */
-public func mapValues<K, T, U>(_ source: [K: T], f: ((T) -> U)) -> [K: U] {
-    var m = [K: U]()
-    for (k, v) in source {
-        m[k] = f(v)
-    }
-    return m
-}
-
 public func findOneValue<K, V>(_ map: [K: V], f: (V) -> Bool) -> V? {
     for v in map.values {
         if f(v) {
@@ -210,14 +170,6 @@ public func findOneValue<K, V>(_ map: [K: V], f: (V) -> Bool) -> V? {
         }
     }
     return nil
-}
-
-/**
- * Take a JSON array, returning the String elements as an array.
- * It's usually convenient for this to accept an optional.
- */
-public func jsonsToStrings(_ arr: [JSON]?) -> [String]? {
-    return arr?.compactMap { $0.stringValue }
 }
 
 // Encapsulate a callback in a way that we can use it with NSTimer.

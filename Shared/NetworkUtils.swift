@@ -31,35 +31,3 @@ public func validatedHTTPResponse(_ response: URLResponse?, contentType: String?
     return nil
 }
 
-//public enum HTTPMethod: String {
-//    case options = "OPTIONS"
-//    case get     = "GET"
-//    case head    = "HEAD"
-//    case post    = "POST"
-//    case put     = "PUT"
-//    case patch   = "PATCH"
-//    case delete  = "DELETE"
-//    case trace   = "TRACE"
-//    case connect = "CONNECT"
-//}
-
-public enum JSONSerializeError: Error {
-    case noData
-    case parseError
-}
-
-public func jsonResponse(fromData data: Data?) throws -> JSON {
-    guard let data = data, !data.isEmpty else {
-        throw JSONSerializeError.noData
-    }
-
-    do {
-        let json = try JSON(data: data)
-        if json.isError() {
-            throw JSONSerializeError.parseError
-        }
-        return json
-    } catch {
-        throw(JSONSerializeError.parseError)
-    }
-}
