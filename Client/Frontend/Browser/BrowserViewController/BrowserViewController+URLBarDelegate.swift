@@ -31,7 +31,7 @@ extension BrowserViewController: URLBarDelegate {
                 }
             }
         }
-        shouldShowChronTabs = true
+//        shouldShowChronTabs = true
         if shouldShowChronTabs {
             let tabTrayViewController = TabTrayV2ViewController(tabTrayDelegate: self, profile: profile)
             let controller: UINavigationController
