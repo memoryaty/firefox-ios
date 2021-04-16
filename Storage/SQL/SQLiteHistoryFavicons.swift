@@ -186,7 +186,7 @@ extension SQLiteHistory: Favicons {
             return deferMaybe(image)
         }
     }
-
+ 
     // Downloads a favicon image from the web or retrieves it from the cache.
     fileprivate func downloadFaviconImage(faviconURL: URL) -> Deferred<Maybe<UIImage>> {
         let deferred = CancellableDeferred<Maybe<UIImage>>()
